@@ -1,3 +1,4 @@
+/*global dojo, rdfjson*/
 dojo.provide("rdfjson.Graph");
 dojo.require("rdfjson.base");
 dojo.require("rdfjson.Statement");
@@ -7,10 +8,10 @@ dojo.require("rdfjson.Statement");
  * Note that for efficiency reasons the RDF JSON object will be extended, hence it will contain attributes 
  * that goes beyond the specification. Hence, note that the pure RDF JSON object:
  * <ul><li>can still be inspected independently, it will contain the correct RDF expression.</li>
- * 	<li>cannot be modified directly since it will conflict with manipulations via this class, 
- * 		the exception is the statement object attributes which can be updated.</li>
- * 	<li>is now unsuitable to be communicated for instance back to a server storage 
- * 		due to the extra attributes. Use the exportRDFJSON function to get a clean RDF JSON object.</li></ul>
+ *  <li>cannot be modified directly since it will conflict with manipulations via this class, 
+ *      the exception is the statement object attributes which can be updated.</li>
+ *  <li>is now unsuitable to be communicated for instance back to a server storage 
+ *      due to the extra attributes. Use the exportRDFJSON function to get a clean RDF JSON object.</li></ul>
  * 
  * TODO: Graph level operations (set operations), 
  * e.g. joining two graphs, requires careful renaming of bnodes.
@@ -127,7 +128,7 @@ dojo.declare("rdfjson.Graph", null, {
 	 * @param {String} s the subject in the form of a uri, if undefined a new blank node is created.
 	 * @param {String} p the predicate in the form of a uri, if undefined a new blank node is created.
 	 * @param {Object} o the object in the form of an object containing 
-	 * 	the attributes: 'type', 'value', 'lang', and 'datatype'. If undefined a new blank node is created. 
+	 *  the attributes: 'type', 'value', 'lang', and 'datatype'. If undefined a new blank node is created. 
 	 * @param {Boolean} assert indicated if the statement should be added to the graph directly. If not specified true is assumed. 
 	 */
 	create: function(s, p, o, assert) {
@@ -163,10 +164,10 @@ dojo.declare("rdfjson.Graph", null, {
 				for (p in graph[s]) {
 					if (graph[s].hasOwnProperty(p)) {
 						objArr = graph[s][p];
-						nobjArr = ngraph[s][p] = [];
+						nObjArr = ngraph[s][p] = [];
 						for (oindex = objArr.length-1;oindex>=0;oindex--) {
 							o = objArr[oindex];
-							nobjArr.push({type: o.type, value: o.value, lang: o.lang, datatype: o.datatype});
+							nObjArr.push({type: o.type, value: o.value, lang: o.lang, datatype: o.datatype});
 						}
 					}
 				}
@@ -210,8 +211,8 @@ dojo.declare("rdfjson.Graph", null, {
 	 * @return {Object} if the object originates from another graph a copy is made.
 	 */
 	_graphObject: function(o) {
-		if (o._statement === undefined 
-			|| o._statement._graph === this) {
+		if (o._statement === undefined ||
+			o._statement._graph === this) {
 			return o;
 		}
 		return {type: o.type, value: o.value, lang: o.lang, datatype: o.datatype};
@@ -223,6 +224,9 @@ dojo.declare("rdfjson.Graph", null, {
 	 * @param {Object} p
 	 */
 	_findSP: function(s,p) {
+		if (this._graph[s] === undefined || this._graph[s][p] === undefined) {
+			return [];
+		}
 		return dojo.map(this._graph[s][p], dojo.hitch(this, function(sobj) {
 			return this._get(s, p, sobj, true);
 		}));
@@ -234,6 +238,9 @@ dojo.declare("rdfjson.Graph", null, {
 	 * @param {Object} s
 	 */
 	_findS: function(s) {
+		if (this._graph[s] === undefined) {
+			return [];
+		}
 		var p, oindex, graph = this._graph, sArr = [], spArrs = [];
 		for (p in graph[s]) {
 			if (graph[s].hasOwnProperty(p)) {
@@ -317,7 +324,7 @@ dojo.declare("rdfjson.Graph", null, {
 	 * Iterates through all statements of the graph and calls the provided function on them.
 	 * 
 	 * @param {Function} f are called for each statement with the three arguments 
-	 * 	(in order) subject, predicate, and object. 
+	 *  (in order) subject, predicate, and object. 
 	 */
 	_map: function(f) {
 		var s, p, oindex, graph = this._graph, objArr;
@@ -327,7 +334,7 @@ dojo.declare("rdfjson.Graph", null, {
 					if (graph[s].hasOwnProperty(p)) {
 						objArr = graph[s][p];
 						for (oindex = objArr.length-1;oindex>=0;oindex--) {
-							f(s, p, objArr[oindex])
+							f(s, p, objArr[oindex]);
 						}
 					}
 				}
@@ -343,7 +350,7 @@ dojo.declare("rdfjson.Graph", null, {
 	_newBNode: function() {
 		this._indexBNodes();
 		var p, n, bnode;
-		for (var p=1;p<10;p++) {
+		for (p=1;p<10;p++) {
 			for (n=1;n<=p;n++) {
 				bnode = "_:" + Math.floor(Math.random()*(Math.pow(10, p)+1));
 				if (this._bnodes[bnode] !== true) {
@@ -369,12 +376,12 @@ dojo.declare("rdfjson.Graph", null, {
 		var s, p, oindex, graph = this._graph, objArr;
 		for (s in graph) {
 			if (graph.hasOwnProperty(s)) {
-				if (s.indexOf("_:") == 0) {
+				if (s.indexOf("_:") === 0) {
 					this._bnodes[s] = true;
 				}				
 				for (p in graph[s]) {
 					if (graph[s].hasOwnProperty(p)) {
-						if (p.indexOf("_:") == 0) {
+						if (p.indexOf("_:") === 0) {
 							this._bnodes[p] = true;
 						}
 						objArr = graph[s][p];
@@ -397,14 +404,14 @@ dojo.declare("rdfjson.Graph", null, {
 	 * @param {Object} o the object in a statement.
 	 */
 	_trackBNodes: function(s, p, o) {
-		if (s.indexOf("_:") == 0) {
+		if (s.indexOf("_:") === 0) {
 			this._bnodes[s] = true;
 		}
-		if (p.indexOf("_:") == 0) {
+		if (p.indexOf("_:") === 0) {
 			this._bnodes[p] = true;
 		}
 		if (o.type === "bnode") {
 			this._bnodes[o.value] = true;
 		}
-	},
+	}
 });

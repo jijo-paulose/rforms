@@ -1,8 +1,9 @@
+/*global dojo, rdfjson*/
 dojo.provide("rdfjson.base");
 
 rdfjson.statementEquals = function (s1, s2) {
 	return s1.s === s2.s && s1.p === s2.p && rdfjson.objectEquals(s1.o, s2.o);
-}
+};
 
 /**
  * Adds a statement to a graph object according to the rdf/json specification. 
@@ -20,9 +21,9 @@ rdfjson.statementEquals = function (s1, s2) {
  * @param {String} s a URI representing the subject in a statement. 
  * @param {String} p a URI representing the predicate in a statement.
  * @param {Object} o an object representing either a resource or a literal, 
- * 	see format described above.
+ *  see format described above.
  * @return {Object} the javascript object corresponding to the statements object just added, 
- * 	note that it might be a clone of the object given in the parameter o
+ *  note that it might be a clone of the object given in the parameter o
  * (for instance when the statement already exists in the graph).
  * @throws {String} an error message if the arguments are not valid. 
  * @see The <a href="http://n2.talis.com/wiki/RDF_JSON_Specification">RDF JSON Specification</a>.
@@ -57,7 +58,7 @@ rdfjson.add = function(graph, s, p, o) {
  * @param {Object} p
  * @param {Object} o
  * @return {Object} the object of the statement removed, 
- * 	undefined if no matching statement could be removed.
+ *  undefined if no matching statement could be removed.
  * @throws {String} an error message if the arguments are not valid. 
  * @see rdfjson.add for a longer treatment of the allowed arguments.
  */
@@ -75,7 +76,7 @@ rdfjson.remove = function(graph, s, p, o) {
 			return o;
 		}
 	}
-}
+};
 
 /**
  * Checks if the graph contains the specified statement.
@@ -98,7 +99,7 @@ rdfjson.contains = function(graph, s, p, o) {
 			return objs[i];
 		}
 	}
-}
+};
 
 /**
  * Removes empty structures in the graph for the given subject and predicate.
@@ -113,7 +114,7 @@ rdfjson.contains = function(graph, s, p, o) {
  * @param {Object} p
  */
 rdfjson.cleanup = function(graph, s, p) {
-	if (graph[s][p].length == 0) {
+	if (graph[s][p].length === 0) {
 		delete graph[s][p];
 		var hasProp = false;
 		for(var prop in graph[s]) {
@@ -126,7 +127,7 @@ rdfjson.cleanup = function(graph, s, p) {
 			delete graph[s];
 		}
 	}
-}
+};
 
 /**
  * Checks the arguments for the add function are valid 
@@ -162,4 +163,4 @@ rdfjson.checkForWrongArgs = function(args) {
  */
 rdfjson.objectEquals =  function(o1, o2) {
 	return o1.type === o2.type && o1.value === o2.value && o1.lang === o2.lang && o1.datatype === o2.datatype;
-}
+};

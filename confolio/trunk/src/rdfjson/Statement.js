@@ -1,3 +1,4 @@
+/*global dojo, rdfjson*/
 dojo.provide("rdfjson.Statement");
 dojo.require("rdfjson.Graph");
 
@@ -39,6 +40,9 @@ dojo.declare("rdfjson.Statement", null, {
 	//===================================================
 	// Public API
 	//===================================================
+	getGraph: function() {
+		return this._graph;
+	},
 	setAsserted: function(asserted) {
 		if (asserted != this._asserted) {
 			if (asserted) {
