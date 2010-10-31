@@ -2,16 +2,19 @@
 dojo.provide("rforms.template.Template");
 dojo.require("rforms.template.Group");
 
-
+/**
+ * A template contains a root (a groupItem) and a list of ontologies.  
+ */
 dojo.declare("rforms.template.Template", rforms.template._BaseItem, {
+	//===================================================
+	// Private attributes
+	//===================================================
 	_itemStore: null,
 	_root: null,
-	
-	constructor: function(source, root, itemStore) {
-		this._itemStore = itemStore;
-		this._ontologies = source.ontologies;
-		this._root = root;
-	},
+
+	//===================================================
+	// Public API
+	//===================================================
 	getRoot: function() {
 		return this._root;
 	},
@@ -20,5 +23,14 @@ dojo.declare("rforms.template.Template", rforms.template._BaseItem, {
 	},
 	getOntologies: function() {
 		return this._ontologies;
+	},
+
+	//===================================================
+	// Inherited methods
+	//===================================================	
+	constructor: function(source, root, itemStore) {
+		this._itemStore = itemStore;
+		this._ontologies = source.ontologies;
+		this._root = root;
 	}
 });

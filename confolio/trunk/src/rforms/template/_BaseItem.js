@@ -1,12 +1,19 @@
 /*global dojo, rforms*/
 dojo.provide("rforms.template._BaseItem");
 
+/**
+ * Common functionality of subclasses Item and Template.
+ * (If it where not for the Template class, this functionality would be merged with Item.)
+ */
 dojo.declare("rforms.template._BaseItem", null, {
+	//===================================================
+	// Private attributes
+	//===================================================	
 	_source: {},
 	
-	constructor: function(source) {
-		this._source = source;
-	},
+	//===================================================
+	// Public API
+	//===================================================	
 	getId: function() {
 		return this._source["@id"];
 	},
@@ -27,6 +34,17 @@ dojo.declare("rforms.template._BaseItem", null, {
 			return c === cls;
 		});
 	},
+
+	//===================================================
+	// Inherited methods
+	//===================================================	
+	constructor: function(source) {
+		this._source = source;
+	},
+	
+	//===================================================
+	// Private methods
+	//===================================================	
 	_getLocalizedValue: function(hash) {
 		if (hash.hasOwnProperty(dojo.locale)) {
 			return {value: hash[dojo.locale], precision: "exact", lang: dojo.locale};

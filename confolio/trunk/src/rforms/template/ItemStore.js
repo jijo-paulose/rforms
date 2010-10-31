@@ -8,16 +8,23 @@ dojo.require("rforms.template.Text");
 dojo.require("rforms.template.Choice");
 dojo.require("rforms.template.OntologyStore");
 
+/**
+ * Keeps a registry of templates and reusable items.
+ * Use the createTemplate method to create templates from a source
+ * json structure, if the structure contains reusable items they are
+ * created and stored separately as well. 
+ */
 dojo.declare("rforms.template.ItemStore", null, {
+	//===================================================
+	// Private Attributes
+	//===================================================
 	_registry: null,
 	_tRegistry: null,
 	_ontologyStore: null,
 	
-	constructor: function(ontologyStore) {
-		this._registry = {};
-		this._tRegistry = {};
-		this._ontologyStore = ontologyStore || new rforms.template.OntologyStore();
-	},
+	//===================================================
+	// Public API
+	//===================================================
 	getTemplate: function(id) {
 		return this._tRegistry[id];
 	},
@@ -37,6 +44,19 @@ dojo.declare("rforms.template.ItemStore", null, {
 		}
 		return t;
 	},
+
+	//===================================================
+	// Inherited methods
+	//===================================================
+	constructor: function(ontologyStore) {
+		this._registry = {};
+		this._tRegistry = {};
+		this._ontologyStore = ontologyStore || new rforms.template.OntologyStore();
+	},
+	
+	//===================================================
+	// Private methods
+	//===================================================
 	_createItems: function(sourceArray) {
 		return dojo.map(sourceArray, function(child) {
 			return this._createItem(child);

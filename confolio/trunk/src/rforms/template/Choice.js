@@ -2,27 +2,44 @@
 dojo.provide("rforms.template.Choice");
 dojo.require("rforms.template.Item");
 
-
+/**
+ * A choice item type indicates that the value should be one of a range of predefined choices,
+ * these predefined choices can be defined manually in the template or extracted from an external
+ * ontlogy (indicated by the ontologyUrl) by means of a query that can be constructed from the constraints.
+ * 
+ * TODO:
+ * The choices can also be organized into a hierarchy using the parent and hierarchy properties.
+ */
 dojo.declare("rforms.template.Choice", rforms.template.Item, {
+	//===================================================
+	// Private attributes
+	//===================================================	
 	_source: null,
 	_ontologyStore: null,
 	_choices: {},
-	
-	constructor: function(source, ontologyStore) {
-		this._ontologyStore = ontologyStore;
-	},
+
+	//===================================================
+	// Public API
+	//===================================================	
+	/**
+	 *  A choice is an object which looks like:
+	 * {"d": "http://example.com/choice1",
+	 *  "label": {"en": "First choice", "sv": "Första valet"}
+	 * }
+	 *  
+	 * @return {Array} of choices.
+	 */
 	getChoices: function() {
 		return this.getStaticChoices() || this.getDynamicChoices();
 	},
+	/**
+	 * @return {Array} of choices defined manually in the Template.
+	 */
 	getStaticChoices: function() {
 		return this._source.choices;
 	},
 	/**
 	 * Fetches choices from an external ontology.
-	 * The choices are returned as an array of choice objects where every choice object looks like:
-	 * {"d": "http://example.com/choice1",
-	 *  "label": {"en": "First choice", "sv": "Första valet"}
-	 * } 
 	 * 
 	 * @param {Object} callback will be called asynchronously, if undefined the call is made synchronously.
 	 * @return {Array} of choice objects, only provided if method called without callback.
@@ -57,5 +74,12 @@ dojo.declare("rforms.template.Choice", rforms.template.Item, {
 	},
 	isHierarchyPropertyInverted: function() {
 		return this._source.ishierarchypropertyinverted === undefined ? false : this._source.ishierarchypropertyinverted;
+	},
+	
+	//===================================================
+	// Inherited methods
+	//===================================================	
+	constructor: function(source, ontologyStore) {
+		this._ontologyStore = ontologyStore;
 	}
 });

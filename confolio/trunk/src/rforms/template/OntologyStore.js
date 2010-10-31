@@ -2,11 +2,18 @@
 dojo.provide("rforms.template.OntologyStore");
 dojo.require("rforms.template.Choice");
 
+/**
+ * Simple store of ontologies to allow reuse across templates and items. 
+ */
 dojo.declare("rforms.template.OntologyStore", null, {
+	//===================================================
+	// Private attributes
+	//===================================================
 	_registry: null,
-	constructor: function() {
-		this._registry = {};
-	},
+	
+	//===================================================
+	// Public API
+	//===================================================	
 	importRegistry: function(registry) {
 		dojo.mixin(this._registry, registry);
 	},
@@ -21,5 +28,12 @@ dojo.declare("rforms.template.OntologyStore", null, {
 		} else {
 			//TODO load via xhr and deferred.
 		}
+	},
+
+	//===================================================
+	// Inherited methods
+	//===================================================
+	constructor: function() {
+		this._registry = {};
 	}
 });

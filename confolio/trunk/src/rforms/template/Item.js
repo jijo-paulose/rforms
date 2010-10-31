@@ -2,10 +2,23 @@
 dojo.provide("rforms.template.Item");
 dojo.require("rforms.template._BaseItem");
 
+/**
+ * Base functionality of Text, Group and Choice item classes.
+ */
 dojo.declare("rforms.template.Item", rforms.template._BaseItem, {
+	//===================================================
+	// Public API
+	//===================================================
+	/**
+	 * @return {String} as a URI, may be undefined for Groups, never undefined for Text or choice item types. 
+	 */
 	getProperty: function() {
 		return this._source.property;
 	},
+	/**
+	 * @return {Object} never available for Text item type. 
+	 * The property value pairs corresponds to predicate and objects in required tripples. 
+	 */
 	getConstraints: function() {
 		return this._source.constraints;
 	},
@@ -28,6 +41,9 @@ dojo.declare("rforms.template.Item", rforms.template._BaseItem, {
 	getValue: function() {
 		return this._source.value;
 	},
+	/**
+	 * @return {Object} containing max, min, and preferred properties.
+	 */
 	getCardinality: function() {
 		return this._source.cardinality;
 	},
