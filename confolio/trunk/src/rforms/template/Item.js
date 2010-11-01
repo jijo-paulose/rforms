@@ -22,9 +22,16 @@ dojo.declare("rforms.template.Item", rforms.template._BaseItem, {
 	getConstraints: function() {
 		return this._source.constraints;
 	},
+	/**
+	 * @return {String} a URI indicating the datatype, for example: "http://www.w3.org/2001/XMLSchema.xsd#date".
+	 */
 	getDatatype: function() {
 		return this._source.datatype;
 	},
+	/**
+	 * @return {String} a two character language code, only relevant if the item type is Text and the nodetype is 
+	 * a LANGUAGE_LITERAL, indicating that all matching bindings should be set with this language. 
+	 */
 	getLanguage: function() {
 		return this._source.language;
 	},
@@ -33,7 +40,7 @@ dojo.declare("rforms.template.Item", rforms.template._BaseItem, {
 	},
 	/**
 	 * Allowed values are:
-	 * LITERAL, RESOURCE, URI, BLANK, LITERAL, PLAIN_LITERAL, ONLY_LITERAL, LANGUAGE_LITERAL, DATATYPE_LITERAL
+	 * LITERAL, RESOURCE, URI, BLANK, PLAIN_LITERAL, ONLY_LITERAL, LANGUAGE_LITERAL, DATATYPE_LITERAL
 	 */
 	getNodetype: function() {
 		return this._source.nodetype;

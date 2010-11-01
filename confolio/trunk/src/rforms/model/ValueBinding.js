@@ -1,16 +1,35 @@
 /*global dojo, rforms*/
 dojo.provide("rforms.model.ValueBinding");
 dojo.require("rforms.model.Binding");
-			
+
+/**
+ * Corresponds to a binding for a Text item type, captures literals, literals with 
+ * language, datatyped literals, or non blank resources, that is, URI's.
+ * Validity is determined by a valid predicate and object.
+ * The statement is asserted when the parents are valid and this ValueBinding is valid.
+ * 
+ * @see rforms.template.Text
+ */
 dojo.declare("rforms.model.ValueBinding", rforms.model.Binding, {
+	//===================================================
+	// Private attributes
+	//===================================================
 	_validObject: true,
 	_validPredicate: true,
 
-	remove: function() {
-		this.setValue(null);
-		this._parent.removeChildBinding(this);
-		this.inherited("remove", arguments);
+	//===================================================
+	// Public API
+	//===================================================
+	/**
+	 * @return {String} corresponding to the value, even if the nodetype is URI 
+	 * or datatype says for example date.
+	 */
+	getValue: function() {
+		return this._statement.getValue();
 	},
+	/**
+	 * @param {String} value
+	 */
 	setValue: function(value) {
 		var oValidObject = this._validObject;
 		if (this._isValidValue(value)) {
@@ -28,6 +47,15 @@ dojo.declare("rforms.model.ValueBinding", rforms.model.Binding, {
 		}
 		this.updateAssertions();
 	},
+	/**
+	 * @return {String} corresponding to a uri.
+	 */
+	getPredicate: function() {
+		return this._statement.getPredicate();
+	},
+	/**
+	 * @param {String} predicate corresponding to a uri.
+	 */
 	setPredicate: function(predicate) {
 		var oValidPredicate = this._validPredicate;
 		if (this._isValidValue(predicate)) {
@@ -45,27 +73,42 @@ dojo.declare("rforms.model.ValueBinding", rforms.model.Binding, {
 		}
 		this.updateAssertions();
 	},
-	getPredicate: function() {
-		return this._statement.getPredicate();
+	/**
+	 * @return {String} a two or three character language code.
+	 */
+	getLanguage: function() {
+		return this._statement.getLanguage();
+	},
+	/**
+	 * @param {Object} lang a two or three character language code.
+	 */
+	setLanguage: function(lang) {
+		this._statement.setLanguage(lang);
+	},
+	/**
+	 * @return {String} corresponding to a uri.
+	 */
+	getDatatype: function() {
+		return this._statement.getDatatype();
+	},
+	/**
+	 * @param {String} dt corresponding to a uri.
+	 */
+	setDatatype: function(dt) {
+		this._statement.setDatatype(dt);
+	},
+
+	//===================================================
+	// Inherited methods
+	//===================================================
+	remove: function() {
+		this.setValue(null);
+		this._parent.removeChildBinding(this);
+		this.inherited("remove", arguments);
 	},
 	updateAssertions: function() {
 		var assert = this._ancestorValid && this._validObject && this._validPredicate;
 		this._statement.setAsserted(assert);
-	},
-	getValue: function() {
-		return this._statement.getValue();
-	},
-	setLanguage: function(lang) {
-		this._statement.setLanguage(lang);
-	},
-	getLanguage: function() {
-		return this._statement.getLanguage();
-	},
-	setDatatype: function(dt) {
-		this._statement.setDatatype(dt);
-	},
-	getDatatype: function() {
-		return this._statement.getDatatype();
 	},
 	isValid: function() {
 		return this._validObject && this._validPredicate;

@@ -35,11 +35,48 @@
 			//Paste code from the tests below (within start and end mark) to be able to debug them,
 			//remove any use of doh to allow independent debugging.
 			//-------------------------START----------------------------------------
-			this.itemStore = new rforms.template.ItemStore();
-			this.template = this.itemStore.createTemplate(rforms.template.tests.template1);
-			this.graph = new rdfjson.Graph(rdfjson.tests.graph2);
-			var binding = rforms.model.match(this.graph, "http://example.org/about", this.template);
-			doh.t(binding instanceof rforms.model.GroupBinding);
+	this.graph = new rdfjson.Graph({});
+	this.s1 = this.graph.create("re1", "http://purl.org/dc/elements/1.1/creator", {"type": "bnode", "value": "_:person"});
+	this.s2 = this.graph.create("_:person", "http://www.w3.org/TR/rdf-schema/type", {"type": "uri", "value": "http://xmlns.com/foaf/0.1/Person"});
+	this.s3 = this.graph.create("_:person", "http://xmlns.com/foaf/0.1/firstname", {"type": "literal", "value": "Anna"});
+	this.s4 = this.graph.create("re1", "http://purl.org/dc/elements/1.1/title", {"type": "literal", "value": "Some title"});
+	this.is = new rforms.template.ItemStore();
+	this.t1 = this.is.createTemplate(rforms.template.tests.template1);	
+	this.b1 = new rforms.model.GroupBinding({item: this.t1.getRoot()});
+	this.b2 = new rforms.model.PropertyGroupBinding({item: this.t1.getRoot().getChildren()[4], statement: this.s1, constraints: [this.s2]});
+	this.b3 = new rforms.model.ValueBinding({item: this.t1.getRoot().getChildren()[4].getChildren()[1].getChildren()[0], statement: this.s3});
+	this.b4 = new rforms.model.ValueBinding({item: this.t1.getRoot().getChildren()[1], statement: this.s4});
+	this.b1.addChildBinding(this.b2);
+	this.b2.getObjectBinding().addChildBinding(this.b3);
+	this.b1.addChildBinding(this.b4);
+
+
+		//First check leaf validity effect.
+		doh.t(this.s1.isAsserted());
+		doh.t(this.s2.isAsserted());
+		doh.t(this.s3.isAsserted());
+		doh.t(this.s4.isAsserted());
+		this.b3.setValue("");
+		doh.f(this.s1.isAsserted());
+		doh.f(this.s2.isAsserted());
+		doh.f(this.s3.isAsserted());
+		doh.t(this.s4.isAsserted());
+		this.b3.setValue("Anna");
+		doh.t(this.s1.isAsserted());
+		doh.t(this.s2.isAsserted());
+		doh.t(this.s3.isAsserted());
+		doh.t(this.s4.isAsserted());
+		//Second, check hierarchy updated when predicate changed above.
+		this.b2.getPredicateBinding().setValue("");
+		doh.f(this.s1.isAsserted());
+		doh.f(this.s2.isAsserted());
+		doh.f(this.s3.isAsserted());
+		doh.t(this.s4.isAsserted());
+		this.b2.getPredicateBinding().setValue("http://purl.org/dc/elements/1.1/creator");
+		doh.t(this.s1.isAsserted());
+		doh.t(this.s2.isAsserted());
+		doh.t(this.s3.isAsserted());
+		doh.t(this.s4.isAsserted());
 			//-------------------------END----------------------------------------
 			console.log("A sensless log entry, to be able to step over last code row in firebug above.")
 		});

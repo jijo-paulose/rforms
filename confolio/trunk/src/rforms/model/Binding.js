@@ -7,23 +7,24 @@ dojo.require("rdfjson.Graph");
 dojo.require("rdfjson.Statement");
 
 /**
- * Hepp hopp
- * @constructor
- * @classDescription humpty dumpty
- * @alias rforms.model.Binding
- * @param {Object} item
- * @param {Object} statement
+ * A binding is a pairing between an item and various RDF statement 
+ * (a single statement unless the binding is a group with constraints).
+ * It keeps track of cardinality and validity.
+ * If a binding is valid and all parent bindings are valid, 
+ * the statement is asserted, that is, inserted into the RDF graph.
  */
 dojo.declare("rforms.model.Binding", null, {
+	//===================================================
+	// Private attributes
+	//===================================================
 	_item: null,
 	_statement: null,
 	_ancestorValid: true,
 	_cardinalityTracker: null,
 
-	constructor: function(args) {
-		this._item = args.item;
-		this._statement = args.statement;
-	},
+	//===================================================
+	// Public API
+	//===================================================
 	getGraph: function() {
 		return this._statement.getGraph();
 	},
@@ -38,10 +39,6 @@ dojo.declare("rforms.model.Binding", null, {
 	getItem: function() {
 		return this._item;
 	},
-	/**
-	 * @method
-	 * @memberOf rforms.model.Binding
-	 */
 	getStatement: function() {
 		return this._statement;
 	},
@@ -50,8 +47,7 @@ dojo.declare("rforms.model.Binding", null, {
 	},
 	setParent: function(parent) {
 		this._parent = parent;
-	},
-	
+	},	
 	
 	/**
 	 * A binding is valid if:
@@ -76,7 +72,18 @@ dojo.declare("rforms.model.Binding", null, {
 	updateAssertions: function() {
 		//Override
 	},
-	
+
+	//===================================================
+	// Inherited methods
+	//===================================================
+	constructor: function(args) {
+		this._item = args.item;
+		this._statement = args.statement;
+	},
+
+	//===================================================
+	// Private methods
+	//===================================================	
 	_isValidValue: function(value) {
 		return value !== undefined && value !== null && value !== "";
 	}

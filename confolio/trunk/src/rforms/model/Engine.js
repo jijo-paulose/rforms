@@ -32,7 +32,16 @@ rforms.model.match = function(graph, uri, template) {
 	return rootBinding;
 };
 
-
+/**
+ * Creates a new binding below the given parentBinding according to what the item specifies. 
+ * New triples are created in the provided graph although not expressed if they have an
+ * empty predicate or object. The item must be a direct child of the item
+ * of the parentBinding.
+ * 
+ * @param {rforms.model.Binding} parentBinding
+ * @param {rforms.template.Item} item
+ * @param {rdfjson.Graph} graph
+ */
 rforms.model.create = function(parentBinding, item, graph) {
 	if (item instanceof rforms.template.Text) {
 		return rforms.model._createTextItem(parentBinding, item, graph);
@@ -64,12 +73,12 @@ rforms.model._createChoiceItem = function(parentBinding, item, graph) {
 };
 
 rforms.model._createGroupItem = function(parentBinding, item, graph) {
-	var stmt;
+	var stmt, constr;
 	if (item.getProperty() !== undefined) {
-		stmt = graph.create(parentBinding.getChildrenRootUri(), item.getProperty(), {type: "uri", value: ""}, false);		
+		stmt = graph.create(parentBinding.getChildrenRootUri(), item.getProperty(), null, false);		
+		constr = rforms.model._createStatementsForConstraints(graph, stmt.getSubject(), item);
 	}
 
-	var constr = new rforms.model.ChoiceBinding({item: item, statement: stmt});
 	var nBinding = new rforms.model.GroupBinding({item: item, statement: stmt, constraints: constr});
 	parentBinding.addChildBinding(nBinding);
 	dojo.forEach(item.getChildren(), function(childItem) {
@@ -78,6 +87,27 @@ rforms.model._createGroupItem = function(parentBinding, item, graph) {
 	return nBinding;
 };
 
+rforms.model._createPropertyGroupItem = function(parentBinding, item, graph) {
+	var stmt, constr;
+	var oItem = item.getChildren()[1];
+	if (oItem instanceof rforms.template.Group) {
+		stmt = graph.create(parentBinding.getChildrenRootUri(), "", null, false);		
+		constr = rforms.model._createStatementsForConstraints(graph, stmt.getSubject(), oItem);
+	} else if (oItem instanceof rforms.model.Choice) {
+		stmt = graph.create(parentBinding.getChildrenRootUri(), "", {type: "uri", value: ""}, false);
+	} else {
+		stmt = graph.create(parentBinding.getChildrenRootUri(), "", {type: "literal", value: ""}, false);
+	}
+
+	var nBinding = new rforms.model.PropertyGroupBinding({item: item, statement: stmt, constraints: constr});
+	parentBinding.addChildBinding(nBinding);
+	if (oItem instanceof rforms.template.Group) {
+		dojo.forEach(oItem.getChildren(), function(childItem) {
+			rforms.model.create(nBinding.getObjectBinding(), childItem, graph);
+		});
+	}
+	return nBinding;
+};
 
 //===============================================
 //Core matching engine
