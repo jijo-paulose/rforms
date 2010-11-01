@@ -9,7 +9,7 @@ dojo.declare("rforms.view.Presenter", dijit._Widget, {
 	showLanguage: true,
 	filterTranslations: true,
 	styleCls: "presenter",
-		
+	
 	buildRendering: function() {
 		var groupIndex, tableRow, itemsGroupedBindings = this.binding.getItemGroupedChildBindings(), itemGroupedBindings;
 		this.domNode = this.srcNodeRef;
@@ -37,6 +37,8 @@ dojo.declare("rforms.view.Presenter", dijit._Widget, {
 	},
 	addRow: function(lastRow, binding, index) {
 		var fieldDiv, newRow;
+		
+		//Taking care of dom node structure plus label.
 		if (index === 0 || binding instanceof rforms.model.GroupBinding) {
 			//New rowDiv since we have a label
 			if (lastRow === undefined) {
@@ -56,11 +58,12 @@ dojo.declare("rforms.view.Presenter", dijit._Widget, {
 			dojo.addClass(fieldDiv, "repeatedValue");
 		}
 		
+		//Taking care of the field, either group, choice or text.
 		if (binding instanceof rforms.model.GroupBinding) {
 			dojo.addClass(fieldDiv, "group");
 			this.addGroup(fieldDiv, binding);
 		} else if (binding instanceof rforms.model.ChoiceBinding ||
-					binding instanceof rforms.model.PropertyBinding) {
+					binding instanceof rforms.model.PropertyChoiceBinding) {
 			dojo.addClass(fieldDiv, "field");
 			this.addChoice(fieldDiv, binding);
 		} else if (binding instanceof rforms.model.ValueBinding) {

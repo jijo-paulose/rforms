@@ -32,8 +32,8 @@ rdfjson.tests.graph2 = {
 		"http://www.w3.org/TR/rdf-schema/type"	  : [ { "value" : "http://xmlns.com/foaf/0.1/Document", "type" : "uri" } ],
         "http://purl.org/dc/terms/publisher" : [ { "value" : "_:person", "type" : "bnode" } ],
         "http://purl.org/dc/terms/creator" : [ { "value" : "_:person2", "type" : "bnode" } ],
-        "http://purl.org/dc/terms/title"   : [ { "value" : "Anna's Homepage", "type" : "literal", "lang" : "sv" },
-											   { "value" : "Anna hemsida", "type" : "literal", "lang" : "no" } ] ,
+        "http://purl.org/dc/terms/title"   : [ { "value" : "Anna's Homepage", "type" : "literal", "lang" : "en" },
+											   { "value" : "Anna hemsida", "type" : "literal", "lang" : "sv" } ] ,
         "http://xmlns.com/foaf/0.1/nick"          : [ { "type" : "literal", "value" : "strange, for testing only"} ],
         "http://purl.org/dc/terms/related" : [ { "value" : "http://example.org/about", "type" : "uri" } ],
         "http://purl.org/dc/terms/subject" : [ { "value" : "http://example.com/instance1", "type" : "uri" } ]

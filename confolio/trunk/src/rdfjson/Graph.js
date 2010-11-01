@@ -132,13 +132,13 @@ dojo.declare("rdfjson.Graph", null, {
 	 * @param {Boolean} assert indicated if the statement should be added to the graph directly. If not specified true is assumed. 
 	 */
 	create: function(s, p, o, assert) {
-		if (s === undefined) {
+		if (s == null) {
 			s = this._newBNode();
 		}
-		if (p === undefined) {
+		if (p == null) {
 			p = this._newBNode();
 		}
-		if (o === undefined) {
+		if (o == null) {
 			o = {type: 'bnode', value: this._newBNode()};
 		} else {
 			//The object is copied to avoid reuse of same object in multiple places of the graph

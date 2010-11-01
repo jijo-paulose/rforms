@@ -30,6 +30,7 @@ dojo.declare("rforms.model.PropertyGroupBinding", rforms.model.GroupBinding, {
 	//===================================================
 	constructor: function(args) {
 		this._statement = undefined;
+		this._validPredicate = true; //Reset to initial value to ignore check from incorrect given statement in this case.
 		this._constraints = [];
 		var children = this._item.getChildren();
 		var pBinding, oBinding, pItem = children[0], oItem = children[1];

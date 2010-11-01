@@ -101,6 +101,12 @@ dojo.declare("rforms.model.ValueBinding", rforms.model.Binding, {
 	//===================================================
 	// Inherited methods
 	//===================================================
+	constructor: function() {
+		if (this._statement) {
+			this._validPredicate = this._isValidValue(this._statement.getPredicate());
+			this._validObject = this._isValidValue(this._statement.getValue());			
+		}
+	},
 	remove: function() {
 		this.setValue(null);
 		this._parent.removeChildBinding(this);

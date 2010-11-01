@@ -26,7 +26,14 @@ dojo.declare("rforms.model.Binding", null, {
 	// Public API
 	//===================================================
 	getGraph: function() {
-		return this._statement.getGraph();
+		if (!this._graph) {
+			if (this._statement) {
+				this._graph = this._statement.getGraph();			
+			} else if (this._parent) {
+				this._graph = this._parent.getGraph();
+			}
+		}
+		return this._graph;
 	},
 	remove: function() {
 	},
@@ -79,6 +86,9 @@ dojo.declare("rforms.model.Binding", null, {
 	constructor: function(args) {
 		this._item = args.item;
 		this._statement = args.statement;
+		if (args.graph) {
+			this._graph = args.graph;
+		}
 	},
 
 	//===================================================

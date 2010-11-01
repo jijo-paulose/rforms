@@ -30,7 +30,7 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 		});
 	},
 	addGroup: function(fieldDiv, binding) {
-		var subView = new rforms.view.Presenter({binding: binding, template: this.template, topLevel: false}, fieldDiv);
+		var subView = new rforms.view.Editor({binding: binding, template: this.template, topLevel: false}, fieldDiv);
 	},
 	addText: function(fieldDiv, binding) {
 /*		if (this.showLanguage && binding.getLanguage()) {

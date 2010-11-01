@@ -42,15 +42,15 @@ rforms.model.match = function(graph, uri, template) {
  * @param {rforms.template.Item} item
  * @param {rdfjson.Graph} graph
  */
-rforms.model.create = function(parentBinding, item, graph) {
+rforms.model.create = function(parentBinding, item) {
 	if (item instanceof rforms.template.Text) {
-		return rforms.model._createTextItem(parentBinding, item, graph);
+		return rforms.model._createTextItem(parentBinding, item);
 	} else if (item instanceof rforms.template.PropertyGroup) {
-		return rforms.model._createPropertyGroupItem(parentBinding, item, graph);
+		return rforms.model._createPropertyGroupItem(parentBinding, item);
 	} else if (item instanceof rforms.template.Group) {
-		return rforms.model._createGroupItem(parentBinding, item, graph);
+		return rforms.model._createGroupItem(parentBinding, item);
 	} else if (item instanceof rforms.template.Choice) {
-		return rforms.model._createChoiceItem(parentBinding, item, graph);		
+		return rforms.model._createChoiceItem(parentBinding, item);		
 	}	
 };
 
@@ -58,23 +58,26 @@ rforms.model.create = function(parentBinding, item, graph) {
 //===============================================
 //Core creation engine
 //===============================================
-rforms.model._createTextItem = function(parentBinding, item, graph) {
+rforms.model._createTextItem = function(parentBinding, item) {
+	var graph = parentBinding.getGraph();
 	var stmt = graph.create(parentBinding.getChildrenRootUri(), item.getProperty(), {type: "literal", value: ""}, false);
 	var nbinding = new rforms.model.ValueBinding({item: item, statement: stmt});
 	parentBinding.addChildBinding(nbinding);
 	return nbinding;
 };
 
-rforms.model._createChoiceItem = function(parentBinding, item, graph) {
+rforms.model._createChoiceItem = function(parentBinding, item) {
+	var graph = parentBinding.getGraph();
 	var stmt = graph.create(parentBinding.getChildrenRootUri(), item.getProperty(), {type: "uri", value: ""}, false);
 	var nbinding = new rforms.model.ChoiceBinding({item: item, statement: stmt});
 	parentBinding.addChildBinding(nbinding);
 	return nbinding;
 };
 
-rforms.model._createGroupItem = function(parentBinding, item, graph) {
+rforms.model._createGroupItem = function(parentBinding, item) {
 	var stmt, constr;
 	if (item.getProperty() !== undefined) {
+		var graph = parentBinding.getGraph();
 		stmt = graph.create(parentBinding.getChildrenRootUri(), item.getProperty(), null, false);		
 		constr = rforms.model._createStatementsForConstraints(graph, stmt.getSubject(), item);
 	}
@@ -82,14 +85,15 @@ rforms.model._createGroupItem = function(parentBinding, item, graph) {
 	var nBinding = new rforms.model.GroupBinding({item: item, statement: stmt, constraints: constr});
 	parentBinding.addChildBinding(nBinding);
 	dojo.forEach(item.getChildren(), function(childItem) {
-		rforms.model.create(nBinding, childItem, graph);
+		rforms.model.create(nBinding, childItem);
 	});
 	return nBinding;
 };
 
-rforms.model._createPropertyGroupItem = function(parentBinding, item, graph) {
+rforms.model._createPropertyGroupItem = function(parentBinding, item) {
 	var stmt, constr;
 	var oItem = item.getChildren()[1];
+	var graph = parentBinding.getGraph();
 	if (oItem instanceof rforms.template.Group) {
 		stmt = graph.create(parentBinding.getChildrenRootUri(), "", null, false);		
 		constr = rforms.model._createStatementsForConstraints(graph, stmt.getSubject(), oItem);
@@ -103,7 +107,7 @@ rforms.model._createPropertyGroupItem = function(parentBinding, item, graph) {
 	parentBinding.addChildBinding(nBinding);
 	if (oItem instanceof rforms.template.Group) {
 		dojo.forEach(oItem.getChildren(), function(childItem) {
-			rforms.model.create(nBinding.getObjectBinding(), childItem, graph);
+			rforms.model.create(nBinding.getObjectBinding(), childItem);
 		});
 	}
 	return nBinding;

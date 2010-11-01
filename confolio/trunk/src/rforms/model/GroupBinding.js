@@ -6,7 +6,7 @@ dojo.require("rforms.model.Binding");
  * Corresponds to a binding for a Group item type.
  * Handles sub-bindings grouped by item.
  * Validity of a group is determined by at least one of the sub-bindings being valid.
- * All subbindings must notify when their validity changed so that the validity of
+ * All sub-bindings must notify when their validity changed so that the validity of
  * the parent group can be checked and possibly updated.
  * Potential statement and constraints are asserted when both parents are valid and this GroupBinding is valid.
  * 
@@ -45,8 +45,8 @@ dojo.declare("rforms.model.GroupBinding", rforms.model.Binding, {
 		//If there is no parent or it's valid state did not change,
 		//then the groups assertions has not been changed and the children
 		//have not been notified of this group change in validity.
-		this._notifyValidityChange(valid);
-		return true; //Validity of group changed.
+		this._notifyValidityChange(valid && this._validPredicate);
+		return this._validPredicate; //Validity of group changed only if valid predicate.
 	},
 	getChildrenRootUri: function() {
 		if (this._statement) { //Either the object of the statement.
@@ -134,6 +134,9 @@ dojo.declare("rforms.model.GroupBinding", rforms.model.Binding, {
 			return [];
 		});
 		this._rootUri = args.childrenRootUri;
+		if (this._statement) {
+			this._validPredicate = this._isValidValue(this._statement.getPredicate());
+		}
 	},
 	remove: function() {
 		this._oneValidChild = false;
