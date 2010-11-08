@@ -27,7 +27,7 @@ dojo.require("rdfjson.Graph");
  * @return an rforms.model.GroupBinding which is the root of binding tree.
  */			
 rforms.model.match = function(graph, uri, template) {
-	var rootBinding = new rforms.model.GroupBinding({item: template.getRoot(), childrenRootUri: uri});
+	var rootBinding = new rforms.model.GroupBinding({item: template.getRoot(), childrenRootUri: uri, graph: graph});
 	rforms.model._matchGroupItemChildren(rootBinding, graph);
 	return rootBinding;
 };
@@ -40,7 +40,6 @@ rforms.model.match = function(graph, uri, template) {
  * 
  * @param {rforms.model.Binding} parentBinding
  * @param {rforms.template.Item} item
- * @param {rdfjson.Graph} graph
  */
 rforms.model.create = function(parentBinding, item) {
 	if (item instanceof rforms.template.Text) {
@@ -118,26 +117,27 @@ rforms.model._createPropertyGroupItem = function(parentBinding, item) {
 //===============================================
 
 
-rforms.model._matchGroupItemChildren = function(pb, graph) {
+rforms.model._matchGroupItemChildren = function(pb) {
 	dojo.forEach(pb.getItem().getChildren(), function(item) {
-		rforms.model._matchItem(pb, item, graph);
+		rforms.model._matchItem(pb, item);
 	});
 };
 
-rforms.model._matchItem = function(pb, item, graph) {
+rforms.model._matchItem = function(pb, item) {
 	if (item instanceof rforms.template.Text) {
-		rforms.model._matchTextItem(pb, item, graph);
+		rforms.model._matchTextItem(pb, item);
 	} else if (item instanceof rforms.template.PropertyGroup) {
-		rforms.model._matchPropertyGroupItem(pb, item, graph);
+		rforms.model._matchPropertyGroupItem(pb, item);
 	} else if (item instanceof rforms.template.Group) {
-		rforms.model._matchGroupItem(pb, item, graph);
+		rforms.model._matchGroupItem(pb, item);
 	} else if (item instanceof rforms.template.Choice) {
-		rforms.model._matchChoiceItem(pb, item, graph);		
+		rforms.model._matchChoiceItem(pb, item);		
 	}
 };
 
-rforms.model._matchGroupItem = function(pb, item, graph) {
+rforms.model._matchGroupItem = function(pb, item) {
 	var stmts, bindings, constStmts, groupBinding;
+	var graph = pb.getGraph();
 	//Case 1: there is a property in the item
 	if (item.getProperty() !== undefined) {
 		stmts = graph.find(pb.getChildrenRootUri(), item.getProperty());
@@ -149,7 +149,7 @@ rforms.model._matchGroupItem = function(pb, item, graph) {
 					if (constStmts !== undefined) {
 						groupBinding =new rforms.model.GroupBinding({item:item, statement: stmt, constraints: constStmts}); 
 						bindings.push(groupBinding);
-						rforms.model._matchGroupItemChildren(groupBinding, graph); //Recursive call
+						rforms.model._matchGroupItemChildren(groupBinding); //Recursive call
 					}
 				}
 			});
@@ -159,14 +159,15 @@ rforms.model._matchGroupItem = function(pb, item, graph) {
 	} else {
 		groupBinding = new rforms.model.GroupBinding({item: item});
 		pb.addChildBindings([groupBinding]);
-		rforms.model._matchGroupItemChildren(groupBinding, graph); //Recursive call
+		rforms.model._matchGroupItemChildren(groupBinding); //Recursive call
 	}
 };
 
-rforms.model._matchPropertyGroupItem = function(pb, item, graph) {
+rforms.model._matchPropertyGroupItem = function(pb, item) {
 	var stmts, constStmts;
 	var bindings, binding, pChoice, oChoice;
 	var pItem = item.getPropertyItem(), oItem = item.getObjectItem();
+	var graph = pb.getGraph();
 	
 	stmts = graph.find(pb.getChildrenRootUri());
 	if (stmts.length > 0) {
@@ -181,7 +182,7 @@ rforms.model._matchPropertyGroupItem = function(pb, item, graph) {
 						constStmts = rforms.model._findStatementsForConstraints(graph, stmt.getValue(), oItem);
 						if (constStmts !== undefined) {
 							binding = new rforms.model.PropertyGroupBinding({item: item, statement: stmt, constraints: constStmts});
-							rforms.model._matchGroupItemChildren(binding.getObjectBinding(), graph); //Recursive call
+							rforms.model._matchGroupItemChildren(binding.getObjectBinding()); //Recursive call
 						}
 					} else if (oItem instanceof rforms.model.Choice) {
 						oChoice = rforms.model._findChoice(oItem, stmt.getValue());
@@ -204,9 +205,9 @@ rforms.model._matchPropertyGroupItem = function(pb, item, graph) {
 	}
 };
 
-rforms.model._matchTextItem = function(pb, item, graph) {
+rforms.model._matchTextItem = function(pb, item) {
 	var stmts, bindings, constStmts;
-	stmts = graph.find(pb.getChildrenRootUri(), item.getProperty());
+	stmts = pb.getGraph().find(pb.getChildrenRootUri(), item.getProperty());
 	if (stmts.length > 0) {
 		bindings = [];
 		dojo.forEach(stmts, function(stmt) {
@@ -218,9 +219,9 @@ rforms.model._matchTextItem = function(pb, item, graph) {
 	}
 };
 
-rforms.model._matchChoiceItem = function(pb, item, graph) {
+rforms.model._matchChoiceItem = function(pb, item) {
 	var stmts, bindings, choice;
-	stmts = graph.find(pb.getChildrenRootUri(), item.getProperty());
+	stmts = pb.getGraph().find(pb.getChildrenRootUri(), item.getProperty());
 	if (stmts.length > 0) {
 		bindings = [];
 		dojo.forEach(stmts, function(stmt) {

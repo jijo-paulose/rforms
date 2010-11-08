@@ -138,10 +138,10 @@ dojo.declare("rforms.view.Presenter", dijit._Widget, {
 	},
 	addText: function(fieldDiv, binding) {
 		if (this.showLanguage && binding.getLanguage()) {
-			var lang = dojo.create("span", {"innerHTML": binding.getLanguage()}, fieldDiv);
+			var lang = dojo.create("div", {"innerHTML": binding.getLanguage()}, fieldDiv);
 			dojo.addClass(lang, "language");
 		}
-		dojo.create("span", {"innerHTML": binding.getValue()}, fieldDiv);
+		dojo.create("div", {"innerHTML": binding.getValue()}, fieldDiv);
 	},
 	addChoice: function(fieldDiv, binding) {
 		var item = binding.getItem();

@@ -9,25 +9,59 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 	styleCls: "editor",
 	
 	addLabel: function(rowDiv, labelDiv, binding) {
+		var parentBinding = binding.getParent(), graph = binding.getGraph();
 		var item = binding.getItem();
 		var isGroup = item instanceof rforms.template.Group;
 		var label = dojo.create("span", {"innerHTML": item.getLabel()+(isGroup ? "": ":")}, labelDiv);
 		dojo.addClass(labelDiv, "labelRow");
 		dojo.addClass(label, "label");
 
+		//If table, no add or remove buttons.
+		if ((item instanceof rforms.template.Group) && item.hasClass("table")) {
+			return;
+		}
 		var add = new dijit.form.Button({label: "add"}, dojo.create("span", null, labelDiv));
-		dojo.connect(binding.getCardinalityTracker(), "maxReached", function() {
+		var remove = new dijit.form.Button({label: "remove"}, dojo.create("span", null));
+
+		var cardMaxCon = dojo.connect(binding.getCardinalityTracker(), "maxReached", function() {
 			add.attr("disabled", true);
 		});
 
-		dojo.connect(binding.getCardinalityTracker(), "justFine", function() {
+		var cardJustFineCon = dojo.connect(binding.getCardinalityTracker(), "justFine", function() {
 			add.attr("disabled", false);
+			remove.attr("disabled", false);
 		});
 
-		dojo.connect(add, "onClick", this, function() {
-			var nBinding = rforms.model.create(binding.getParent(), binding.getItem(), binding.getGraph()); 
-			rowDiv = this.addRow(rowDiv, nBinding, -1); //not the first binding...
+		var cardMinCon = dojo.connect(binding.getCardinalityTracker(), "minReached", function() {
+			remove.attr("disabled", true);
 		});
+
+		var addCon = dojo.connect(add, "onClick", this, function() {
+			var nBinding = rforms.model.create(parentBinding, item, graph); 
+			this.addRow(rowDiv, nBinding, -1); //not the first binding...
+		});
+		
+		var removeCon = dojo.connect(remove, "onClick", function() {
+			if (binding.getCardinalityTracker().getCardinality() === 1) {
+				//Clear somehow.
+//				binding.setValue(null);
+	//			tb.attr("value", "");
+			} else {
+				dojo.disconnect(cardMaxCon);
+				dojo.disconnect(cardMinCon);
+				dojo.disconnect(cardJustFineCon);
+				dojo.disconnect(addCon);
+				dojo.disconnect(removeCon);
+				//Remove somehow.
+				binding.remove();
+				dojo.destroy(rowDiv);
+			}
+		});
+		
+		//If group (and not table) make the remove button visible.
+		if (item instanceof rforms.template.Group) {
+			dojo.place(remove.domNode, labelDiv);
+		}		
 	},
 	addGroup: function(fieldDiv, binding) {
 		var subView = new rforms.view.Editor({binding: binding, template: this.template, topLevel: false}, fieldDiv);
@@ -69,6 +103,7 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 
 	},
 	addChoice: function(fieldDiv, binding) {
+		//TODO Fredrik start here.
 		var item = binding.getItem();
 		dojo.create("span", {"innerHTML": item._getLocalizedValue(binding.getChoice().label).value}, fieldDiv);
 	}
