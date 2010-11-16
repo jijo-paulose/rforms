@@ -116,7 +116,7 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 		
 		//Sets the value if any
 		if (binding.getValue()) {
-			fSelect.attr("value", binding.getValue());
+			fSelect.set("value", binding.getValue());
 		}
 	},
 	/*
