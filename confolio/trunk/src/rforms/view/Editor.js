@@ -112,7 +112,7 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 		
 		//The FilteringSelect is set on a "span" that is added to the fieldDiv
 		var spanToUse = dojo.create("span",null,fieldDiv);
-		var fSelect = new dijit.form.FilteringSelect({store: store, searchAttr: "label"}, spannet);
+		var fSelect = new dijit.form.FilteringSelect({store: store, searchAttr: "label"}, spanToUse);
 		
 		//Sets the value if any
 		if (binding.getValue()) {
