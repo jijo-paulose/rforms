@@ -41,6 +41,9 @@ dojo.declare("rforms.model.CardinalityTracker", null, {
 		this._counter--;
 		this._checkCounter();		
 	},
+	checkCardinality: function() {
+		this._checkCounter();
+	},
 	//===================================================
 	// Inherited methods
 	//===================================================
