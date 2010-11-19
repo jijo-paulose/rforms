@@ -43,10 +43,19 @@
 	border-left: 1px solid #E6E6E6;
 	padding-left: 0.3em;
  }
+ .rforms.editor .language {
+ 	position: absolute;
+	float:left;
+	padding-left: 0.3em;
+ }
  .rforms.editor .field {
  	padding-right: 4em;
 	position: relative;
  }		 
+  .rforms.editor .langcontrolledfield {
+ 	padding-right: 15em;
+	padding-left: 1em;
+ }	
  .rforms.editor .fieldControl {
 	position: absolute;
 	width: 3.8em;
@@ -55,13 +64,28 @@
 	overflow-x: hidden;
 	padding-right: 0.1em;
  }
-
+ .rforms.editor .langFieldControl {
+	width: 14em;
+ }
+.rforms.editor .langFieldControl .dijitTextBox {
+	width: 10em;
+}
 .rforms.editor .fieldControl .dijitButton {
  	font-size: xx-small;
+	float:right;
 }
 .rforms.editor .labelRow .dijitButton {
  	font-size: xx-small;
 	margin-left: 1em;
+}
+.rforms.editor .field .dijitButton {
+ 	font-size: xx-small;
+	margin-left: 1em;
+}
+
+.rforms.editor .langFieldControl .dijitButton {
+ 	font-size: xx-small;
+	margin-left: 0.2em;
 }
  
  .rforms.editor .fieldInput {
