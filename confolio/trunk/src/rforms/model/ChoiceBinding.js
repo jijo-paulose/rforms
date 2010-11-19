@@ -33,7 +33,9 @@ dojo.declare("rforms.model.ChoiceBinding", rforms.model.ValueBinding, {
 	},
 	remove: function() {
 		this.setValue(null);
-		this._parent.removeChildBinding(this);
+		//Removed line below as it is also done in superclass
+		//and therefore causes an error
+		//this._parent.removeChildBinding(this);
 		this.inherited("remove", arguments);
 	}
 });
