@@ -162,5 +162,15 @@ rdfjson.checkForWrongArgs = function(args) {
  * @return {boolean} true if they have the same type, lexical value, language, and datatype.
  */
 rdfjson.objectEquals =  function(o1, o2) {
-	return o1.type === o2.type && o1.value === o2.value && o1.lang === o2.lang && o1.datatype === o2.datatype;
+	if (dojo.isString(o1)) {
+		if (dojo.isString(o2)) {
+			return o1 === o2;
+		} else {
+			return o1 === o2.value;
+		}
+	} else if (dojo.isString(o2)) {
+		return o1.value === o2;
+	} else {
+		return o1.type === o2.type && o1.value === o2.value && o1.lang === o2.lang && o1.datatype === o2.datatype;		
+	}
 };

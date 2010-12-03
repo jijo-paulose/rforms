@@ -80,10 +80,10 @@ dojo.declare("rdfjson.Graph", null, {
 	 */
 	find: function(s, p, o) {
 		// none, s, p, s&p 
-		if (o === undefined) {
+		if (o == null) {
 			// none, s
-			if (p === undefined) {
-				if (s === undefined) {
+			if (p == null) {
+				if (s == null) {
 					return this._find();
 				} else {
 					return this._findS(s);
@@ -91,7 +91,7 @@ dojo.declare("rdfjson.Graph", null, {
 			// p, s&p
 			} else {
 				// p
-				if (s === undefined) {
+				if (s == null) {
 					return this._findP(p);
 				// s&p
 				} else {
@@ -100,8 +100,8 @@ dojo.declare("rdfjson.Graph", null, {
 			}
 		}
 		// o, s&o
-		if (p === undefined) {
-			if (s=== undefined) {
+		if (p == null) {
+			if (s == null) {
 				return this._findO(o);				
 			} else {
 				return this._findSO(s,o);
@@ -109,13 +109,13 @@ dojo.declare("rdfjson.Graph", null, {
 		}
 
 		// p&o 
-		if (s === undefined) {
+		if (s == null) {
 			return this._findPO(p, o);
 		}
 		
 		//s&p&o
 		var stmt = this._get(s, p, rdfjson.contains(this._graph, s, p, o), true);
-		if (stmt === undefined) {
+		if (stmt == null) {
 			return [];
 		} else {
 			return [stmt];
@@ -128,7 +128,7 @@ dojo.declare("rdfjson.Graph", null, {
 	 * @param {String} s the subject in the form of a uri, if undefined a new blank node is created.
 	 * @param {String} p the predicate in the form of a uri, if undefined a new blank node is created.
 	 * @param {Object} o the object in the form of an object containing 
-	 *  the attributes: 'type', 'value', 'lang', and 'datatype'. If undefined a new blank node is created. 
+	 *  the attributes: 'type', 'value', 'lconxillaang', and 'datatype'. If undefined a new blank node is created. 
 	 * @param {Boolean} assert indicated if the statement should be added to the graph directly. If not specified true is assumed. 
 	 */
 	create: function(s, p, o, assert) {
@@ -198,10 +198,10 @@ dojo.declare("rdfjson.Graph", null, {
 	 * @return {Object} a statement that belongs to this graph.
 	 */
 	_get: function(s, p, o, asserted) {
-		if (o === undefined) {
+		if (o == null) {
 			return;
 		}
-		if (o._statement === undefined) {
+		if (o._statement == null) {
 			new rdfjson.Statement(this, s, p, o, asserted);
 		}
 		return o._statement;
@@ -211,7 +211,7 @@ dojo.declare("rdfjson.Graph", null, {
 	 * @return {Object} if the object originates from another graph a copy is made.
 	 */
 	_graphObject: function(o) {
-		if (o._statement === undefined ||
+		if (o._statement == null ||
 			o._statement._graph === this) {
 			return o;
 		}
@@ -224,7 +224,7 @@ dojo.declare("rdfjson.Graph", null, {
 	 * @param {Object} p
 	 */
 	_findSP: function(s,p) {
-		if (this._graph[s] === undefined || this._graph[s][p] === undefined) {
+		if (this._graph[s] == null || this._graph[s][p] == null) {
 			return [];
 		}
 		return dojo.map(this._graph[s][p], dojo.hitch(this, function(sobj) {
@@ -238,7 +238,7 @@ dojo.declare("rdfjson.Graph", null, {
 	 * @param {Object} s
 	 */
 	_findS: function(s) {
-		if (this._graph[s] === undefined) {
+		if (this._graph[s] == null) {
 			return [];
 		}
 		var p, oindex, graph = this._graph, sArr = [], spArrs = [];
