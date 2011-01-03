@@ -49,6 +49,7 @@ rforms.template.tests.template1 = {
 			"property":"http://purl.org/dc/terms/publisher",
 			"constraints":{"http://www.w3.org/TR/rdf-schema/type":"http://xmlns.com/foaf/0.1/Person"},
 			"nodetype":"RESOURCE",
+			"cls": ["table"],
 			"content":[
 				{
 					"@type":"text",
