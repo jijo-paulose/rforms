@@ -251,7 +251,7 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 		var list = [{"d": "", label:{"en":"", "sv":""}},
 		            {"d": "en", label:{"en":"English", "sv":"Engelska"}},
 		            {"d": "de", label:{"en":"German", "sv":"Tyska"}},
-					{"d": "sv", label:{"en":"Swedish", "sv":"Svenska"}},];
+					{"d": "sv", label:{"en":"Swedish", "sv":"Svenska"}}];
 		return list;
 	}
 });
