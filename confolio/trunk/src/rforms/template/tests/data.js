@@ -16,7 +16,7 @@ rforms.template.tests.template1 = {
 				"label":{"en":"Title"},
 				"nodetype":"LANGUAGE_LITERAL",
 				"property":"http://purl.org/dc/terms/title",
-				"cardinality": {"min": 0, "max": 3}
+				"cardinality": {"min": 2, "max": 2}
 			},
 			{"@id":"publisheddate"},
 			{"@id":"subjectVocab"},
@@ -40,7 +40,10 @@ rforms.template.tests.template1 = {
 			"nodetype":"RESOURCE",
 			"constraints": {"http://www.w3.org/2004/02/skos/core#inScheme":"http://example.com/bookSubjects"},
 			"ontologyUrl": "http://example.com/bookOntology",
-			"property":"http://purl.org/dc/terms/subject"
+			"property":"http://purl.org/dc/terms/subject",
+			"cardinality": {"min": 0, "max": 1},
+			"parentproperty": "http://something.se/doh",
+			"hierarchyproperty": "http://somethingel.se/doh"
 		},{
 			"@id":"http://example.ch/people.sirff#author",
 			"@type":"group",
@@ -83,8 +86,10 @@ rforms.template.tests.template1 = {
 	],
 	"ontologies":["http://example.ru/library.rdf"],
 	"cachedChoices": {
-		"http://example.com/bookOntology?constr=%7B%22http%3A%2F%2Fwww.w3.org%2F2004%2F02%2Fskos%2Fcore%23inScheme%22%3A%22http%3A%2F%2Fexample.com%2FbookSubjects%22%7D":
-			[{d: "http://example.com/instance1", label: {"sv": "Matematik", "en":"Mathematics"}},
+		"http://example.com/bookOntology?constr=%7B%22http%3A%2F%2Fwww.w3.org%2F2004%2F02%2Fskos%2Fcore%23inScheme%22%3A%22http%3A%2F%2Fexample.com%2FbookSubjects%22%7D&pp=http%3A%2F%2Fsomething.se%2Fdoh&hp=http%3A%2F%2Fsomethingel.se%2Fdoh":
+			[{"top":true, d: "http://example.com/instanceTop", label: {"sv": "Toppen", "en":"Ze top!"}, children:[
+			    {"_reference": "http://example.com/instance1"},{"_reference": "http://example.com/instance2"}]},
+			 {d: "http://example.com/instance1", label: {"sv": "Matematik", "en":"Mathematics"}},
 			 {d: "http://example.com/instance2", label: {"sv": "Kemi", "en":"Chemistry"}}],
 		"http://example.com/DCOntology?constr=%7B%22http%3A%2F%2Fwww.w3.org%2F2004%2F02%2Fskos%2Fcore%23inScheme%22%3A%22http%3A%2F%2Fexample.com%2FauthorPredicates%22%7D":
 			[{d: "http://purl.org/dc/terms/creator", label: {"sv": "Skapare", "en":"Creator"}},
