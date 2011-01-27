@@ -56,5 +56,14 @@ dojo.declare("rforms.template.Item", rforms.template._BaseItem, {
 	},
 	isEnabled: function() {
 		return this._source.enabled === undefined ? true : this._source.enabled;
+	},
+	/**
+	 * @return {Array} that contains strings with the style, if no style is defined an empty array is returned
+	 */
+	getStyles: function() {
+		if(this._source.styles){
+			return this._source.styles;
+		}
+		return [];
 	}
 });
