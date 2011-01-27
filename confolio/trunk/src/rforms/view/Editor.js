@@ -164,12 +164,11 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 			
 		} //Check if a tree-hierarchy should be created
 		else if(item.getParentProperty() && item.getHierarchyProperty()){
-			var treeStore = this._createChoiceStore(item);
 			var ddButton = new dijit.form.DropDownButton({
 				label:"browse"
 			},divToUse);
 			ddButton.onClick = dojo.hitch(this, function (arg1){
-				this._displayChoiceTree(treeStore, ddButton.domNode);
+				this._displayChoiceTree(item, ddButton.domNode);
 			});
 		} //Last option is the normal listing in a dropdown-menu
 		else {
@@ -221,19 +220,49 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 			});
 		}
 	},
-	_displayChoiceTree: function(tree, node){
-		dojo.connect(node, "onClick",dojo.hitch(this, function(e){
+	_displayChoiceTree: function(item, node){
+		this.toolTipNode = node;
+		ontologyPopupWidget = new dijit.TooltipDialog();
+		var treeNode = dojo.create("div");
+		ontologyPopupWidget.set("content", treeNode);
+		var store = this._createChoiceStore(item); 
+		var tree = new dijit.Tree({store: store,
+								childrenAttr: ["children"], 
+								query: {top: true}}, treeNode);
+		tree.getLabelClass = function(item) {
+								if(item == null)
+									return "";
+								var value = store.getValue(item, "d");
+								if(store.getValue(item, "selectable") === false)
+									return "notselectable";
+		/*						var selected = filteringSelect.attr("value");
+								if (value == selected) {
+									return "currentselection";
+								}*/
+								return "default";
+							};
+		tree.onClick = function(item) {
+			if (store.getValue(item, "selectable") !== false) {
+//									filteringSelect.attr("value", store.getValue(item, "d"));
+			}
+		};
+								
+								
+		dijit.popup.open({popup: ontologyPopupWidget, around: node});
+		ontologyPopupWidget._onBlur = function() {
+				dijit.popup.close(ontologyPopupWidget);
+				this.toolTipNode = null;			
+		};
+			
+/*		dojo.connect(node, "onClick",dojo.hitch(this, function(e){
 			if (this.toolTipNode === node) {
 				dijit.popup.close(ontologyPopupWidget);
 				this.toolTipNode = null;
 				return;
 			}
-			this.toolTipNode = node;
-			ontologyPopupWidget = new dijit.TooltipDialog();
-			ontologyPopupWidget.set("content", "Hejbaberiba!");
-			dijit.popup.open({popup: ontologyPopupWidget, around: node});	
+				
 		}));
-		
+*/		
 		/*if (this.toolTipNode === node) {
 				dijit.popup.close(this);
 				this.toolTipNode = null;
@@ -267,7 +296,9 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 		var itemsArray = [];
 		for (var i in objects){
 			var currentLabel = item._getLocalizedValue(objects[i].label);
-			itemsArray.push({d:objects[i].d, label:currentLabel.value});
+			var obj = dojo.clone(objects[i]);
+			obj.label = currentLabel.value;
+			itemsArray.push(obj);
 		}
 		var store = dojo.data.ItemFileReadStore({
 			data: {
