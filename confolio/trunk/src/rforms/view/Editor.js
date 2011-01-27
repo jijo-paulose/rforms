@@ -7,12 +7,16 @@ dojo.require("dijit.form.FilteringSelect");
 dojo.require("dojo.data.ItemFileReadStore");
 dojo.require("rforms.template._BaseItem");
 dojo.require("dijit.form.RadioButton");
+dojo.require("dijit.form.DropDownButton");
+dojo.require("dijit.Tree");
+dojo.require("dijit.TooltipDialog");
 
 rforms.template.uniqueRadioButtonNameNr = 0;
 
 dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 	filterTranslations: false,
 	styleCls: "editor",
+	ontologyPopupWidget: null,
 	
 	addLabel: function(rowDiv, labelDiv, binding) {
 		var parentBinding = binding.getParent(), graph = binding.getGraph();
@@ -141,10 +145,10 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 		var choices = item.getChoices();
 		var controlDiv = dojo.create("div", null, fieldDiv);
 		dojo.addClass(controlDiv, "fieldControl");
-		
+		var divToUse =  dojo.create("div", null, fieldDiv);
+		//Check if radiobuttons can be created, i.e. when few chioces and max-cardinality == 1 
 		if (choices.length < 5 && item.getCardinality.max === 1) {
 			for (var ib in choices) {
-				var divToUse =  dojo.create("div", null, fieldDiv);
 				var inputToUse = dojo.create("input", null, divToUse);
 				dojo.create("span", { innerHTML: item._getLocalizedValue(choices[ib].label).value }, divToUse);
 				var rb = new dijit.form.RadioButton({
@@ -157,7 +161,18 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 				}));
 			}
 			rforms.template.uniqueRadioButtonNameNr++;
-		} else {
+			
+		} //Check if a tree-hierarchy should be created
+		else if(item.getParentProperty() && item.getHierarchyProperty()){
+			var treeStore = this._createChoiceStore(item);
+			var ddButton = new dijit.form.DropDownButton({
+				label:"browse"
+			},divToUse);
+			ddButton.onClick = dojo.hitch(this, function (arg1){
+				this._displayChoiceTree(treeStore, ddButton.domNode);
+			});
+		} //Last option is the normal listing in a dropdown-menu
+		else {
 			//Create an ItemFileReadStore with the correct language to use
 			var store = this._createChoiceStore(item);
 			var spanToUse = dojo.create("span", null, fieldDiv);
@@ -205,6 +220,32 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 				}
 			});
 		}
+	},
+	_displayChoiceTree: function(tree, node){
+		dojo.connect(node, "onClick",dojo.hitch(this, function(e){
+			if (this.toolTipNode === node) {
+				dijit.popup.close(ontologyPopupWidget);
+				this.toolTipNode = null;
+				return;
+			}
+			this.toolTipNode = node;
+			ontologyPopupWidget = new dijit.TooltipDialog();
+			ontologyPopupWidget.set("content", "Hejbaberiba!");
+			dijit.popup.open({popup: ontologyPopupWidget, around: node});	
+		}));
+		
+		/*if (this.toolTipNode === node) {
+				dijit.popup.close(this);
+				this.toolTipNode = null;
+				e.preventDefault();
+				return;
+			}
+			this.toolTipNode = node;
+			// stop the native click
+			this.tooltipDialog.attr("content", description.replace(/(\r\n|\r|\n)/g, "<br/>"));
+			e.preventDefault();
+			
+			dijit.focus(this.tooltipDialog.domNode);*/
 	},
 	/*
 	 * From a Choice Item the possible values are extracted and added into 
