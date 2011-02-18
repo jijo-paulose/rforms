@@ -168,7 +168,7 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 				label:"browse"
 			},divToUse);
 			ddButton.onClick = dojo.hitch(this, function (arg1){
-				this._displayChoiceTree(item, ddButton.domNode);
+				var tree = this._displayChoiceTree(binding, ddButton);
 			});
 		} //Last option is the normal listing in a dropdown-menu
 		else {
@@ -220,8 +220,9 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 			});
 		}
 	},
-	_displayChoiceTree: function(item, node){
-		this.toolTipNode = node;
+	_displayChoiceTree: function(binding, button){
+		var item = binding.getItem();
+		this.toolTipNode = button.domNode;
 		ontologyPopupWidget = new dijit.TooltipDialog();
 		var treeNode = dojo.create("div");
 		ontologyPopupWidget.set("content", treeNode);
@@ -241,19 +242,21 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 								}*/
 								return "default";
 							};
+		
+								
 		tree.onClick = function(item) {
 			if (store.getValue(item, "selectable") !== false) {
-//									filteringSelect.attr("value", store.getValue(item, "d"));
+				button.set('label',item.label);
+				binding.setValue(item.d);
 			}
 		};
-								
-								
-		dijit.popup.open({popup: ontologyPopupWidget, around: node});
+						
+		dijit.popup.open({popup: ontologyPopupWidget, around: button.domNode});
 		ontologyPopupWidget._onBlur = function() {
 				dijit.popup.close(ontologyPopupWidget);
 				this.toolTipNode = null;			
 		};
-			
+		return tree;	
 /*		dojo.connect(node, "onClick",dojo.hitch(this, function(e){
 			if (this.toolTipNode === node) {
 				dijit.popup.close(ontologyPopupWidget);
