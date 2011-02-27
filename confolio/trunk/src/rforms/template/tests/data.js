@@ -16,7 +16,7 @@ rforms.template.tests.template1 = {
 				"label":{"en":"Title"},
 				"nodetype":"LANGUAGE_LITERAL",
 				"property":"http://purl.org/dc/terms/title",
-				"cardinality": {"min": 2, "max": 2}
+				"cardinality": {"min": 2, "pref": "4", "max": 5}
 			},
 			{"@id":"publisheddate"},
 			{"@id":"subjectVocab"},
@@ -50,6 +50,7 @@ rforms.template.tests.template1 = {
 			"label":{"en":"Author"},
 			"description":{"en":"The author of the book"},
 			"property":"http://purl.org/dc/terms/publisher",
+			"cardinality": {"min": 2, "max": 5},
 			"constraints":{"http://www.w3.org/TR/rdf-schema/type":"http://xmlns.com/foaf/0.1/Person"},
 			"nodetype":"RESOURCE",
 			"cls": ["table"],
@@ -75,6 +76,7 @@ rforms.template.tests.template1 = {
 				{
 					"@type":"choice",
 					"label":{"en":"Type"},
+					"cardinality": {"min": 0, "max": 1},
 					"description":{"en":"Type of contribution"},
 					"nodetype":"RESOURCE",
 					"constraints": {"http://www.w3.org/2004/02/skos/core#inScheme":"http://example.com/authorPredicates"},

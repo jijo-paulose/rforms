@@ -26,12 +26,23 @@ dojo.declare("rforms.model.CardinalityTracker", null, {
 	},
 	justFine: function() {	
 	},
+	cardinalityChanged: function() {
+	},
 	
 	//===================================================
 	// Public API
 	//===================================================
 	getCardinality: function() {
 		return this._counter;
+	},
+	isMax: function() {
+		return this._limits.max != null && this._counter >= this._limits.max;
+	},
+	isMin: function() {
+		return this._limits.min != null && this._counter <= this._limits.min;
+	},
+	isFine: function() {
+		return this._fine;
 	},
 	increment: function() {
 		this._counter++;
@@ -56,19 +67,16 @@ dojo.declare("rforms.model.CardinalityTracker", null, {
 	// Private methods
 	//===================================================
 	_checkCounter: function() {
-		if (this._limits.max !== undefined && this._counter >= this._limits.max) {
+		if (this._limits.max != null && this._counter >= this._limits.max) {
 			this._fine = false;
 			this.maxReached();
-			return;
-		}
-		if (this._limits.min !== undefined && this._counter <= this._limits.min) {
+		} else if (this._limits.min != null && this._counter <= this._limits.min) {
 			this._fine = false;
 			this.minReached();
-			return;		
-		}
-		if (this._fine === false) {
+		} else if (this._fine === false) {
 			this._fine = true;
 			this.justFine();
 		}
+		this.cardinalityChanged();
 	}
 }); 

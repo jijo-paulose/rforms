@@ -24,16 +24,19 @@
 	padding-left: 0.3em;
 	padding-right: 0.3em;
 }
-.rforms.presenter table.group td {
+.rforms.presenter table.group td,
+.rforms.editor table.group td {
 	background: white;
 	border: 1px solid #E6E6E6;
 	padding-left: 0.3em;
 	padding-right: 0.3em;
 }
-.rforms.presenter table.group {
+.rforms.presenter table.group,
+.rforms.editor table.group {
 	border-collapse: collapse;
 }
-.rforms.presenter table.group th {
+.rforms.presenter table.group th,
+.rforms.editor table.group th {
 	padding-left: 0.3em;
 	padding-right: 0.3em;
 	border: 1px solid white;			
@@ -51,8 +54,13 @@
  .rforms.editor .field {
  	padding-right: 4em;
 	position: relative;
- }		 
-  .rforms.editor .langcontrolledfield {
+ }
+ 
+ .rforms.editor .field .choiceLabel {
+ 	margin-left: 0.2em;
+ 	margin-right: 1em;
+ }
+ .rforms.editor .langcontrolledfield {
  	padding-right: 15em;
 	padding-left: 1em;
  }	
@@ -74,11 +82,12 @@
  	font-size: xx-small;
 	float:right;
 }
-.rforms.editor .labelRow .dijitButton {
+.rforms.editor .labelRow .dijitButton,
+.rforms.editor .field .dijitButton {
  	font-size: xx-small;
 	margin-left: 1em;
 }
-.rforms.editor .field .dijitButton {
+.rforms.editor .tableControl .dijitButton {
  	font-size: xx-small;
 	margin-left: 1em;
 }

@@ -57,12 +57,12 @@ dojo.declare("rforms.template.ItemStore", null, {
 	//===================================================
 	// Private methods
 	//===================================================
-	_createItems: function(sourceArray) {
+	_createItems: function(sourceArray, forceClone) {
 		return dojo.map(sourceArray, function(child) {
-			return this._createItem(child);
+			return this._createItem(child, forceClone);
 		}, this);
 	},
-	_createItem: function(source) {
+	_createItem: function(source, forceClone) {
 		var item;
 		if (source.hasOwnProperty("@type")) {
 			switch(source["@type"]) {
@@ -76,10 +76,10 @@ dojo.declare("rforms.template.ItemStore", null, {
 				item = new rforms.template.Group(source, this._createItems(source.content || []));
 				break;
 			case "propertygroup":
-				item = new rforms.template.PropertyGroup(source, this._createItems(source.content || []));
+				item = new rforms.template.PropertyGroup(source, this._createItems(source.content || [], true));
 				break;
 			}
-			if (source["@id"] !== undefined) {
+			if (source["@id"] != null && this._registry[source["@id"]] == null) {
 				this._registry[source["@id"]] = item;
 			}
 			return item;
@@ -90,7 +90,11 @@ dojo.declare("rforms.template.ItemStore", null, {
 			if (this._registry[source["@id"]] === undefined) {
 				throw "Cannot find referenced subitem using identifier: "+source["@id"];
 			}
-			return this._registry[source["@id"]];
+			if (forceClone === true) {
+				return this._createItem(dojo.clone(this._registry[source["@id"]]._source));
+			} else {
+				return this._registry[source["@id"]];				
+			}
 		}
 	}
 });

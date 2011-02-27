@@ -39,7 +39,9 @@ dojo.declare("rforms.template.Item", rforms.template._BaseItem, {
 		return this._source.member;
 	},
 	/**
-	 * Allowed values are:
+	 * Allowed values are:				source.content[0].cardinality = {"min": 1, "max": 1, "pref": 1};
+				source.content[1].cardinality = {"min": 1, "max": 1, "pref": 1};
+
 	 * LITERAL, RESOURCE, URI, BLANK, PLAIN_LITERAL, ONLY_LITERAL, LANGUAGE_LITERAL, DATATYPE_LITERAL
 	 */
 	getNodetype: function() {
@@ -52,7 +54,7 @@ dojo.declare("rforms.template.Item", rforms.template._BaseItem, {
 	 * @return {Object} containing max, min, and preferred properties.
 	 */
 	getCardinality: function() {
-		return this._source.cardinality;
+		return this._source.cardinality || {};
 	},
 	isEnabled: function() {
 		return this._source.enabled === undefined ? true : this._source.enabled;

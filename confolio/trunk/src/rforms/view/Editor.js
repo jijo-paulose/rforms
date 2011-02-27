@@ -14,82 +14,82 @@ dojo.require("dijit.TooltipDialog");
 rforms.template.uniqueRadioButtonNameNr = 0;
 
 dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
+	//===================================================
+	// Public attributes
+	//===================================================
 	filterTranslations: false,
 	styleCls: "editor",
 	ontologyPopupWidget: null,
+	includeLevel: "optional",
+
+	//===================================================
+	// Inherited methods
+	//===================================================	
+	/**
+	 * Will only show something for the given item if there is anything to show, or if the includeLevel indicates 
+	 * to show it anyhow (for example min cardinality > 0 or includeLevel is optional or recommended at the same
+	 * time the preferred cardinality is bigger than zero.
+	 * @param {Object} item
+	 * @param {Object} bindings
+	 */
+	showNow: function(item, bindings) {
+		if (bindings.length > 0) {
+			return true;
+		}
+		var card = item.getCardinality();
+		switch(this.includeLevel) {
+			case "mandatory":
+				return card && card.min>1;
+			case "recommended":
+				return card && card.pref>1;
+			default:
+				return true;
+		}
+	},
+	/**
+	 * Will add bindings until the min cardinality is reached.
+	 * @param {Object} item
+	 * @param {Object} bindings
+	 */
+	prepareBindings: function(item, bindings) {
+		var card = item.getCardinality();
+		var target = card.pref > 0 ? card.pref : card.min > 0 ? card.min : 1;
+		if (target > bindings.length) {
+			bindings = bindings.concat([]);
+			while(target > bindings.length) {
+				bindings.push(rforms.model.create(this.binding, item));
+			}
+		}
+		return bindings;
+	},
 	
 	addLabel: function(rowDiv, labelDiv, binding) {
-		var parentBinding = binding.getParent(), graph = binding.getGraph();
-		var item = binding.getItem();
-		var isGroup = item instanceof rforms.template.Group;
+		var item = binding.getItem(), isGroup = item instanceof rforms.template.Group;
 		var label = dojo.create("span", {"innerHTML": item.getLabel()+(isGroup ? "": ":")}, labelDiv);
 		dojo.addClass(labelDiv, "labelRow");
 		dojo.addClass(label, "label");
 
 		//If table, no add or remove buttons.
-		if ((item instanceof rforms.template.Group) && item.hasClass("table")) {
+		if (this.showAsTable(item)) {
 			return;
 		}
-		var add = new dijit.form.Button({label: "add"}, dojo.create("span", null, labelDiv));
-		var remove = new dijit.form.Button({label: "remove"}, dojo.create("span", null));
-
-		var cardMaxCon = dojo.connect(binding.getCardinalityTracker(), "maxReached", function() {
-			add.attr("disabled", true);
-		});
-
-		var cardJustFineCon = dojo.connect(binding.getCardinalityTracker(), "justFine", function() {
-			add.attr("disabled", false);
-			remove.attr("disabled", false);
-		});
-
-		var cardMinCon = dojo.connect(binding.getCardinalityTracker(), "minReached", function() {
-			remove.attr("disabled", true);
-		});
-
-		var addCon = dojo.connect(add, "onClick", this, function() {
-			var nBinding = rforms.model.create(parentBinding, item, graph); 
-			this.addRow(rowDiv, nBinding, -1); //not the first binding...
-		});
-		
-		var removeCon = dojo.connect(remove, "onClick", function() {
-			if (binding.getCardinalityTracker().getCardinality() === 1) {
-				//Clear somehow.
-//				binding.setValue(null);
-	//			tb.attr("value", "");
-			} else {
-				dojo.disconnect(cardMaxCon);
-				dojo.disconnect(cardMinCon);
-				dojo.disconnect(cardJustFineCon);
-				dojo.disconnect(addCon);
-				dojo.disconnect(removeCon);
-				//Remove somehow.
-				binding.remove();
-				dojo.destroy(rowDiv);
-			}
-		});
-		
-		//If group (and not table) make the remove button visible.
-		if (item instanceof rforms.template.Group) {
-			dojo.place(remove.domNode, labelDiv);
-		}		
+		if (isGroup) {
+			this._addGroupButtons(rowDiv, labelDiv, binding);
+		} else {
+			this._addCreateChildButton(rowDiv, labelDiv, binding);
+		}
 	},
 	addGroup: function(fieldDiv, binding) {
 		var subView = new rforms.view.Editor({binding: binding, template: this.template, topLevel: false}, fieldDiv);
 	},
-	addText: function(fieldDiv, binding) {
-/*		if (this.showLanguage && binding.getLanguage()) {
-			var lang = dojo.create("span", {"innerHTML": binding.getLanguage()}, div);
-			dojo.addClass(lang, "language");
-		}*/
+	addText: function(fieldDiv, binding, noCardinalityButtons) {
 		var controlDiv = dojo.create("div", null, fieldDiv);
 		dojo.addClass(controlDiv, "fieldControl");
 		var tb = new dijit.form.TextBox({value: binding.getValue(), onChange: function() {
 			binding.setValue(this.attr("value"));
 		}}, dojo.create("div", null, fieldDiv));
 		dojo.addClass(tb.domNode, "fieldInput");
-		
-		var remove = new dijit.form.Button({label: "remove"}, dojo.create("div", null, controlDiv));
-		
+				
 		//If the language can be set
 		var item = binding.getItem();
 		var nodeType = item.getNodetype();
@@ -109,48 +109,27 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 			dojo.addClass(fieldDiv,"langcontrolledfield");
 			dojo.addClass(controlDiv, "langFieldControl");
 		}
-		
-		var cardConnect1 = dojo.connect(binding.getCardinalityTracker(), "minReached", function() {
-			remove.attr("disabled", true);
-		});
-
-		var cardConnect2 = dojo.connect(binding.getCardinalityTracker(), "justFine", function() {
-			remove.attr("disabled", false);
-		});
-		
-		//Inactivates buttons at startup if needed
-		binding.getCardinalityTracker().checkCardinality();
-		
-		var removeConnect = dojo.connect(remove, "onClick", function() {
-			if (binding.getCardinalityTracker().getCardinality() === 1) {
-				binding.setValue(null);
+		if (noCardinalityButtons !== true) {
+			this._addRemoveButton(fieldDiv, binding, controlDiv, function() {
 				tb.attr("value", "");
-			} else {
-				dojo.disconnect(cardConnect1);
-				dojo.disconnect(cardConnect2);
-				dojo.disconnect(removeConnect);
-				binding.remove();
-				dojo.destroy(fieldDiv);
-			}
-			if (nodeType === "LANGUAGE_LITERAL" || nodeType === "PLAIN_LITERAL") {
+				if (nodeType === "LANGUAGE_LITERAL" || nodeType === "PLAIN_LITERAL") {
 					languageSelector.set("value", "");
-			}
-		});
-		
-
+				}				
+			});
+		}
 	},
-	addChoice: function(fieldDiv, binding) {
-		 
+	addChoice: function(fieldDiv, binding, noCardinalityButtons) {
 		var item = binding.getItem();
 		var choices = item.getChoices();
 		var controlDiv = dojo.create("div", null, fieldDiv);
 		dojo.addClass(controlDiv, "fieldControl");
 		var divToUse =  dojo.create("div", null, fieldDiv);
+		var hierarchy = item.getParentProperty() && item.getHierarchyProperty();
 		//Check if radiobuttons can be created, i.e. when few chioces and max-cardinality == 1 
-		if (choices.length < 5 && item.getCardinality.max === 1) {
+		if (!hierarchy && choices.length < 5 && item.getCardinality().max === 1) {
 			for (var ib in choices) {
 				var inputToUse = dojo.create("input", null, divToUse);
-				dojo.create("span", { innerHTML: item._getLocalizedValue(choices[ib].label).value }, divToUse);
+				dojo.create("span", { "class": "choiceLabel", innerHTML: item._getLocalizedValue(choices[ib].label).value }, divToUse);
 				var rb = new dijit.form.RadioButton({
 					name: "RadioButtonName"+rforms.template.uniqueRadioButtonNameNr,
 					value: choices[ib].d,
@@ -162,64 +141,181 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 			}
 			rforms.template.uniqueRadioButtonNameNr++;
 			
-		} //Check if a tree-hierarchy should be created
-		else if(item.getParentProperty() && item.getHierarchyProperty()){
-			var ddButton = new dijit.form.DropDownButton({
-				label:"browse"
-			},divToUse);
-			ddButton.onClick = dojo.hitch(this, function (arg1){
-				var tree = this._displayChoiceTree(binding, ddButton);
-			});
-		} //Last option is the normal listing in a dropdown-menu
-		else {
-			//Create an ItemFileReadStore with the correct language to use
-			var store = this._createChoiceStore(item);
-			var spanToUse = dojo.create("span", null, fieldDiv);
-			var fSelect = new dijit.form.FilteringSelect({
-				store: store,
-				searchAttr: "label"
-			}, spanToUse);
-			
-			//Sets the value if any
-			if (binding.getValue()) {
-				fSelect.set("value", binding.getValue());
+		} else {
+			var ddButton, fSelect;
+			//Check if a tree-hierarchy should be created
+			if(hierarchy){
+				ddButton = new dijit.form.DropDownButton({
+					label: this._getLabelForChoice(binding, item) || "browse"
+				},divToUse);
+				ddButton.onClick = dojo.hitch(this, function (arg1){
+					var tree = this._displayChoiceTree(binding, ddButton);
+				});
+			//Last option is the normal listing in a dropdown-menu
+			} else {
+				//Create an ItemFileReadStore with the correct language to use
+				var store = this._createChoiceStore(item);
+				var spanToUse = dojo.create("span", null, fieldDiv);
+				fSelect = new dijit.form.FilteringSelect({
+					store: store,
+					searchAttr: "label"
+				}, spanToUse);
+				
+				//Sets the value if any
+				if (binding.getValue()) {
+					fSelect.set("value", binding.getValue());
+				}
+				//Callback when the user edits the value
+				fSelect.onChange = dojo.hitch(this, function (newvalue) {
+						binding.setValue(newvalue);
+				});
 			}
-			//Callback when the user edits the value
-			fSelect.onChange = dojo.hitch(this, function (newvalue) {
-					binding.setValue(newvalue);
-			});
 			
 			/*Code below is to correctly remove items in the form and their
 			 * values
 			 */
-			
-			//The button
-			var remove = new dijit.form.Button({label: "remove"}, dojo.create("span", null, fieldDiv));
-			
-			var cardConnect1 = dojo.connect(binding.getCardinalityTracker(), "minReached", function() {
-				remove.attr("disabled", true);
-			});
-
-			var cardConnect2 = dojo.connect(binding.getCardinalityTracker(), "justFine", function() {
-				remove.attr("disabled", false);
-			});
-			
-			//Inactivates buttons at startup if needed
-			binding.getCardinalityTracker().checkCardinality();
-			
-			var removeConnect = dojo.connect(remove, "onClick", function() {
-				if (binding.getCardinalityTracker().getCardinality() === 1) {
-					fSelect.set("value", "");
-				} else {
-					dojo.disconnect(cardConnect1);
-					dojo.disconnect(cardConnect2);
-					dojo.disconnect(removeConnect);
-					binding.remove();
-					dojo.destroy(fieldDiv);
-				}
-			});
+			if (noCardinalityButtons !== true) {
+				this._addRemoveButton(fieldDiv, binding, fieldDiv, function() {
+					fSelect && fSelect.set("value", "");
+					ddButton && ddButton.set("label", "browse");
+				});
+			}
 		}
 	},
+	
+	addTable: function(lastRow, firstBinding) {
+		var newRow, table, tHead, tHeadRow, childItems = firstBinding.getItem().getChildren();
+		if (lastRow === undefined) {
+			newRow = dojo.create("div", null, this.domNode);
+		} else  {
+			newRow = dojo.create("div", null, lastRow, "after");
+		}
+		if (this.topLevel) {
+			dojo.addClass(newRow, "topLevel");			
+		}
+		this.addLabel(newRow, dojo.create("div", null, newRow), firstBinding);
+		table = dojo.create("table", null, newRow);
+		dojo.addClass(table, "group");
+
+		tHead = dojo.create("thead", null, table);
+		tHeadRow = dojo.create("tr", null, table);
+		for (colInd = 0;colInd < childItems.length;colInd++) {
+			dojo.create("th", {innerHTML: childItems[colInd].getLabel()}, tHeadRow);
+		}
+		var addTh = dojo.create("th", {"class": "tableControl"}, tHeadRow);
+
+		var parentBinding = firstBinding.getParent(), item = firstBinding.getItem();
+		var add = new dijit.form.Button({label: "add", onClick: dojo.hitch(this, function() {
+					var nBinding = rforms.model.create(parentBinding, item);
+					this._addTableRow(table, nBinding);
+				})
+			}, dojo.create("span", null, addTh));
+		var cardTr = firstBinding.getCardinalityTracker();
+		dojo.connect(cardTr, "cardinalityChanged", function() {
+			add.attr("disabled", cardTr.isMax());
+		});
+		
+		return table;
+	},
+	fillTable: function(table, bindings) {
+		if (bindings.length === 0) {
+			return;
+		}
+		dojo.forEach(bindings, dojo.hitch(this, this._addTableRow, table));
+	},
+	//===================================================
+	// Private methods
+	//===================================================
+	_addCreateChildButton: function(rowDiv, labelDiv, binding) {
+		var parentBinding = binding.getParent(), item = binding.getItem();
+		var add = new dijit.form.Button({label: "add", onClick: dojo.hitch(this, function() {
+					var nBinding = rforms.model.create(parentBinding, item); 
+					this.addRow(rowDiv, nBinding, -1); //not the first binding...			
+				})
+			}, dojo.create("span", null, labelDiv));
+		var cardTr = binding.getCardinalityTracker();
+		var cardMaxCon = dojo.connect(cardTr, "cardinalityChanged", function() {
+			add.attr("disabled", cardTr.isMax());
+		});		
+	},
+	_addGroupButtons: function(rowDiv, labelDiv, binding) {
+		var parentBinding = binding.getParent(), item = binding.getItem();
+		var add = new dijit.form.Button({label: "add"}, dojo.create("span", null, labelDiv));
+		var remove = new dijit.form.Button({label: "remove"}, dojo.create("span", null, labelDiv));
+
+		var cardTr = binding.getCardinalityTracker();
+		var con = dojo.connect(cardTr, "cardinalityChanged", function() {
+			add.attr("disabled", cardTr.isMax());
+			remove.attr("disabled", cardTr.isMin());
+		});
+		
+		var addCon = dojo.connect(add, "onClick", this, function() {
+			var nBinding = rforms.model.create(parentBinding, item); 
+			this.addRow(rowDiv, nBinding, -1); //not the first binding...
+		});
+		
+		var removeCon = dojo.connect(remove, "onClick", function() {
+			if (cardTr.getCardinality() === 1) {
+				//Clear somehow.
+//				binding.setValue(null);
+	//			tb.attr("value", "");
+			} else {
+				dojo.disconnect(con);
+				dojo.disconnect(addCon);
+				dojo.disconnect(removeCon);
+				//Remove somehow.
+				binding.remove();
+				dojo.destroy(rowDiv);
+			}
+		});
+	},
+	_addRemoveButton: function(fieldDiv, binding, containerDiv, onReset) {
+		var remove = new dijit.form.Button({label: "remove"}, dojo.create("div", null, containerDiv));
+		var cardTr = binding.getCardinalityTracker();
+		var con = dojo.connect(cardTr, "cardinalityChanged", function() {
+			remove.attr("disabled", cardTr.isMin());
+		});
+		
+		var removeConnect = dojo.connect(remove, "onClick", function() {
+			if (cardTr.getCardinality() === 1) {
+				binding.setValue(null);
+				onReset();
+			} else {
+				dojo.disconnect(con);
+				dojo.disconnect(removeConnect);
+				binding.remove();
+				dojo.destroy(fieldDiv);
+			}
+		});
+	},
+	_addTableRow: function(table, binding) {
+		var groupedBindings = binding.getItemGroupedChildBindings();
+		var trEl = dojo.create("tr", null, table);
+		
+		dojo.forEach(groupedBindings, function(bindings) {
+			this.addComponent(dojo.create("td", null, trEl), bindings[0], true);
+		}, this);
+		
+		var lastTd = dojo.create("td", {"class": "tableControl"}, trEl);
+		var remove = new dijit.form.Button({label: "remove"}, dojo.create("span", null, lastTd));	
+		var cardTr = binding.getCardinalityTracker();
+		var cardConnect1 = dojo.connect(cardTr, "cardinalityChanged", function() {
+			remove.attr("disabled", cardTr.isMin());
+		});	
+		var removeConnect = dojo.connect(remove, "onClick", this, function() {
+			if (cardTr.getCardinality() === 1) {
+				var parentBinding = binding.getParent(), item = binding.getItem();
+				var nBinding = rforms.model.create(parentBinding, item);
+				this._addTableRow(table, nBinding);
+			} 
+			dojo.disconnect(cardConnect1);
+			dojo.disconnect(removeConnect);
+			binding.remove();
+			dojo.destroy(trEl);
+		});
+	},
+
+	
 	_displayChoiceTree: function(binding, button){
 		var item = binding.getItem();
 		this.toolTipNode = button.domNode;
@@ -231,23 +327,24 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 								childrenAttr: ["children"], 
 								query: {top: true}}, treeNode);
 		tree.getLabelClass = function(item) {
-								if(item == null)
-									return "";
-								var value = store.getValue(item, "d");
-								if(store.getValue(item, "selectable") === false)
-									return "notselectable";
-		/*						var selected = filteringSelect.attr("value");
-								if (value == selected) {
-									return "currentselection";
-								}*/
-								return "default";
-							};
+			if(item == null) {
+				return "";
+			}
+			var value = store.getValue(item, "d");
+			if(store.getValue(item, "selectable") === false)
+				return "notselectable";
+/*			var selected = filteringSelect.attr("value");
+			if (value == selected) {
+				return "currentselection";
+			}*/
+			return "default";
+		};
 		
 								
 		tree.onClick = function(item) {
 			if (store.getValue(item, "selectable") !== false) {
-				button.set('label',item.label);
-				binding.setValue(item.d);
+				button.set('label',store.getValue(item,"label"));
+				binding.setValue(store.getValue(item,"d"));
 			}
 		};
 						
@@ -279,13 +376,18 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 			
 			dijit.focus(this.tooltipDialog.domNode);*/
 	},
+	_getLabelForChoice: function(binding, item) {
+		var choice = binding.getChoice();
+		if (choice) {
+			return item._getLocalizedValue(choice.label).value;			
+		}
+	},
 	/*
 	 * From a Choice Item the possible values are extracted and added into 
 	 * a ItemFileReadStore that is returned
 	 */
 	_createChoiceStore: function(/*Choice*/ item){
-		var choices = item.getChoices();
-		return this._getItemFileReadStoreFromArray(choices, item);
+		return this._getItemFileReadStoreFromArray(item.getChoices(), item);
 	},
 	/*
 	 * From an array of choices that contains value and labels an 

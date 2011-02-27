@@ -25,5 +25,7 @@ dojo.declare("rforms.template.PropertyGroup", rforms.template.Group, {
 	//===================================================
 	constructor: function(source, children) {
 		this._children = children;
+		this.getPropertyItem()._source.cardinality = {"min": 1, "max": 1, "pref": 1};
+		this.getObjectItem()._source.cardinality = {"min": 1, "max": 1, "pref": 1};
 	}
 });

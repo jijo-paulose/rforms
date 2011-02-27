@@ -247,7 +247,7 @@ dojo.declare("rdfjson.Graph", null, {
 				spArrs.push(this._findSP(s, p));
 			}
 		}
-		return Array.concat.apply([], spArrs);
+		return Array.prototype.concat.apply([], spArrs);
 	},
 
 	/**

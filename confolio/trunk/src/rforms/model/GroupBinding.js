@@ -54,7 +54,7 @@ dojo.declare("rforms.model.GroupBinding", rforms.model.Binding, {
 		} else if (this._rootUri !== undefined){
 			return this._rootUri;
 		} else if (this._parent !== undefined) {
-			return this.getChildrenRootUri();
+			return this._parent.getChildrenRootUri();
 		}
 	},
 	addChildBinding: function(binding) {
