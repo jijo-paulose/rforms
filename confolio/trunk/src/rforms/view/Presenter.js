@@ -95,6 +95,7 @@ dojo.declare("rforms.view.Presenter", rforms.view.View, {
 		var isGroup = item instanceof rforms.template.Group;
 		dojo.attr(labelDiv, "innerHTML", item.getLabel()+(isGroup ? "": ":"));
 		dojo.addClass(labelDiv, "label");
+		this.showInfo(binding.getItem(), labelDiv);
 	},
 	addGroup: function(fieldDiv, binding) {
 		var subView = new rforms.view.Presenter({binding: binding, template: this.template, topLevel: false}, fieldDiv);

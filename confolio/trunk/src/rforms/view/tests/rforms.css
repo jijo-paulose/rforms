@@ -7,6 +7,16 @@
 	font-style: italic;
 	color: black;
 }
+
+.rforms .label.hasInfo:hover {
+	text-decoration: underline;
+}
+
+.rforms.itemInfo .propertyLabel,
+.rforms.itemInfo .descriptionLabel {
+	font-style: italic;
+}
+
 .rforms .group {
 	margin-left: 1em;
  }

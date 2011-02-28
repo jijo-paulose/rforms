@@ -60,6 +60,13 @@ dojo.declare("rforms.view.View", dijit._Widget, {
 	},
 	addChoice: function(fieldDiv, binding) {
 	},
+	showInfo: function(item, aroundNode) {
+		if (item == null || (item.getProperty() == null &&item.getDescription() == null)) {
+				return;
+		}
+		this.connect(aroundNode, "onclick", dojo.hitch(this, this._showInfo, item, aroundNode));
+		dojo.addClass(aroundNode, "hasInfo");		
+	},
 	
 	//===================================================
 	// Inherited methods
@@ -154,5 +161,29 @@ dojo.declare("rforms.view.View", dijit._Widget, {
 	},
 	showAsTable: function(item) {
 		return item instanceof rforms.template.Group && item.hasClass("table");
+	},
+
+	//===================================================
+	// Private methods
+	//===================================================	
+	_showInfo:function(item, aroundNode) {
+		var ttd = new dijit.TooltipDialog({});
+		var property = item.getProperty();
+		var description = item.getDescription();
+		var message;
+		if (property != null && description != null) {
+			message = "<div><span class='propertyLabel'>Property:&nbsp;</span><span class='propertyValue'>"+item.getProperty()+"</span></div><div><span class='descriptionLabel'>Description:&nbsp;</span><span class='descriptionValue'>"+item.getDescription()+"</span></div>";
+		} else if (property != null) {
+			message = "<span class='propertyLabel'>Property:&nbsp;</span><span class='propertyValue'>"+item.getProperty()+"</span>";
+		} else {
+			message = "<span class='descriptionLabel'>Description:&nbsp;</span><span class='descriptionValue'>"+item.getDescription()+"</span>";
+		}
+		var node = dojo.create("div", {"innerHTML": message, "class": "rforms itemInfo"});
+		ttd.set("content", node);
+		dijit.popup.open({popup: ttd, around: aroundNode});
+		ttd._onBlur = function() {
+				dijit.popup.close(ttd);
+				ttd.destroy();
+		};
 	}
 });

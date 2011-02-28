@@ -1,0 +1,31 @@
+<html>
+  <head>
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  </head>
+  <body class="tundra">
+	<script type="text/javascript" src="../../../../lib/dojo/dojo/dojo.js.uncompressed.js"
+		djConfig="isDebug: true, debugAtAllCosts: true, parseOnLoad: false, usePlainJson: true"></script>
+	<style>
+		@import "../../../../lib/dojo/dijit/themes/tundra/tundra.css"; /* required when dijit */	
+		@import "rforms.css";
+	</style>
+	<script type="text/javascript">
+		dojo.addOnLoad(function() {
+			dojo.xhrGet({
+				url: "http://convert.test.talis.com/?data-uri[]=http://dublincore.org/2010/10/11/dcterms.rdf&input=&output=exhibit-json&callback=",
+				handleAs: "json-comment-optional",
+				load: function(data) {
+					
+				}
+
+			})
+			var itemStore = new rforms.template.ItemStore();
+	 		var template = itemStore.createTemplate(rforms.template.tests.template1);
+			var graph = new rdfjson.Graph(rdfjson.tests.graph2);
+			var binding = rforms.model.match(graph, "http://example.org/about", template);
+			new rforms.view.Presenter({template: template, binding: binding}, "compactView");
+		});
+	</script>
+	<div id="compactView"></div>
+  </body>
+</html>

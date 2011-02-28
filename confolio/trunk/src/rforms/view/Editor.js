@@ -68,6 +68,8 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 		var label = dojo.create("span", {"innerHTML": item.getLabel()+(isGroup ? "": ":")}, labelDiv);
 		dojo.addClass(labelDiv, "labelRow");
 		dojo.addClass(label, "label");
+		this.showInfo(item, label);
+
 
 		//If table, no add or remove buttons.
 		if (this.showAsTable(item)) {
@@ -319,7 +321,7 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 	_displayChoiceTree: function(binding, button){
 		var item = binding.getItem();
 		this.toolTipNode = button.domNode;
-		ontologyPopupWidget = new dijit.TooltipDialog();
+		var ontologyPopupWidget = new dijit.TooltipDialog();
 		var treeNode = dojo.create("div");
 		ontologyPopupWidget.set("content", treeNode);
 		var store = this._createChoiceStore(item); 

@@ -46,7 +46,9 @@ dojo.declare("rforms.template._BaseItem", null, {
 	// Private methods
 	//===================================================	
 	_getLocalizedValue: function(hash) {
-		if (hash.hasOwnProperty(dojo.locale)) {
+		if (hash == null) {
+			return {precision: "none"};
+		} else if (hash.hasOwnProperty(dojo.locale)) {
 			return {value: hash[dojo.locale], precision: "exact", lang: dojo.locale};
 		} else {
 			var pos = dojo.locale.indexOf("_");
