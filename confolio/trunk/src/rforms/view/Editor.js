@@ -1,7 +1,9 @@
 /*global dojo, rforms, dijit*/
 dojo.provide("rforms.view.Editor");
+dojo.require("rforms.view.Duration");
 dojo.require("rforms.view.Presenter");
 dojo.require("dijit.form.TextBox");
+dojo.require("dijit.form.DateTextBox");
 dojo.require("dijit.form.Button");
 dojo.require("dijit.form.FilteringSelect");
 dojo.require("dojo.data.ItemFileReadStore");
@@ -10,6 +12,7 @@ dojo.require("dijit.form.RadioButton");
 dojo.require("dijit.form.DropDownButton");
 dojo.require("dijit.Tree");
 dojo.require("dijit.TooltipDialog");
+
 
 rforms.template.uniqueRadioButtonNameNr = 0;
 
@@ -87,14 +90,67 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 	addText: function(fieldDiv, binding, noCardinalityButtons) {
 		var controlDiv = dojo.create("div", null, fieldDiv);
 		dojo.addClass(controlDiv, "fieldControl");
-		var tb = new dijit.form.TextBox({value: binding.getValue(), onChange: function() {
-			binding.setValue(this.attr("value"));
-		}}, dojo.create("div", null, fieldDiv));
-		dojo.addClass(tb.domNode, "fieldInput");
-				
-		//If the language can be set
 		var item = binding.getItem();
 		var nodeType = item.getNodetype();
+		var datatype = item.getDatatype();
+		var tb;
+		
+		//If certain datatype
+		if (nodeType == "DATATYPE_LITERAL" || datatype) {
+			
+			//Special editing support implemented for integer, data and duration
+			
+			if (datatype === "http://www.w3.org/2001/XMLSchema.xsd#date" ||
+			datatype === "http://purl.org/dc/terms/W3CDTF") {
+				var dateStringValue = item.getValue() || "";
+				if (dateStringValue.length > 0) {
+					dateStringValue = dojo.date.stamp.fromISOString(this.getValue());
+				}
+				tb = new dijit.form.DateTextBox({
+					value: dateStringValue,
+					disabled: !item.isEnabled(),
+					invalidMessage: "Proper date format is required, value will not be saved",
+					onChange: function(){
+						if (tb.isValid()) {
+							binding.setValue(dojo.date.stamp.fromISOString(this.attr("value")));
+						} else {
+							binding.setValue("");
+						}
+					}
+				}, dojo.create("div", null, fieldDiv));
+				
+			} else if (datatype === "http://www.w3.org/2001/XMLSchema.xsd#duration") {
+				tb = new rforms.view.Duration({disabled: !item.isEnabled(), onChange: function(){
+					binding.setValue(tb.attr("value"));
+				}}, dojo.create("div", null, fieldDiv));
+			
+			} else if (datatype === "http://www.w3.org/2001/XMLSchema.xsd#integer") {
+				tb = new dijit.form.ValidationTextBox({
+					value: binding.getValue(),
+					disabled: !item.isEnabled(),
+					invalidMessage: "Only integer value is allowed, value will not be saved",
+					regExp: "[0-9]*",
+					onChange: function() {
+						if (tb.isValid()) {
+							binding.setValue(this.attr("value"));
+						} else {
+							binding.setValue("");
+						}
+					}
+				}, dojo.create("div", null, fieldDiv));
+			}
+		}
+		else {
+			tb = new dijit.form.TextBox({
+				value: binding.getValue(),
+				onChange: function(){
+					binding.setValue(this.attr("value"));
+				}
+			}, dojo.create("div", null, fieldDiv));
+			dojo.addClass(tb.domNode, "fieldInput");
+		}
+				
+		//If the language can be set
 		if(nodeType === "LANGUAGE_LITERAL" || nodeType === "PLAIN_LITERAL"){
 			var langSpan = dojo.create("span", null, controlDiv);
 			var langList = this._getLanguagesList();
