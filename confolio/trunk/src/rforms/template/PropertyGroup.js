@@ -10,21 +10,26 @@ dojo.require("rforms.template.Group");
  * Text, Choice or Group item depending on the kind of object envisioned in the triple.  
  */
 dojo.declare("rforms.template.PropertyGroup", rforms.template.Group, {
+	
+	//===================================================
+	// Inherited attributes
+	//===================================================
+	_forceChildrenClones: true,
+
 	//===================================================
 	// Public API
 	//===================================================
 	getPropertyItem: function() {
-		return this._children[0];
+		return this.getChildren()[0];
 	},
 	getObjectItem: function() {
-		return this._children[1];
+		return this.getChildren()[1];
 	},
 	
 	//===================================================
 	// Inherited methods
 	//===================================================
-	constructor: function(source, children) {
-		this._children = children;
+	constructor: function(source, children, itemStore) {
 		this.getPropertyItem()._source.cardinality = {"min": 1, "max": 1, "pref": 1};
 		this.getObjectItem()._source.cardinality = {"min": 1, "max": 1, "pref": 1};
 	}

@@ -57,6 +57,9 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 	prepareBindings: function(item, bindings) {
 		var card = item.getCardinality();
 		var target = card.pref > 0 ? card.pref : card.min > 0 ? card.min : 1;
+		if (item instanceof rforms.template.Group) {
+			target = 0;
+		}
 		if (target > bindings.length) {
 			bindings = bindings.concat([]);
 			while(target > bindings.length) {
@@ -66,14 +69,17 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 		return bindings;
 	},
 	
-	addLabel: function(rowDiv, labelDiv, binding) {
-		var item = binding.getItem(), isGroup = item instanceof rforms.template.Group;
-		var label = dojo.create("span", {"innerHTML": item.getLabel()+(isGroup ? "": ":")}, labelDiv);
+	addLabel: function(rowDiv, labelDiv, binding, item) {
+		var isGroup = item instanceof rforms.template.Group;
+		var label = dojo.create("span", {"innerHTML": item.getLabel()}, labelDiv);
 		dojo.addClass(labelDiv, "labelRow");
 		dojo.addClass(label, "label");
 		this.showInfo(item, label);
-
-
+		
+		if (binding == null) {
+			this._addExpandButton(rowDiv, labelDiv, item);
+			return;
+		}
 		//If table, no add or remove buttons.
 		if (this.showAsTable(item)) {
 			return;
@@ -84,6 +90,7 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 			this._addCreateChildButton(rowDiv, labelDiv, binding);
 		}
 	},
+
 	addGroup: function(fieldDiv, binding) {
 		var subView = new rforms.view.Editor({binding: binding, template: this.template, topLevel: false}, fieldDiv);
 	},
@@ -241,28 +248,20 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 		}
 	},
 	
-	addTable: function(lastRow, firstBinding) {
-		var newRow, table, tHead, tHeadRow, childItems = firstBinding.getItem().getChildren();
-		if (lastRow === undefined) {
-			newRow = dojo.create("div", null, this.domNode);
-		} else  {
-			newRow = dojo.create("div", null, lastRow, "after");
-		}
-		if (this.topLevel) {
-			dojo.addClass(newRow, "topLevel");			
-		}
-		this.addLabel(newRow, dojo.create("div", null, newRow), firstBinding);
-		table = dojo.create("table", null, newRow);
+	addTable: function(newRow, firstBinding) {
+		var item = firstBinding.getItem(), childItems = item.getChildren();
+		var table = dojo.create("table", null, newRow);
 		dojo.addClass(table, "group");
 
 		tHead = dojo.create("thead", null, table);
 		tHeadRow = dojo.create("tr", null, table);
 		for (colInd = 0;colInd < childItems.length;colInd++) {
-			dojo.create("th", {innerHTML: childItems[colInd].getLabel()}, tHeadRow);
+			var th = dojo.create("th", null, tHeadRow);
+			this.showInfo(item, dojo.create("span", {innerHTML: childItems[colInd].getLabel()}, th));
 		}
 		var addTh = dojo.create("th", {"class": "tableControl"}, tHeadRow);
 
-		var parentBinding = firstBinding.getParent(), item = firstBinding.getItem();
+		var parentBinding = firstBinding.getParent();
 		var add = new dijit.form.Button({label: "add", onClick: dojo.hitch(this, function() {
 					var nBinding = rforms.model.create(parentBinding, item);
 					this._addTableRow(table, nBinding);
@@ -288,7 +287,7 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 		var parentBinding = binding.getParent(), item = binding.getItem();
 		var add = new dijit.form.Button({label: "add", onClick: dojo.hitch(this, function() {
 					var nBinding = rforms.model.create(parentBinding, item); 
-					this.addRow(rowDiv, nBinding, -1); //not the first binding...			
+					this.addRow(rowDiv, nBinding); //not the first binding...			
 				})
 			}, dojo.create("span", null, labelDiv));
 		var cardTr = binding.getCardinalityTracker();
@@ -309,7 +308,7 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 		
 		var addCon = dojo.connect(add, "onClick", this, function() {
 			var nBinding = rforms.model.create(parentBinding, item); 
-			this.addRow(rowDiv, nBinding, -1); //not the first binding...
+			this.addRow(rowDiv, nBinding); //not the first binding...
 		});
 		
 		var removeCon = dojo.connect(remove, "onClick", function() {
@@ -346,6 +345,23 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 			}
 		});
 	},
+
+	_addExpandButton: function(rowDiv, labelDiv, item) {
+		var expand = new dijit.form.Button({label: "expand"}, dojo.create("span", null, labelDiv));
+		var expandCon = dojo.connect(expand, "onClick", this, function() {
+			var nBinding = rforms.model.create(this.binding, item);
+			if (this.showAsTable(item)) {
+				var table = this.addTable(rowDiv, nBinding, item);
+				this.fillTable(table, [nBinding]);
+			} else {
+				this.addRow(rowDiv, nBinding, false); //not the first binding...
+				this._addGroupButtons(rowDiv, labelDiv, nBinding);					
+			}
+			expand.destroy();
+			dojo.disconnect(expandCon);				
+		});
+	},
+
 	_addTableRow: function(table, binding) {
 		var groupedBindings = binding.getItemGroupedChildBindings();
 		var trEl = dojo.create("tr", null, table);

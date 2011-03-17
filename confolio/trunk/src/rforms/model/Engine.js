@@ -32,6 +32,19 @@ rforms.model.match = function(graph, uri, template) {
 	return rootBinding;
 };
 
+rforms.model.constructTemplate = function(graph, uri, itemStore) {
+	var props = graph.findProperties(uri);
+	var items = [];
+	dojo.forEach(props, function(prop) {
+		var item = itemStore.getItemByProperty(prop);
+		if (item != null) {
+			items.push(item);
+		}
+	}, this);
+	return itemStore.createTemplateFromChildren(items);
+};
+
+
 /**
  * Creates a new binding below the given parentBinding according to what the item specifies. 
  * New triples are created in the provided graph although not expressed if they have an
@@ -40,14 +53,15 @@ rforms.model.match = function(graph, uri, template) {
  * 
  * @param {rforms.model.Binding} parentBinding
  * @param {rforms.template.Item} item
+ * @param {Object} parentItems is a hash of parent Items to use for loop detection.
  */
-rforms.model.create = function(parentBinding, item) {
+rforms.model.create = function(parentBinding, item, parentItems) {
 	if (item instanceof rforms.template.Text) {
 		return rforms.model._createTextItem(parentBinding, item);
 	} else if (item instanceof rforms.template.PropertyGroup) {
 		return rforms.model._createPropertyGroupItem(parentBinding, item);
 	} else if (item instanceof rforms.template.Group) {
-		return rforms.model._createGroupItem(parentBinding, item);
+		return rforms.model._createGroupItem(parentBinding, item, parentItems || {});
 	} else if (item instanceof rforms.template.Choice) {
 		return rforms.model._createChoiceItem(parentBinding, item);		
 	}	
@@ -73,7 +87,7 @@ rforms.model._createChoiceItem = function(parentBinding, item) {
 	return nbinding;
 };
 
-rforms.model._createGroupItem = function(parentBinding, item) {
+rforms.model._createGroupItem = function(parentBinding, item, parentItems) {
 	var stmt, constr;
 	if (item.getProperty() !== undefined) {
 		var graph = parentBinding.getGraph();
@@ -83,9 +97,22 @@ rforms.model._createGroupItem = function(parentBinding, item) {
 
 	var nBinding = new rforms.model.GroupBinding({item: item, statement: stmt, constraints: constr});
 	parentBinding.addChildBinding(nBinding);
+
+	//Only do loop detection for items that are stored in the itemStore and hence are used in more than one place.
+	var itemId = item._source["@id"];	
+	if (itemId) {
+		//If loop stop.
+		if (parentItems[itemId]) {
+			return nBinding;
+		} else {
+			parentItems[itemId] = true;
+		}
+	}
+	//Do not create substructures directly, let the view model and user interaction decide when to create children.
+	/* 
 	dojo.forEach(item.getChildren(), function(childItem) {
-		rforms.model.create(nBinding, childItem);
-	});
+		rforms.model.create(nBinding, childItem, parentItems);
+	});*/
 	return nBinding;
 };
 

@@ -53,24 +53,14 @@ dojo.declare("rforms.view.Presenter", rforms.view.View, {
 		return  singleBinding !== undefined ? [singleBinding] : bindings;
 	},
 	
-	addTable: function(lastRow, firstBinding) {
-		var newRow, table, tHead, tHeadRow, childItems = firstBinding.getItem().getChildren();
-		if (lastRow === undefined) {
-			newRow = dojo.create("div", null, this.domNode);
-		} else  {
-			newRow = dojo.create("div", null, lastRow, "after");
-		}
-		if (this.topLevel) {
-			dojo.addClass(newRow, "topLevel");			
-		}
-		this.addLabel(newRow, dojo.create("div", null, newRow), firstBinding);
-		table = dojo.create("table", null, newRow);
-		dojo.addClass(table, "group");
-
+	addTable: function(newRow, firstBinding) {
+		var item = firstBinding.getItem(), childItems = item.getChildren();
+		var table = dojo.create("table", {"class": "group"}, newRow);
 		tHead = dojo.create("thead", null, table);
 		tHeadRow = dojo.create("tr", null, table);
 		for (colInd = 0;colInd < childItems.length;colInd++) {
-			dojo.create("th", {innerHTML: childItems[colInd].getLabel()}, tHeadRow);
+			var th = dojo.create("th", null, tHeadRow);
+			this.showInfo(item, dojo.create("span", {innerHTML: childItems[colInd].getLabel()}, th));
 		}
 		return table;
 	},
@@ -93,7 +83,7 @@ dojo.declare("rforms.view.Presenter", rforms.view.View, {
 	addLabel: function(rowDiv, labelDiv, binding) {
 		var item = binding.getItem();
 		var isGroup = item instanceof rforms.template.Group;
-		dojo.attr(labelDiv, "innerHTML", item.getLabel()+(isGroup ? "": ":"));
+		dojo.attr(labelDiv, "innerHTML", item.getLabel());
 		dojo.addClass(labelDiv, "label");
 		this.showInfo(binding.getItem(), labelDiv);
 	},

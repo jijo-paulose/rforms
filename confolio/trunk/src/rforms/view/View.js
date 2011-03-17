@@ -1,6 +1,7 @@
 /*global dojo, rforms, dijit*/
 dojo.provide("rforms.view.View");
 dojo.require("dijit._Widget");
+dojo.require("dijit.TooltipDialog");
 
 dojo.declare("rforms.view.View", dijit._Widget, {
 	//===================================================
@@ -76,7 +77,7 @@ dojo.declare("rforms.view.View", dijit._Widget, {
 	 * creates new views for all groupbindings.
 	 */
 	buildRendering: function() {
-		var groupIndex, table, lastRow,
+		var groupIndex, table, lastRow, table,
 			groupedItemsArr = this.binding.getItem().getChildren(), 
 			groupedBindingsArr = this.binding.getItemGroupedChildBindings(), 
 			bindings, item;
@@ -97,19 +98,27 @@ dojo.declare("rforms.view.View", dijit._Widget, {
 			
 			//Table case
 			if (this.showAsTable(item)) {
-				table = this.addTable(lastRow, bindings[0]);
-				this.fillTable(table, bindings);
-				lastRow = table.parentElement;
+				lastRow = this.addLabelClean(lastRow, bindings[0], item);
+				if (bindings.length > 0) {
+					table = this.addTable(lastRow, bindings[0], item);
+					this.fillTable(table, bindings);			
+				}
 			
 			//Non table case
 			} else {
-				dojo.forEach(bindings, function(binding, index) {
-					lastRow = this.addRow(lastRow, binding, index);
-				}, this);
+				if (bindings.length > 0) {
+					dojo.forEach(bindings, function(binding, index) {
+						lastRow = this.addRow(lastRow, binding, index === 0);
+					}, this);					
+				} else {
+					lastRow = this.addLabelClean(lastRow, null, item);
+				}
 			}
 									
 			//Activates/deactivates buttons at startup if needed
-			bindings[0].getCardinalityTracker().checkCardinality();
+			if (bindings.length > 0){
+				bindings[0].getCardinalityTracker().checkCardinality();				
+			}
 		}
 	},
 
@@ -118,25 +127,15 @@ dojo.declare("rforms.view.View", dijit._Widget, {
 	 * 
 	 * @param {Object} lastRow last row that was added
 	 * @param {Object} binding the binding to add a row for
-	 * @param {Object} index if multiple rows are added for the same item this variable holds the index within the same item 
+	 * @param {Boolean} includeLabel, a label is added when true or if undefined and the binding corresponds to a group. 
 	 */
-	addRow: function(lastRow, binding, index) {
-		var fieldDiv, newRow;
+	addRow: function(lastRow, binding, includeLabel) {
+		var fieldDiv, newRow, item = binding.getItem();
 		
 		//Taking care of dom node structure plus label.
-		if (index === 0 || binding instanceof rforms.model.GroupBinding) {
-			//New rowDiv since we have a label
-			if (lastRow === undefined) {
-				newRow = dojo.create("div", null, this.domNode);
-			} else {
-				newRow = dojo.create("div", null, lastRow, "after");
-			}
-			this.addLabel(newRow, dojo.create("div", null, newRow), binding);
+		if (includeLabel || (includeLabel == null && binding instanceof rforms.model.GroupBinding)) {
+			newRow = this.addLabelClean(lastRow, binding, item);
 			fieldDiv = dojo.create("div", null, newRow);
-
-			if (this.topLevel) {
-				dojo.addClass(newRow, "topLevel");
-			}
 		} else {
 			//No new rowDiv since we have a repeated value under the same label.
 			fieldDiv = dojo.create("div", null, lastRow);
@@ -144,6 +143,20 @@ dojo.declare("rforms.view.View", dijit._Widget, {
 		}
 		this.addComponent(fieldDiv, binding);
 		return newRow || lastRow;
+	},
+	addLabelClean: function(lastRow, binding, item) {
+		var newRow;
+		//New rowDiv since we have a label
+		if (lastRow === undefined) {
+			newRow = dojo.create("div", null, this.domNode);
+		} else {
+			newRow = dojo.create("div", null, lastRow, "after");
+		}
+		if (this.topLevel) {
+			dojo.addClass(newRow, "topLevel");
+		}
+		this.addLabel(newRow, dojo.create("div", null, newRow), binding, item);
+		return newRow;
 	},
 	addComponent: function(fieldDiv, binding, noCardinalityButtons) {
 		//Taking care of the field, either group, choice or text.

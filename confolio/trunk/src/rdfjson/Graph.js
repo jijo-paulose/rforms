@@ -123,6 +123,22 @@ dojo.declare("rdfjson.Graph", null, {
 	},
 	
 	/**
+	 * Convenience method that returns the value of the first matching statement
+	 * for the given subject and predicate.
+	 * 
+	 * @param {Object} s the subject
+	 * @param {Object} p the predicate
+	 * @return {String} the value, may be a literal or a URI, if undefined no matching statement (and value) could be found.
+	 * @see find
+	 */
+	findFirstValue: function(s, p) {
+		var arr = this.find(s, p);
+		if (arr != null && arr.length > 0) {
+			return arr[0].getValue();
+		}
+	},
+		
+	/**
 	 * Creates a new statement and adds it to the graph unless explicitly specified not to via the assert flag. 
 	 * 
 	 * @param {String} s the subject in the form of a uri, if undefined a new blank node is created.
@@ -173,6 +189,26 @@ dojo.declare("rdfjson.Graph", null, {
 				}
 			}
 		}
+		return ngraph;
+	},
+	
+	/**
+	 * Finds all properties for a given subject.
+	 * Note: Optimal.
+	 * @param {String} s
+	 * @return {Array} of strings
+	 */
+	findProperties: function(s) {
+		if (this._graph[s] == null) {
+			return [];
+		}
+		var p, graph = this._graph, predicates = [];
+		for (p in graph[s]) {
+			if (graph[s].hasOwnProperty(p)) {
+				predicates.push(p);
+			}
+		}
+		return predicates;
 	},
 	
 	//===================================================
@@ -185,7 +221,7 @@ dojo.declare("rdfjson.Graph", null, {
 	 * @param {Object} graph a pure RDF JSON object according to the specification.
 	 */
 	constructor: function(graph) {
-		this._graph = graph;
+		this._graph = graph || {};
 		this._bnodes = {};
 	},
 

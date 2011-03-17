@@ -19,6 +19,7 @@ dojo.declare("rforms.template.ItemStore", null, {
 	// Private Attributes
 	//===================================================
 	_registry: null,
+	_registryByProperty: null,
 	_tRegistry: null,
 	_ontologyStore: null,
 	
@@ -30,6 +31,9 @@ dojo.declare("rforms.template.ItemStore", null, {
 	},
 	getItem: function(id) {
 		return this._registry[id];
+	},
+	getItemByProperty: function(property) {
+		return this._registryByProperty[property];
 	},
 	createTemplate: function(source) {
 		if (dojo.isArray(source.auxilliary)) {
@@ -44,12 +48,23 @@ dojo.declare("rforms.template.ItemStore", null, {
 		}
 		return t;
 	},
+	createTemplateFromChildren: function(children) {
+		var childrenObj = dojo.map(children || [], function(child) {
+			return dojo.isString(child) ? this.getItem(child) : child;
+		}, this);
+		var root = new rforms.template.Group({}, childrenObj);
+		return new rforms.template.Template({}, root, this);
+	},
+	setPriorities: function(priorities) {
+		this.priorities = priorities;
+	},
 
 	//===================================================
 	// Inherited methods
 	//===================================================
 	constructor: function(ontologyStore) {
 		this._registry = {};
+		this._registryByProperty = {};
 		this._tRegistry = {};
 		this._ontologyStore = ontologyStore || new rforms.template.OntologyStore();
 	},
@@ -73,11 +88,17 @@ dojo.declare("rforms.template.ItemStore", null, {
 				item = new rforms.template.Choice(source, this._ontologyStore);
 				break;
 			case "group":
-				item = new rforms.template.Group(source, this._createItems(source.content || []));
+				item = new rforms.template.Group(source, null, this); //Lazy loading of children.
 				break;
 			case "propertygroup":
-				item = new rforms.template.PropertyGroup(source, this._createItems(source.content || [], true));
+				item = new rforms.template.PropertyGroup(source, null, this); //Lazy loading of children.
 				break;
+			}
+			if (source.property != null) {
+				this._registryByProperty[source.property] = item;
+				if (this.priorities && this.priorities[source.property] != null) {
+					item.priority = this.priorities[source.property];
+				}
 			}
 			if (source["@id"] != null && this._registry[source["@id"]] == null) {
 				this._registry[source["@id"]] = item;

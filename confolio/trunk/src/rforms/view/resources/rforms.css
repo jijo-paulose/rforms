@@ -4,17 +4,20 @@
  	margin-top: 0.2em;
 }
 .rforms .label {
-	font-style: italic;
+/*	font-style: italic;*/
 	color: black;
 }
 
+.rforms.presenter th span:hover,
+.rforms.editor th span:hover,
 .rforms .label.hasInfo:hover {
 	text-decoration: underline;
+	cursor: pointer;
 }
 
 .rforms.itemInfo .propertyLabel,
 .rforms.itemInfo .descriptionLabel {
-	font-style: italic;
+	/*font-style: italic;*/
 }
 
 .rforms .group {
@@ -34,6 +37,14 @@
 	padding-left: 0.3em;
 	padding-right: 0.3em;
 }
+
+.rforms.presenter th,
+.rforms.editor th {
+	font-weight: normal;
+}
+
+
+
 .rforms.presenter table.group td,
 .rforms.editor table.group td {
 	background: white;

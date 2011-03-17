@@ -50,7 +50,7 @@ rforms.template.tests.template1 = {
 			"label":{"en":"Author"},
 			"description":{"en":"The author of the book"},
 			"property":"http://purl.org/dc/terms/publisher",
-			"cardinality": {"min": 2, "max": 5},
+			"cardinality": {"min": 0, "max": 5},
 			"constraints":{"http://www.w3.org/TR/rdf-schema/type":"http://xmlns.com/foaf/0.1/Person"},
 			"nodetype":"RESOURCE",
 			"cls": ["table"],
