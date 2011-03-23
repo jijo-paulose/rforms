@@ -133,7 +133,7 @@ dojo.declare("rdfjson.Graph", null, {
 	 */
 	findFirstValue: function(s, p) {
 		var arr = this.find(s, p);
-		if (arr != null && arr.length > 0) {
+		if (arr.length > 0) {
 			return arr[0].getValue();
 		}
 	},
@@ -173,7 +173,7 @@ dojo.declare("rdfjson.Graph", null, {
 	 * The returned object is suitable for serilazation and communicated with other systems.
 	 */
 	exportRDFJSON: function() {
-		var s, p, oindex, graph = this._graph, ngraph = {}, objArr, nObjArr, o;
+		var s, p, oindex, graph = this._graph, ngraph = {}, objArr, nObjArr, o, no;
 		for (s in graph) {
 			if (graph.hasOwnProperty(s)) {
 				ngraph[s] = {};
@@ -183,13 +183,23 @@ dojo.declare("rdfjson.Graph", null, {
 						nObjArr = ngraph[s][p] = [];
 						for (oindex = objArr.length-1;oindex>=0;oindex--) {
 							o = objArr[oindex];
-							nObjArr.push({type: o.type, value: o.value, lang: o.lang, datatype: o.datatype});
+							no = {type: o.type, value: o.value};
+							if (o.lang != null) {
+								no.lang = o.lang;
+							}
+							if (o.datatype != null) {
+								no.datatype = o.datatype;
+							}
+							nObjArr.push(no);
 						}
 					}
 				}
 			}
 		}
 		return ngraph;
+	},
+	clone: function() {
+		return new rdfjson.Graph(this.exportRDFJSON());
 	},
 	
 	/**

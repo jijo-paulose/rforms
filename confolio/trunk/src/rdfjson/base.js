@@ -174,3 +174,14 @@ rdfjson.objectEquals =  function(o1, o2) {
 		return o1.type === o2.type && o1.value === o2.value && o1.lang === o2.lang && o1.datatype === o2.datatype;		
 	}
 };
+
+rdfjson.findDirectOrRDFValue = function(graph, subject, predicate) {
+	var arr = graph.find(subject, predicate);
+	if (arr.length > 0) {
+		if (arr[0].getType() != "bnode") {
+			return arr[0].getValue();
+		} else {
+			return rdfjson.findValue(graph, arr[0].getValue(),"http://www.w3.org/1999/02/22-rdf-syntax-ns#value");
+		}
+	}
+};

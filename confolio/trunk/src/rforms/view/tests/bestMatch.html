@@ -33,10 +33,9 @@
 			itemStore.setPriorities({"http:\/\/xmlns.com\/foaf\/0.1\/firstName": 1000, "http:\/\/xmlns.com\/foaf\/0.1\/surname": 999});
 			var converter = new rforms.template.Converter(itemStore);
 			//itemStore.createTemplate(rforms.template.tests.template1);
-	 		converter.convertExhibit(dojo.moduleUrl("rforms.template.tests", "dc-exhibit.json"), function(results) {	
+	 		converter.convertExhibit(dojo.moduleUrl("rforms.template.tests", "foaf-exhibit.json"), function(results) {	
 				var graph = new rdfjson.Graph(rdfjson.tests.graph2);
-				//var template = itemStore.createTemplateFromChildren(["http:\/\/xmlns.com\/foaf\/0.1\/Person"]);
-				var template = rforms.model.constructTemplate(graph, "http://example.org/about", itemStore);
+				var template = itemStore.createTemplateFromChildren(["http:\/\/xmlns.com\/foaf\/0.1\/Person"]);
 				var binding = rforms.model.match(graph, "http://example.org/about", template);
 				new rforms.view.Editor({template: template, binding: binding}, "compactView");
 			});
