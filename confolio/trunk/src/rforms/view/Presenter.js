@@ -39,15 +39,15 @@ dojo.declare("rforms.view.Presenter", rforms.view.View, {
 		}
 		for (index =0;index<bindings.length;index++) {
 			var lang = bindings[index].getLanguage();
-			if (lang === dojo.locale) {
+			if (lang === "" || lang === undefined) {
+				alts.noLanguage = bindings[index];
+			} else if (lang === dojo.locale) {
 				alts.best = bindings[index];
 			} else if (lang.indexOf(dojo.locale) !== -1 || dojo.locale.indexOf(lang) !== -1) {
 				alts.close = bindings[index];				
 			} else if (lang.indexOf(this.defaultLanguage) === 0) {
 				alts.defaultLanguage = bindings[index];
-			} else if (lang === "" || lang === undefined) {
-				alts.noLanguage = bindings[index];
-			}
+			} 
 		}
 		var singleBinding = alts.best || alts.close || alts.defaultLanguage || alts.noLanguage;
 		return  singleBinding !== undefined ? [singleBinding] : bindings;
