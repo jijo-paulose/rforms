@@ -17,8 +17,10 @@ dojo.declare("rforms.model.ChoiceBinding", rforms.model.ValueBinding, {
 	//===================================================
 	setChoice: function(choice) {
 		this._choice = choice;
-		if (this.getValue() != choice.d) {
-			this.setValue(choice.d);			
+		if (choice == null) {
+			this.setValue(null);
+		} else if (this.getValue() != choice.d) {
+			this.setValue(choice.d);
 		}
 	},
 	getChoice: function() {

@@ -89,9 +89,9 @@ rforms.template.tests.template1 = {
 	"ontologies":["http://example.ru/library.rdf"],
 	"cachedChoices": {
 		"http://example.com/bookOntology?constr=%7B%22http%3A%2F%2Fwww.w3.org%2F2004%2F02%2Fskos%2Fcore%23inScheme%22%3A%22http%3A%2F%2Fexample.com%2FbookSubjects%22%7D&pp=http%3A%2F%2Fsomething.se%2Fdoh&hp=http%3A%2F%2Fsomethingel.se%2Fdoh":
-			[{"top":true, d: "http://example.com/instanceTop", label: {"sv": "Toppen", "en":"Ze top!"}, children:[
+			[{"top":true, d: "http://example.com/instanceTop", selectable: false, label: {"sv": "Toppen", "en":"Ze top!"}, children:[
 			    {"_reference": "http://example.com/instance1"},{"_reference": "http://example.com/instance2"}]},
-			 {d: "http://example.com/instance1", label: {"sv": "Matematik", "en":"Mathematics"}},
+			 {d: "http://example.com/instance1", label: {"sv": "Matematik", "en":"Mathematics"}, description: {"sv": "Matematik är ett coolt ämne", "en":"Mathematics is a cool subject"}},
 			 {d: "http://example.com/instance2", label: {"sv": "Kemi", "en":"Chemistry"}}],
 		"http://example.com/DCOntology?constr=%7B%22http%3A%2F%2Fwww.w3.org%2F2004%2F02%2Fskos%2Fcore%23inScheme%22%3A%22http%3A%2F%2Fexample.com%2FauthorPredicates%22%7D":
 			[{d: "http://purl.org/dc/terms/creator", label: {"sv": "Skapare", "en":"Creator"}},

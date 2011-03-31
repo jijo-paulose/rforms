@@ -12,7 +12,7 @@ dojo.require("dijit.form.RadioButton");
 dojo.require("dijit.form.DropDownButton");
 dojo.require("dijit.Tree");
 dojo.require("dijit.TooltipDialog");
-
+dojo.require("rforms.view.TreeOntologyChooser");
 
 rforms.template.uniqueRadioButtonNameNr = 0;
 
@@ -207,15 +207,21 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 			rforms.template.uniqueRadioButtonNameNr++;
 			
 		} else {
-			var ddButton, fSelect;
+			var fSelect, cNode, dialog;
 			//Check if a tree-hierarchy should be created
 			if(hierarchy){
-				ddButton = new dijit.form.DropDownButton({
-					label: this._getLabelForChoice(binding, item) || "browse"
-				},divToUse);
-				ddButton.onClick = dojo.hitch(this, function (arg1){
-					var tree = this._displayChoiceTree(binding, ddButton);
-				});
+				cNode = dojo.create("span", null, divToUse);
+				dojo.attr(cNode, "innerHTML", this._getLabelForChoice(binding, item));				
+				var oc;
+				var ddButton = new dijit.form.Button({label:  "Browse", onClick: dojo.hitch(this, function() {
+					if (oc == null) {
+						oc = new rforms.view.TreeOntologyChooser({binding: binding, done: dojo.hitch(this, function() {
+							dojo.attr(cNode, "innerHTML", this._getLabelForChoice(binding, item));
+						})});
+					}
+					oc.show();
+				})}, dojo.create("span", null, divToUse));
+			
 			//Last option is the normal listing in a dropdown-menu
 			} else {
 				//Create an ItemFileReadStore with the correct language to use
@@ -240,9 +246,9 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 			 * values
 			 */
 			if (noCardinalityButtons !== true) {
-				this._addRemoveButton(fieldDiv, binding, fieldDiv, function() {
+				this._addRemoveButton(fieldDiv, binding, divToUse, function() {
 					fSelect && fSelect.set("value", "");
-					ddButton && ddButton.set("label", "browse");
+					cNode && dojo.attr(cNode, "innerHTML", "");
 				});
 			}
 		}
@@ -335,7 +341,11 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 		
 		var removeConnect = dojo.connect(remove, "onClick", function() {
 			if (cardTr.getCardinality() === 1) {
-				binding.setValue(null);
+				if (binding.getItem() instanceof rforms.template.Choice) {
+					binding.setChoice(null);					
+				} else {
+					binding.setValue(null);					
+				}
 				onReset();
 			} else {
 				dojo.disconnect(con);
@@ -389,67 +399,6 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 		});
 	},
 
-	
-	_displayChoiceTree: function(binding, button){
-		var item = binding.getItem();
-		this.toolTipNode = button.domNode;
-		var ontologyPopupWidget = new dijit.TooltipDialog();
-		var treeNode = dojo.create("div");
-		ontologyPopupWidget.set("content", treeNode);
-		var store = this._createChoiceStore(item); 
-		var tree = new dijit.Tree({store: store,
-								childrenAttr: ["children"], 
-								query: {top: true}}, treeNode);
-		tree.getLabelClass = function(item) {
-			if(item == null) {
-				return "";
-			}
-			var value = store.getValue(item, "d");
-			if(store.getValue(item, "selectable") === false)
-				return "notselectable";
-/*			var selected = filteringSelect.attr("value");
-			if (value == selected) {
-				return "currentselection";
-			}*/
-			return "default";
-		};
-		
-								
-		tree.onClick = function(item) {
-			if (store.getValue(item, "selectable") !== false) {
-				button.set('label',store.getValue(item,"label"));
-				binding.setValue(store.getValue(item,"d"));
-			}
-		};
-						
-		dijit.popup.open({popup: ontologyPopupWidget, around: button.domNode});
-		ontologyPopupWidget._onBlur = function() {
-				dijit.popup.close(ontologyPopupWidget);
-				this.toolTipNode = null;			
-		};
-		return tree;	
-/*		dojo.connect(node, "onClick",dojo.hitch(this, function(e){
-			if (this.toolTipNode === node) {
-				dijit.popup.close(ontologyPopupWidget);
-				this.toolTipNode = null;
-				return;
-			}
-				
-		}));
-*/		
-		/*if (this.toolTipNode === node) {
-				dijit.popup.close(this);
-				this.toolTipNode = null;
-				e.preventDefault();
-				return;
-			}
-			this.toolTipNode = node;
-			// stop the native click
-			this.tooltipDialog.attr("content", description.replace(/(\r\n|\r|\n)/g, "<br/>"));
-			e.preventDefault();
-			
-			dijit.focus(this.tooltipDialog.domNode);*/
-	},
 	_getLabelForChoice: function(binding, item) {
 		var choice = binding.getChoice();
 		if (choice) {
