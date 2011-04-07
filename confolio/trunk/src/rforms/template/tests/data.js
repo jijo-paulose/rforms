@@ -101,15 +101,15 @@ rforms.template.tests.template1 = {
 
 
 
-/*
 
-rforms.template.tests.template1 ={
+
+rforms.template.tests.template2 ={
  "label": {
   "en": "Default Base formlet in compound formlets",
   "sv": "Default formulet bas i sammansatta formuletter"
  },
  "cachedChoices": {
-  "http://localhost:8080/ontologies/Model0.rdf?constr=%7B%22http%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23type%22%3A%22http%3A%2F%2Fltsc.ieee.org%2Frdf%2Flomv1p0%2Flom%23InteractivityLevel%22%7D": [
+  "http://localhost:8080/ontologies/Model0.rdf?constr=%7B%22http%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23type%22%3A%7B%22uri%22%3A%22http%3A%2F%2Fltsc.ieee.org%2Frdf%2Flomv1p0%2Flom%23InteractivityLevel%22%7D%7D": [
    {
     "d": "http://ltsc.ieee.org/rdf/lomv1p0/vocabulary#InteractivityLevel-low",
     "top": true,
@@ -191,7 +191,7 @@ rforms.template.tests.template1 ={
     }
    }
   ],
-  "http://localhost:8080/ontologies/Model0.rdf?constr=%7B%22http%3A%2F%2Fwww.w3.org%2F2004%2F02%2Fskos%2Fcore%23inScheme%22%3A%22http%3A%2F%2Fwww.ehaweb.org%2Frdf%2F2011-passport%23CurriculumPassportScheme%22%7D%26pp%3Dhttp%3A%2F%2Fwww.w3.org%2F2004%2F02%2Fskos%2Fcore%23member": [
+  "http://localhost:8080/ontologies/Model0.rdf?constr=%7B%22http%3A%2F%2Fwww.w3.org%2F2004%2F02%2Fskos%2Fcore%23inScheme%22%3A%7B%22uri%22%3A%22http%3A%2F%2Fwww.ehaweb.org%2Frdf%2F2011-passport%23CurriculumPassportScheme%22%7D%7D&ipp=http%3A%2F%2Fwww.w3.org%2F2004%2F02%2Fskos%2Fcore%23member": [
    {
     "d": "http://www.ehaweb.org/rdf/2011-passport#Item4AE",
     "label": {"": "4Ae) Acute and chronic graft versus host disease"}
@@ -2975,9 +2975,5 @@ rforms.template.tests.template1 ={
     ]
    }
   ]
- },
- "ontologies": [
-  "http://localhost:8080/ontologies/Model0.rdf",
-  "http://localhost:8080/ontologies/Model0.rdf"
- ]
-}*/
+ }
+}

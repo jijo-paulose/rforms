@@ -19,14 +19,14 @@ dojo.declare("rforms.template.OntologyStore", null, {
 	},
 	getChoices: function(choiceUrl, callback) {
 		var choices = this._registry[choiceUrl];
-		if (choices !== undefined) {
-			if (callback === undefined) {
+		if (choices == null) {
+			//TODO load via xhr and deferred.			
+		} else {
+			if (callback == null) {
 				return choices;
 			} else {
 				callback(choices);				
 			}
-		} else {
-			//TODO load via xhr and deferred.
 		}
 	},
 

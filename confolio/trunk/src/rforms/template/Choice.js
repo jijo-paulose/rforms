@@ -30,7 +30,7 @@ dojo.declare("rforms.template.Choice", rforms.template.Item, {
 	 * @return {Array} of choices.
 	 */
 	getChoices: function() {
-		return this.getStaticChoices() || this.getDynamicChoices();
+		return this.getStaticChoices() || this.getDynamicChoices() || [];
 	},
 	/**
 	 * @return {Array} of choices defined manually in the Template.
@@ -58,7 +58,13 @@ dojo.declare("rforms.template.Choice", rforms.template.Item, {
 			}
 			this._dynamicChoicesUrl = this._source.ontologyUrl+"?"+params.join("&");
 		}
-		return this._ontologyStore.getChoices(this._dynamicChoicesUrl, callback);
+		var arrChoices = this._ontologyStore.getChoices(this._dynamicChoicesUrl, callback);
+		if (arrChoices == null) {
+			console.log("Failed lookup of choices for "+this.getLabel());
+			console.log("  OntologyUrl is: "+this._source.ontologyUrl);
+			console.log("  Looking up via url: "+this._dynamicChoicesUrl);
+		}
+		return arrChoices;
 	},
 	getOntologyUrl: function() {
 		return this._source.ontologyUrl;
