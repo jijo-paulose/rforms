@@ -39,9 +39,7 @@ dojo.declare("rforms.template.Item", rforms.template._BaseItem, {
 		return this._source.member;
 	},
 	/**
-	 * Allowed values are:				source.content[0].cardinality = {"min": 1, "max": 1, "pref": 1};
-				source.content[1].cardinality = {"min": 1, "max": 1, "pref": 1};
-
+	 * Allowed values are:
 	 * LITERAL, RESOURCE, URI, BLANK, PLAIN_LITERAL, ONLY_LITERAL, LANGUAGE_LITERAL, DATATYPE_LITERAL
 	 */
 	getNodetype: function() {

@@ -166,7 +166,7 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 					store: langStore,
 					searchAttr: "label"
 				}, langSpan);
-			languageSelector.set("value", binding.getLanguage());				
+			languageSelector.set("value", binding.getLanguage());
 			dojo.connect(languageSelector, "onChange", dojo.hitch(this, function(){
 					binding.setLanguage(languageSelector.getValue());
 				}));
@@ -226,7 +226,7 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 			} else {
 				//Create an ItemFileReadStore with the correct language to use
 				var store = this._createChoiceStore(item);
-				var spanToUse = dojo.create("span", null, fieldDiv);
+				var spanToUse = dojo.create("span", null, divToUse);
 				fSelect = new dijit.form.FilteringSelect({
 					store: store,
 					searchAttr: "label"
@@ -235,6 +235,8 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 				//Sets the value if any
 				if (binding.getValue()) {
 					fSelect.set("value", binding.getValue());
+				} else {
+					fSelect.set("value", "");
 				}
 				//Callback when the user edits the value
 				fSelect.onChange = dojo.hitch(this, function (newvalue) {
@@ -424,9 +426,20 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 		var itemsArray = [];
 		for (var i in objects){
 			var currentLabel = item._getLocalizedValue(objects[i].label);
-			var obj = dojo.clone(objects[i]);
-			obj.label = currentLabel.value;
+			var obj = {d: objects[i].d || (dojo.isString(objects[i].value) ? objects[i].value : objects[i].value.uri), label: currentLabel.value};
+			if (objects[i].top === true) {
+				obj.top = true;
+			}
+			if (objects[i].children != null) {
+				obj.children = dojo.clone(objects[i].children);
+			}
+			if (objects[i].selectable === false) {
+				obj.selectable = false;				
+			}
 			itemsArray.push(obj);
+		}
+		if (!(item.getCardinality().min > 0)) {
+			itemsArray.push({d: "", label: "", top: true});
 		}
 		var store = new rforms.view.SortedStore({
 			sortBy: "label",

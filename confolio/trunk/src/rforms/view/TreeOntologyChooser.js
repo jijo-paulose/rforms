@@ -94,18 +94,19 @@ dojo.declare("rforms.view.TreeOntologyChooser", [dijit.layout._LayoutWidget, dij
 		var objects = item.getChoices(), itemsArray = [];
 		for (var i in objects){
 			var currentLabel = item._getLocalizedValue(objects[i].label);
-			var obj = {d: objects[i].d, label: currentLabel.value};
+			var obj = {d: objects[i].d || (dojo.isString(objects[i].value) ? objects[i].value : objects[i].value.uri), label: currentLabel.value};
 			if (objects[i].top === true) {
 				obj.top = true;
 			}
 			if (objects[i].children != null) {
-				obj.children = objects[i].children;
+				obj.children = dojo.clone(objects[i].children);
 			}
 			if (objects[i].selectable === false) {
 				obj.selectable = false;				
 			}
 			itemsArray.push(obj);
 		}
+
 		var store = new rforms.view.SortedStore({
 			sortBy: "label",
 			data: {
