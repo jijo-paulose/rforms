@@ -20,7 +20,7 @@
 		dojo.require("rforms.view.Editor");
 		dojo.addOnLoad(function() {
 			var itemStore = new rforms.template.ItemStore();
-	 		var template = itemStore.createTemplate(rforms.template.tests.template1);
+	 		var template = itemStore.createTemplate(rforms.template.tests.template2);
 			var graph = new rdfjson.Graph(rdfjson.tests.graph2);
 			var binding = rforms.model.match(graph, "http://example.org/about", template);
 			new rforms.view.Editor({template: template, binding: binding}, "compactView");

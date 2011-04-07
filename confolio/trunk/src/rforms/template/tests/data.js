@@ -191,7 +191,7 @@ rforms.template.tests.template2 ={
     }
    }
   ],
-  "http://localhost:8080/ontologies/Model0.rdf?constr=%7B%22http%3A%2F%2Fwww.w3.org%2F2004%2F02%2Fskos%2Fcore%23inScheme%22%3A%7B%22uri%22%3A%22http%3A%2F%2Fwww.ehaweb.org%2Frdf%2F2011-passport%23CurriculumPassportScheme%22%7D%7D&ipp=http%3A%2F%2Fwww.w3.org%2F2004%2F02%2Fskos%2Fcore%23member": [
+  "http://localhost:8080/ontologies/Model0.rdf?constr=%7B%22http%3A%2F%2Fwww.w3.org%2F2004%2F02%2Fskos%2Fcore%23inScheme%22%3A%7B%22uri%22%3A%22http%3A%2F%2Fwww.ehaweb.org%2Frdf%2F2011-passport%23CurriculumPassportScheme%22%7D%7D&ipp=http%3A%2F%2Fwww.w3.org%2F2004%2F02%2Fskos%2Fcore%23member&ihp=http%3A%2F%2Fwww.w3.org%2F2004%2F02%2Fskos%2Fcore%23member": [
    {
     "d": "http://www.ehaweb.org/rdf/2011-passport#Item4AE",
     "label": {"": "4Ae) Acute and chronic graft versus host disease"}
@@ -1783,7 +1783,7 @@ rforms.template.tests.template2 ={
     "label": {"": "7Ed) Plasmapheresis "}
    }
   ],
-  "http://localhost:8080/ontologies/Model0.rdf?constr=%7B%22http%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23type%22%3A%22http%3A%2F%2Fltsc.ieee.org%2Frdf%2Flomv1p0%2Flom%23Difficulty%22%7D": [
+  "http://localhost:8080/ontologies/Model0.rdf?constr=%7B%22http%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23type%22%3A%7B%22uri%22%3A%22http%3A%2F%2Fltsc.ieee.org%2Frdf%2Flomv1p0%2Flom%23Difficulty%22%7D%7D" : [
    {
     "d": "http://ltsc.ieee.org/rdf/lomv1p0/vocabulary#Difficulty-veryDifficult",
     "top": true,
@@ -1865,7 +1865,7 @@ rforms.template.tests.template2 ={
     }
    }
   ],
-  "http://localhost:8080/ontologies/Model0.rdf?constr=%7B%22http%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23type%22%3A%22http%3A%2F%2Fltsc.ieee.org%2Frdf%2Flomv1p0%2Flom%23InteractivityType%22%7D": [
+  "http://localhost:8080/ontologies/Model0.rdf?constr=%7B%22http%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23type%22%3A%7B%22uri%22%3A%22http%3A%2F%2Fltsc.ieee.org%2Frdf%2Flomv1p0%2Flom%23InteractivityType%22%7D%7D": [
    {
     "d": "http://ltsc.ieee.org/rdf/lomv1p0/vocabulary#InteractivityType-mixed",
     "top": true,
@@ -1915,7 +1915,7 @@ rforms.template.tests.template2 ={
     }
    }
   ],
-  "http://localhost:8080/ontologies/Model0.rdf?constr=%7B%22http%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23type%22%3A%22http%3A%2F%2Fpurl.org%2Fdc%2Fterms%2FAgentClass%22%7D": [
+  "http://localhost:8080/ontologies/Model0.rdf?constr=%7B%22http%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23type%22%3A%7B%22uri%22%3A%22http%3A%2F%2Fpurl.org%2Fdc%2Fterms%2FAgentClass%22%7D%7D": [
    {
     "d": "http://ltsc.ieee.org/rdf/lomv1p0/vocabulary#IntendedEndUserRole-manager",
     "top": true,
@@ -2198,13 +2198,11 @@ rforms.template.tests.template2 ={
     "constraints": {"http://www.w3.org/1999/02/22-rdf-syntax-ns#type": {"uri": "http://ltsc.ieee.org/rdf/lomv1p0/lom#LangString"}}
    },
    {
-    "isparentpropertyinverted": true,
     "styles": [
      "ChoiceFormItem",
      "ExpandableTree"
     ],
     "nodetype": "URI",
-    "parentproperty": "http://www.w3.org/2004/02/skos/core#member",
     "cardinality": {
      "min": 0,
      "pref": 1
@@ -2214,7 +2212,11 @@ rforms.template.tests.template2 ={
     "property": "http://www.ehaweb.org/rdf/passport#passportSubfieldClassification",
     "description": {"en": "Points to a part of the EHA CV-passport that this resource deals with"},
     "constraints": {"http://www.w3.org/2004/02/skos/core#inScheme": {"uri": "http://www.ehaweb.org/rdf/2011-passport#CurriculumPassportScheme"}},
-    "ontologyUrl": "http://localhost:8080/ontologies/Model0.rdf"
+    "ontologyUrl": "http://localhost:8080/ontologies/Model0.rdf",
+	"parentproperty": "http://www.w3.org/2004/02/skos/core#member",
+	"hierarchyproperty": "http://www.w3.org/2004/02/skos/core#member",
+    "isparentpropertyinverted": true,
+	"ishierarchypropertyinverted": true
    },
    {
     "styles": ["ChoiceFormItem"],

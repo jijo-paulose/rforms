@@ -6,13 +6,13 @@ dojo.require("dijit.form.TextBox");
 dojo.require("dijit.form.DateTextBox");
 dojo.require("dijit.form.Button");
 dojo.require("dijit.form.FilteringSelect");
-dojo.require("dojo.data.ItemFileReadStore");
 dojo.require("rforms.template._BaseItem");
 dojo.require("dijit.form.RadioButton");
 dojo.require("dijit.form.DropDownButton");
 dojo.require("dijit.Tree");
 dojo.require("dijit.TooltipDialog");
 dojo.require("rforms.view.TreeOntologyChooser");
+dojo.require("rforms.view.SortedStore");
 
 rforms.template.uniqueRadioButtonNameNr = 0;
 
@@ -161,7 +161,7 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 		if(nodeType === "LANGUAGE_LITERAL" || nodeType === "PLAIN_LITERAL"){
 			var langSpan = dojo.create("span", null, controlDiv);
 			var langList = this._getLanguagesList();
-			var langStore = this._getItemFileReadStoreFromArray(langList,binding.getItem());
+			var langStore = this._getStoreFromArray(langList,binding.getItem());
 			var languageSelector = new dijit.form.FilteringSelect({
 					store: langStore,
 					searchAttr: "label"
@@ -210,8 +210,8 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 			var fSelect, cNode, dialog;
 			//Check if a tree-hierarchy should be created
 			if(hierarchy){
-				cNode = dojo.create("span", null, divToUse);
-				dojo.attr(cNode, "innerHTML", this._getLabelForChoice(binding, item));				
+				cNode = dojo.create("div", {"class": "choiceValue"}, divToUse);
+				dojo.attr(cNode, "innerHTML", this._getLabelForChoice(binding, item) || "");				
 				var oc;
 				var ddButton = new dijit.form.Button({label:  "Browse", onClick: dojo.hitch(this, function() {
 					if (oc == null) {
@@ -410,17 +410,17 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 	 * a ItemFileReadStore that is returned
 	 */
 	_createChoiceStore: function(/*Choice*/ item){
-		return this._getItemFileReadStoreFromArray(item.getChoices(), item);
+		return this._getStoreFromArray(item.getChoices(), item);
 	},
 	/*
 	 * From an array of choices that contains value and labels an 
-	 * ItemFileReadStore is created and returned. The object inside 
+	 * DataStore is created and returned. The object inside 
 	 * the array should have the following structure:
 	 *  {"d": "Value",
 	 *  "label": {"en": "English-label", "sv": "Svensk label"}
 	 * }
 	 */
-	_getItemFileReadStoreFromArray: function(/*Array of objects*/objects, /*The item*/ item){
+	_getStoreFromArray: function(/*Array of objects*/objects, /*The item*/ item){
 		var itemsArray = [];
 		for (var i in objects){
 			var currentLabel = item._getLocalizedValue(objects[i].label);
@@ -428,7 +428,8 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 			obj.label = currentLabel.value;
 			itemsArray.push(obj);
 		}
-		var store = dojo.data.ItemFileReadStore({
+		var store = new rforms.view.SortedStore({
+			sortBy: "label",
 			data: {
 				identifier: "d",
 				label: "label",

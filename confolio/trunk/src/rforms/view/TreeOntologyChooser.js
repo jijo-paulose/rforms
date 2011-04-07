@@ -25,7 +25,7 @@ dojo.require("dijit.layout.ContentPane");
 dojo.require("dijit.layout.BorderContainer");
 dojo.require("dijit.form.Button");
 dojo.require("dijit.Tree");
-dojo.require("dojo.data.ItemFileReadStore");
+dojo.require("rforms.view.SortedStore");
 
 dojo.declare("rforms.view.TreeOntologyChooser", [dijit.layout._LayoutWidget, dijit._Templated], {
 	templatePath: dojo.moduleUrl("rforms.view", "TreeOntologyChooserTemplate.html"),
@@ -60,7 +60,7 @@ dojo.declare("rforms.view.TreeOntologyChooser", [dijit.layout._LayoutWidget, dij
 	postCreate: function() {
 		this.inherited("postCreate", arguments);
 		this._choices = this.binding.getItem().getChoices();
-		this._store = this._getItemFileReadStoreFromArray(this._choices, this.binding.getItem());
+		this._store = this._getStoreFromArray(this._choices, this.binding.getItem());
 		this._showAsTree(this.binding);
 		this.bc.startup();
 	},
@@ -84,13 +84,13 @@ dojo.declare("rforms.view.TreeOntologyChooser", [dijit.layout._LayoutWidget, dij
 
 	/*
 	 * From an array of choices that contains value and labels an 
-	 * ItemFileReadStore is created and returned. The object inside 
+	 * DataStore is created and returned. The object inside 
 	 * the array should have the following structure:
 	 *  {"d": "Value",
 	 *  "label": {"en": "English-label", "sv": "Svensk label"}
 	 * }
 	 */
-	_getItemFileReadStoreFromArray: function(/*Array of objects*/objects, /*The item*/ item){
+	_getStoreFromArray: function(/*Array of objects*/objects, /*The item*/ item){
 		var objects = item.getChoices(), itemsArray = [];
 		for (var i in objects){
 			var currentLabel = item._getLocalizedValue(objects[i].label);
@@ -106,7 +106,8 @@ dojo.declare("rforms.view.TreeOntologyChooser", [dijit.layout._LayoutWidget, dij
 			}
 			itemsArray.push(obj);
 		}
-		var store = dojo.data.ItemFileReadStore({
+		var store = new rforms.view.SortedStore({
+			sortBy: "label",
 			data: {
 				identifier: "d",
 				label: "label",
@@ -126,7 +127,7 @@ dojo.declare("rforms.view.TreeOntologyChooser", [dijit.layout._LayoutWidget, dij
 			}
 			var value = this._store.getValue(item, "d");
 			if(this._store.getValue(item, "selectable") === false) {
-				return "notselectable";				
+				return "notselectable";
 			} if (this.binding.getChoice() && this.binding.getChoice().d === value) {
 				return "currentselection";				
 			}

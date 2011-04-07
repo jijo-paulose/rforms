@@ -121,3 +121,17 @@
  .rforms.editor .fieldInput {
  	width: 100%;
  }
+ 
+ .rforms.editor .choiceValue {
+ 	display: inline-block;
+	zoom:1;
+	*display: inline;
+	background: whitesmoke;
+	min-width: 5em;
+	min-height: 1em;
+	padding: 2px;
+	padding-left: 4px;
+	padding-right: 4px;
+	max-width: 20em;
+	border: 1px solid lightgrey;
+ }
