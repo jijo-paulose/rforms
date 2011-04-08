@@ -48,6 +48,8 @@ dojo.declare("rforms.template._BaseItem", null, {
 	_getLocalizedValue: function(hash) {
 		if (hash == null) {
 			return {precision: "none"};
+		} else if (dojo.isString(hash)) {
+			return {value: hash, precision: "nolang", lang: ""};
 		} else if (hash.hasOwnProperty(dojo.locale)) {
 			return {value: hash[dojo.locale], precision: "exact", lang: dojo.locale};
 		} else {

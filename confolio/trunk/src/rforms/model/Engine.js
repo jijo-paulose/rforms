@@ -331,7 +331,7 @@ rforms.model._createStatementsForConstraints = function(graph, uri, item) {
 rforms.model._findChoice = function(item, obj) {
 	var index, choices = item.getChoices();
 	for (index = 0;index < choices.length;index++) {
-		if (choices[index].d === obj) {
+		if (choices[index].value === obj) {
 			return choices[index];
 		}
 	}

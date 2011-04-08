@@ -1,6 +1,7 @@
 /*global dojo, rforms*/
 dojo.provide("rforms.template.tests.data");
 
+//For unit testing purposes, hands off!
 rforms.template.tests.template1 = {
 	"label":{"en":"Bibliography", "sv":"Bibliografi"},
 	"description":{"en":"Some nice information about books", "sv":"Lite trevlig bokinformation"},
@@ -89,13 +90,143 @@ rforms.template.tests.template1 = {
 	"ontologies":["http://example.ru/library.rdf"],
 	"cachedChoices": {
 		"http://example.com/bookOntology?constr=%7B%22http%3A%2F%2Fwww.w3.org%2F2004%2F02%2Fskos%2Fcore%23inScheme%22%3A%22http%3A%2F%2Fexample.com%2FbookSubjects%22%7D&pp=http%3A%2F%2Fsomething.se%2Fdoh&hp=http%3A%2F%2Fsomethingel.se%2Fdoh":
-			[{"top":true, d: "http://example.com/instanceTop", selectable: false, label: {"sv": "Toppen", "en":"Ze top!"}, children:[
+			[{"top":true, value: "http://example.com/instanceTop", selectable: false, label: {"sv": "Toppen", "en":"Ze top!"}, children:[
 			    {"_reference": "http://example.com/instance1"},{"_reference": "http://example.com/instance2"}]},
-			 {d: "http://example.com/instance1", label: {"sv": "Matematik", "en":"Mathematics"}, description: {"sv": "Matematik är ett coolt ämne", "en":"Mathematics is a cool subject"}},
-			 {d: "http://example.com/instance2", label: {"sv": "Kemi", "en":"Chemistry"}}],
+			 {value: "http://example.com/instance1", label: {"sv": "Matematik", "en":"Mathematics"}, description: {"sv": "Matematik är ett coolt ämne", "en":"Mathematics is a cool subject"}},
+			 {value: "http://example.com/instance2", label: {"sv": "Kemi", "en":"Chemistry"}}],
 		"http://example.com/DCOntology?constr=%7B%22http%3A%2F%2Fwww.w3.org%2F2004%2F02%2Fskos%2Fcore%23inScheme%22%3A%22http%3A%2F%2Fexample.com%2FauthorPredicates%22%7D":
-			[{d: "http://purl.org/dc/terms/creator", label: {"sv": "Skapare", "en":"Creator"}},
-			 {d: "http://purl.org/dc/terms/contributor", label: {"sv": "Bidragare", "en":"Contributor"}}]
+			[{value: "http://purl.org/dc/terms/creator", label: {"sv": "Skapare", "en":"Creator"}},
+			 {value: "http://purl.org/dc/terms/contributor", label: {"sv": "Bidragare", "en":"Contributor"}}]
+	}
+};
+
+rforms.template.tests.template2 = {
+	"label":{"en":"Bibliography", "sv":"Bibliografi"},
+	"description":{"en":"Some nice information about books", "sv":"Lite trevlig bokinformation"},
+	"root":{"@type":"group",
+		"@id":"http://example.ch/books/book",
+		"label":{"en":"Book"},
+		"constraints":{"http://www.w3.org/TR/rdf-schema/type":"http://xmlns.com/foaf/0.1/Document"},
+		"nodetype":"RESOURCE",
+		"content":[
+			{"@id":"http://example.ch/people.sirff#author"},
+			{
+				"@type":"text",
+				"label":{"en":"Title"},
+				"nodetype":"LANGUAGE_LITERAL",
+				"property":"http://purl.org/dc/terms/title",
+				"cardinality": {"min": 2, "pref": "4", "max": 5}
+			},
+			{"@id":"publisheddate"},
+			{"@id":"subjectVocab"},
+			{"@id":"http://example.ch/people.sirff#contribution"}
+		]
+	},
+	"auxilliary":[
+		{
+			"@id":"publisheddate",
+			"@type":"text",
+			"label":{"en":"Published"},
+			"description":{"en":"The date this book was first published"},
+			"nodetype":"LITERAL",
+			"datatype":"http://www.w3.org/2001/XMLSchema.xsd#date",
+			"property":"http://purl.org/dc/terms/date"
+		},{
+			"@id":"subjectVocab",
+			"@type":"choice",
+			"label":{"en":"Subject"},
+			"description":{"en":"The book's subject"},
+			"nodetype":"RESOURCE",
+			"constraints": {"http://www.w3.org/2004/02/skos/core#inScheme":"http://example.com/bookSubjects"},
+			"ontologyUrl": "http://example.com/bookOntology",
+			"property":"http://purl.org/dc/terms/subject",
+			"cardinality": {"min": 0, "max": 1},
+			"parentproperty": "http://something.se/doh",
+			"hierarchyproperty": "http://somethingel.se/doh"
+		},{
+			"@id":"http://example.ch/people.sirff#author",
+			"@type":"group",
+			"label":{"en":"Author"},
+			"description":{"en":"The author of the book"},
+			"property":"http://purl.org/dc/terms/publisher",
+			"cardinality": {"min": 0, "max": 5},
+			"constraints":{"http://www.w3.org/TR/rdf-schema/type":"http://xmlns.com/foaf/0.1/Person"},
+			"nodetype":"RESOURCE",
+			"cls": ["table", "firstcolumnfixedtable"],
+			"content":[
+				{
+			      "styles": ["ChoiceFormItem"],
+				  "cls": ["noneditable"],
+			      "nodetype": "URI",
+			      "cardinality": {
+			       "min": 0,
+			       "pref": 1,
+			       "max": 1
+			      },
+			      "label": {"en": "Creative Commons"},
+			      "@type": "choice",
+			      "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#value",
+			      "choices": [
+			       {
+			        "value": "http://creativecommons.org/licenses/by/3.0/",
+			        "label": {"en": "The owner ALLOWS commercial uses AND changes to the resource"}
+			       },
+			       {
+			        "value": "http://creativecommons.org/licenses/by-nd/3.0/",
+			        "label": {"en": "The owner ALLOWS commercial uses but does NOT allow changes to the resource"}
+			       },
+			       {
+			        "value": "http://creativecommons.org/licenses/by-nc/3.0/",
+			        "label": {"en": "The owner does NOT allow commercial uses but ALLOWS changes to the resource"}
+			       },
+			       {
+			        "value": "http://creativecommons.org/licenses/by-nc-nd/3.0/",
+			        "label": {"en": "The owner does NOT allow commercial uses OR changes to the resource"}
+			       }
+			      ]
+			    },
+			
+				{
+					"@type":"text",
+					"property":"http://xmlns.com/foaf/0.1/firstName",
+					"label":{"en":"First name"},
+					"nodetype":"LITERAL"
+				},{
+					"@type":"text",
+					"property":"http://xmlns.com/foaf/0.1/surname",
+					"label":{"en":"Surname"},
+					"nodetype":"LITERAL"
+				}
+			]
+		},{
+			"@id":"http://example.ch/people.sirff#contribution",
+			"@type":"propertygroup",
+			"label":{"en":"Contribution"},
+			"description":{"en":"A person who has contributed"},
+			"content":[
+				{
+					"@type":"choice",
+					"label":{"en":"Type"},
+					"cardinality": {"min": 0, "max": 1},
+					"description":{"en":"Type of contribution"},
+					"nodetype":"RESOURCE",
+					"constraints": {"http://www.w3.org/2004/02/skos/core#inScheme":"http://example.com/authorPredicates"},
+					"ontologyUrl": "http://example.com/DCOntology"
+				},
+				{"@id":"http://example.ch/people.sirff#author"}
+			]
+		}
+	],
+	"ontologies":["http://example.ru/library.rdf"],
+	"cachedChoices": {
+		"http://example.com/bookOntology?constr=%7B%22http%3A%2F%2Fwww.w3.org%2F2004%2F02%2Fskos%2Fcore%23inScheme%22%3A%22http%3A%2F%2Fexample.com%2FbookSubjects%22%7D&pp=http%3A%2F%2Fsomething.se%2Fdoh&hp=http%3A%2F%2Fsomethingel.se%2Fdoh":
+			[{"top":true, value: "http://example.com/instanceTop", selectable: false, label: {"sv": "Toppen", "en":"Ze top!"}, children:[
+			    {"_reference": "http://example.com/instance1"},{"_reference": "http://example.com/instance2"}]},
+			 {value: "http://example.com/instance1", label: {"sv": "Matematik", "en":"Mathematics"}, description: {"sv": "Matematik är ett coolt ämne", "en":"Mathematics is a cool subject"}},
+			 {value: "http://example.com/instance2", label: {"sv": "Kemi", "en":"Chemistry"}}],
+		"http://example.com/DCOntology?constr=%7B%22http%3A%2F%2Fwww.w3.org%2F2004%2F02%2Fskos%2Fcore%23inScheme%22%3A%22http%3A%2F%2Fexample.com%2FauthorPredicates%22%7D":
+			[{value: "http://purl.org/dc/terms/creator", label: {"sv": "Skapare", "en":"Creator"}},
+			 {value: "http://purl.org/dc/terms/contributor", label: {"sv": "Bidragare", "en":"Contributor"}}]
 	}
 };
 
@@ -103,7 +234,7 @@ rforms.template.tests.template1 = {
 
 
 
-rforms.template.tests.template2 ={
+rforms.template.tests.template3 ={
  "label": {
   "en": "Default Base formlet in compound formlets",
   "sv": "Default formulet bas i sammansatta formuletter"
@@ -111,7 +242,7 @@ rforms.template.tests.template2 ={
  "cachedChoices": {
   "http://localhost:8080/ontologies/Model0.rdf?constr=%7B%22http%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23type%22%3A%7B%22uri%22%3A%22http%3A%2F%2Fltsc.ieee.org%2Frdf%2Flomv1p0%2Flom%23InteractivityLevel%22%7D%7D": [
    {
-    "d": "http://ltsc.ieee.org/rdf/lomv1p0/vocabulary#InteractivityLevel-low",
+    "value": "http://ltsc.ieee.org/rdf/lomv1p0/vocabulary#InteractivityLevel-low",
     "top": true,
     "label": {
      "hu": "2: alacsony",
@@ -127,7 +258,7 @@ rforms.template.tests.template2 ={
     }
    },
    {
-    "d": "http://ltsc.ieee.org/rdf/lomv1p0/vocabulary#InteractivityLevel-medium",
+    "value": "http://ltsc.ieee.org/rdf/lomv1p0/vocabulary#InteractivityLevel-medium",
     "top": true,
     "label": {
      "hu": "3: közepes",
@@ -143,7 +274,7 @@ rforms.template.tests.template2 ={
     }
    },
    {
-    "d": "http://ltsc.ieee.org/rdf/lomv1p0/vocabulary#InteractivityLevel-veryLow",
+    "value": "http://ltsc.ieee.org/rdf/lomv1p0/vocabulary#InteractivityLevel-veryLow",
     "top": true,
     "label": {
      "hu": "1: nagyon alacsony",
@@ -159,7 +290,7 @@ rforms.template.tests.template2 ={
     }
    },
    {
-    "d": "http://ltsc.ieee.org/rdf/lomv1p0/vocabulary#InteractivityLevel-high",
+    "value": "http://ltsc.ieee.org/rdf/lomv1p0/vocabulary#InteractivityLevel-high",
     "top": true,
     "label": {
      "hu": "4: magas",
@@ -175,7 +306,7 @@ rforms.template.tests.template2 ={
     }
    },
    {
-    "d": "http://ltsc.ieee.org/rdf/lomv1p0/vocabulary#InteractivityLevel-veryHigh",
+    "value": "http://ltsc.ieee.org/rdf/lomv1p0/vocabulary#InteractivityLevel-veryHigh",
     "top": true,
     "label": {
      "hu": "5: nagyon magas",
@@ -193,15 +324,15 @@ rforms.template.tests.template2 ={
   ],
   "http://localhost:8080/ontologies/Model0.rdf?constr=%7B%22http%3A%2F%2Fwww.w3.org%2F2004%2F02%2Fskos%2Fcore%23inScheme%22%3A%7B%22uri%22%3A%22http%3A%2F%2Fwww.ehaweb.org%2Frdf%2F2011-passport%23CurriculumPassportScheme%22%7D%7D&ipp=http%3A%2F%2Fwww.w3.org%2F2004%2F02%2Fskos%2Fcore%23member&ihp=http%3A%2F%2Fwww.w3.org%2F2004%2F02%2Fskos%2Fcore%23member": [
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item4AE",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item4AE",
     "label": {"": "4Ae) Acute and chronic graft versus host disease"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item2AK",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item2AK",
     "label": {"": "2Ak) Other Myeloproliferative and Myelodysplastic disorders including pediatric disorders (e.g. JMML)"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#SectionClinicalHematologyStemCellTransplantationAndSpecialTherapy",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#SectionClinicalHematologyStemCellTransplantationAndSpecialTherapy",
     "label": {"": "4) Clinical Hematology: Stem Cell Transplantation and Special Therapy"},
     "children": [
      {"_reference": "http://www.ehaweb.org/rdf/2011-passport#TreatmentOfHematologicalDisorders"},
@@ -213,19 +344,19 @@ rforms.template.tests.template2 ={
     "selectable": false
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item1EA",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item1EA",
     "label": {"": "1Ea) Genetic counseling"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item7DG",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item7DG",
     "label": {"": "7DG?"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item3AC",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item3AC",
     "label": {"": "3Ac) Burkitt´s lymphoma"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#AcuteMyeloidLeukemiaAndLeukemiasOfAmbiguousLineage",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#AcuteMyeloidLeukemiaAndLeukemiasOfAmbiguousLineage",
     "label": {"": "2B) Acute Myeloid Leukemia and Leukemias of Ambiguous Lineage"},
     "children": [
      {"_reference": "http://www.ehaweb.org/rdf/2011-passport#Item2BF"},
@@ -238,11 +369,11 @@ rforms.template.tests.template2 ={
     "selectable": false
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item4AC",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item4AC",
     "label": {"": "4Ac) Administration of high-dose therapy"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#EndOfLife",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#EndOfLife",
     "label": {"": "8H) End Of Life"},
     "children": [
      {"_reference": "http://www.ehaweb.org/rdf/2011-passport#Item8HE"},
@@ -256,35 +387,35 @@ rforms.template.tests.template2 ={
     "selectable": false
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item4BB",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item4BB",
     "label": {"": "4Bb) Clinical potential and limits of gene therapy"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item8HC",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item8HC",
     "label": {"": "8Hc) Recognizing physical, psychological, social or spiritual distress and identifying the need for specialist palliative care"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item7DD",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item7DD",
     "label": {"": "7Dd) Rate and conditions of administration and monitoring"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item8AG",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item8AG",
     "label": {"": "8Ag) Strategic and economic implications of combining drugs and clinical biomarkers (personalized medicine)"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item6ED",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item6ED",
     "label": {"": "6Ed) Post-thrombotic complications"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item1AD",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item1AD",
     "label": {"": "1Ad) Pure red cell aplasia"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item2BB",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item2BB",
     "label": {"": "2Bb) AML with MDS related changes"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#PsychosocialIssues",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#PsychosocialIssues",
     "label": {"": "8F) Psychosocial Issues"},
     "children": [
      {"_reference": "http://www.ehaweb.org/rdf/2011-passport#Item8FB"},
@@ -294,7 +425,7 @@ rforms.template.tests.template2 ={
     "selectable": false
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#BloodDonation",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#BloodDonation",
     "label": {"": "7A) Blood Donation"},
     "children": [
      {"_reference": "http://www.ehaweb.org/rdf/2011-passport#Item7AB"},
@@ -305,15 +436,15 @@ rforms.template.tests.template2 ={
     "selectable": false
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item1AL",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item1AL",
     "label": {"": "1Al) Erythrocytosis (other than PV)"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item1EC",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item1EC",
     "label": {"": "1Ec) Hematological manifestations of non hematological disorders"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#EthicsAndLaw",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#EthicsAndLaw",
     "label": {"": "8D) Ethics and Law"},
     "children": [
      {"_reference": "http://www.ehaweb.org/rdf/2011-passport#Item8DD"},
@@ -328,35 +459,35 @@ rforms.template.tests.template2 ={
     "selectable": false
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item8EA",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item8EA",
     "label": {"": "8Ea) Communication with patients with hematological disorders (including communicating sad, bad and difficult information and managing patients with different cultural backgrounds)"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item7EA",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item7EA",
     "label": {"": "7Ea) Hemolytic disease of the newborn"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item7CC",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item7CC",
     "label": {"": "7Cc) Blood derivatives (incl. immunoglobulins)"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item8HD",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item8HD",
     "label": {"": "8Hd) Potential indicators of the quality of end-of-life care "}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item6CE",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item6CE",
     "label": {"": "6Ce) Other bleeding disorders (e.g. deficiency of factor XIII,  XI, X, VII, V and II, and hypofibrinogenaemia)"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item6DC",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item6DC",
     "label": {"": "6Dc) Heparin-induced thrombocytopenia "}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item3AD",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item3AD",
     "label": {"": "3Ad) Other aggressive B-cell lymphomas (e.g. unclassifiable, primary mediastinal large B-cell lymphoma, intravascular, plasmablastic, ALK+ large B-cell lymphoma)"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#GoodLaboratoryPractice",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#GoodLaboratoryPractice",
     "label": {"": "5B) Good Laboratory Practice"},
     "children": [
      {"_reference": "http://www.ehaweb.org/rdf/2011-passport#Item5BA"},
@@ -367,31 +498,31 @@ rforms.template.tests.template2 ={
     "selectable": false
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item3BB",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item3BB",
     "label": {"": "3Bb) Peripheral T-cell lymphoma, NOS"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item7AD",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item7AD",
     "label": {"": "7Ad) Preparation and preservation of standard and special blood components (Whole Blood; Red cells; Plasma; Platelets. Cryoprecipitate; irradiated; leukocyte depleted; washed; pathogen reduced; Pediatric Units)"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item3BA",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item3BA",
     "label": {"": "3Ba) Acute lymphoblastic leukemia/lymphoblastic lymphoma of T-cell origin"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item8HG",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item8HG",
     "label": {"": "8Hg) The national legal requirements regarding euthanasia "}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item5AA",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item5AA",
     "label": {"": "5Aa) Hematopoiesis"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item3AB",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item3AB",
     "label": {"": "3Ab) Diffuse large B-cell lymphoma"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#GeneticsAndMolecularBiology",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#GeneticsAndMolecularBiology",
     "label": {"": "5F) Genetics and Molecular Biology"},
     "children": [
      {"_reference": "http://www.ehaweb.org/rdf/2011-passport#Item5FA"},
@@ -402,59 +533,59 @@ rforms.template.tests.template2 ={
     "selectable": false
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item7BC",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item7BC",
     "label": {"": "7Bc) Minor red cell antigens and antibodies "}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item8GB",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item8GB",
     "label": {"": "8Gb) The impact of age on the pharmacodynamics, pharmacokinetics and risks of drugs used to treat hematologic disorders "}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item8FC",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item8FC",
     "label": {"": "8Fc) Patients’ rights according  to national legislation"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item3ED",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item3ED",
     "label": {"": "3Ed) Monoclonal immunoglobulin deposition diseases (amyloidosis)"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item3BD",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item3BD",
     "label": {"": "3Bd) Other T- and NK-cell lymphomas (incl. AILT, T-PLL, T-LGL, NK-cell lymphoma/leukemia)"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item5AE",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item5AE",
     "label": {"": "5Ae) Basic concepts of transcription and translation, epigenetic regulation, signal transduction, cell cycle regulation and apoptosis"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item4CE",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item4CE",
     "label": {"": "4Ce) Hematological malignancies in pregnancy"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item6AC",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item6AC",
     "label": {"": "6Ac) Establishing ranges, including relevance to gender and age"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item1AN",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item1AN",
     "label": {"": "1An) Secondary hemochromatosis"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item6EF",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item6EF",
     "label": {"": "6Ef) Acquired thrombotic tendency, (e.g. APS, HIT, PNH and MPN) "}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item8HA",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item8HA",
     "label": {"": "8Ha) Communication with patients and family about death and dying"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item2BD",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item2BD",
     "label": {"": "2Bd) Other AML"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item6DA",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item6DA",
     "label": {"": "6Da) Platelet structure, function and vessel wall interactions"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#BloodCountAndMorphology",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#BloodCountAndMorphology",
     "label": {"": "5C) Blood Count and Morphology"},
     "children": [
      {"_reference": "http://www.ehaweb.org/rdf/2011-passport#Item5CB"},
@@ -468,51 +599,51 @@ rforms.template.tests.template2 ={
     "selectable": false
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item1AJ",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item1AJ",
     "label": {"": "1Aj) Acquired non-immune hemolytic anemias"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item6AA",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item6AA",
     "label": {"": "6Aa) Techniques for assessing coagulation and platelets"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item7EI",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item7EI",
     "label": {"": "7Ei) Multi-component collection "}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item3EB",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item3EB",
     "label": {"": "3Eb) Solitary plasmacytoma "}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item8CD",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item8CD",
     "label": {"": "8Cd) Procedures and systematic post-marketing surveillance studies aimed at assessing the full safety profile of drugs (e.g., risk management plan, risk evaluation mitigation strategy, post-authorization safety studies)"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item1DA",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item1DA",
     "label": {"": "1Da) Acquired platelet function disorders"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item5CC",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item5CC",
     "label": {"": "5Cc) Preparation, fixation, staining, reading and reporting of peripheral blood smears and bone marrow aspirates"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item8HE",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item8HE",
     "label": {"": "8He) Collaboration of the multi-professional team with patients and family"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item1AG",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item1AG",
     "label": {"": "1Ag) Red blood cell membrane disorders (e.g.Spherocytosis)"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item4DD",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item4DD",
     "label": {"": "4Dd) Cytomegalovirus (CMV) infection"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item5EB",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item5EB",
     "label": {"": "5Eb) Essential cellular markers applied in the diagnosis of hematological conditions (e.g. lineage, progenitor and differentiation markers)"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#AdministrationOfTransfusionAndManagementOfComplications",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#AdministrationOfTransfusionAndManagementOfComplications",
     "label": {"": "7D) Administration of Transfusion and Management of Complications"},
     "children": [
      {"_reference": "http://www.ehaweb.org/rdf/2011-passport#Item7DA"},
@@ -527,7 +658,7 @@ rforms.template.tests.template2 ={
     "selectable": false
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#MyeloproliferativeAndMyelodysplasticNeoplasms",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#MyeloproliferativeAndMyelodysplasticNeoplasms",
     "label": {"": "2A) Myeloproliferative and Myelodysplastic Neoplasms"},
     "children": [
      {"_reference": "http://www.ehaweb.org/rdf/2011-passport#Item2AI"},
@@ -545,23 +676,23 @@ rforms.template.tests.template2 ={
     "selectable": false
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item5FC",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item5FC",
     "label": {"": "5Fc) Other techniques for detection of genetic and epigenetic aberrations (e.g. Western blot, CGH, SNP, gene expression profiling, high-throughput sequencing, microRNA assays, methylation studies, proteomics)"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item2AH",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item2AH",
     "label": {"": "2Ah) CMML"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item7CE",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item7CE",
     "label": {"": "7Ce) Massive transfusion (in surgery, trauma, pregnancy, etc)"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item6CC",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item6CC",
     "label": {"": "6Cc) Hemophilia A and B"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#AcquiredBleedingDisorders",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#AcquiredBleedingDisorders",
     "label": {"": "6B) Acquired Bleeding Disorders"},
     "children": [
      {"_reference": "http://www.ehaweb.org/rdf/2011-passport#Item6BF"},
@@ -575,11 +706,11 @@ rforms.template.tests.template2 ={
     "selectable": false
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item5AB",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item5AB",
     "label": {"": "5Ab) Stem cell biology"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#TreatmentOfHematologicalDisorders",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#TreatmentOfHematologicalDisorders",
     "label": {"": "4C) Treatment of Hematological Disorders"},
     "children": [
      {"_reference": "http://www.ehaweb.org/rdf/2011-passport#Item4CB"},
@@ -591,27 +722,27 @@ rforms.template.tests.template2 ={
     "selectable": false
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item8DA",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item8DA",
     "label": {"": "8Da) Principles of medical ethics central to the physician-patient relationship (e.g., principle of primacy of patients’ welfare, patients’ autonomy, social justice) "}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item8AA",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item8AA",
     "label": {"": "8Aa) Fundamental principles of evidence based medicine"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item4EC",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item4EC",
     "label": {"": "4Ec) Superior vena cava syndrome "}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item2AJ",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item2AJ",
     "label": {"": "2Aj) MDS intermediate and high risk disease"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item3DA",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item3DA",
     "label": {"": "3Da) Lymphomas in immunodeficient patients (incl. PTLD, HIV-associated lymphomas)"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#BoneMarrowFailure",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#BoneMarrowFailure",
     "label": {"": "1B) Bone Marrow Failure"},
     "children": [
      {"_reference": "http://www.ehaweb.org/rdf/2011-passport#Item1BD"},
@@ -622,11 +753,11 @@ rforms.template.tests.template2 ={
     "selectable": false
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item3AI",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item3AI",
     "label": {"": "3Ai) Chronic lymphocytic leukemia/small lymphocytic lymphoma/monoclonal B cell lymphocytosis"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#SectionGeneralSkills",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#SectionGeneralSkills",
     "label": {"": "8) General Skills"},
     "children": [
      {"_reference": "http://www.ehaweb.org/rdf/2011-passport#CommunicationSkills"},
@@ -641,39 +772,39 @@ rforms.template.tests.template2 ={
     "selectable": false
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item7BA",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item7BA",
     "label": {"": "7Ba) Cross matching, direct and indirect antiglobulin (Coombs) tests, ABO and Rh typing of red blood cells"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item3CA",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item3CA",
     "label": {"": "3Ca) Nodular lymphocyte predominant HL "}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item8HB",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item8HB",
     "label": {"": "8Hb) Decision making related to end-of-life situations"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item1BC",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item1BC",
     "label": {"": "1Bc) Fanconi’s anemia"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item2BC",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item2BC",
     "label": {"": "2Bc) Therapy related AML and MDS"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item5CF",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item5CF",
     "label": {"": "5Cf) Histopathology in regard to hematological conditions. Review of trephine biopsy, pathological lymph node and other tissue biopsies for diagnosis with a pathologist"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item6EB",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item6EB",
     "label": {"": "6Eb) Venous thromboembolism"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item6EJ",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item6EJ",
     "label": {"": "6Ej) Adverse drug reactions to anticoagulant, antiplatelet and thrombolytic therapy "}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#CellAndGeneTherapy",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#CellAndGeneTherapy",
     "label": {"": "4B) Cell and Gene Therapy"},
     "children": [
      {"_reference": "http://www.ehaweb.org/rdf/2011-passport#Item4BD"},
@@ -684,7 +815,7 @@ rforms.template.tests.template2 ={
     "selectable": false
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#ConsultativeHematology",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#ConsultativeHematology",
     "label": {"": "1E) Consultative Hematology"},
     "children": [
      {"_reference": "http://www.ehaweb.org/rdf/2011-passport#Item1EC"},
@@ -696,15 +827,15 @@ rforms.template.tests.template2 ={
     "selectable": false
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item3AF",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item3AF",
     "label": {"": "3Af) Follicular lymphoma"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item3AA",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item3AA",
     "label": {"": "3Aa) Acute lymphoblastic leukemia/lymphoblastic lymphoma of B-cell origin"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#SectionClinicalHematologyLymphoidMalignanciesAndPlasmaCellDisorders",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#SectionClinicalHematologyLymphoidMalignanciesAndPlasmaCellDisorders",
     "label": {"": "3) Clinical Hematology: Lymphoid Malignancies and Plasma Cell Disorders"},
     "children": [
      {"_reference": "http://www.ehaweb.org/rdf/2011-passport#T-CellLymphomasAndNK-CellNeoplasms"},
@@ -716,7 +847,7 @@ rforms.template.tests.template2 ={
     "selectable": false
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#BasicConcepts",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#BasicConcepts",
     "label": {"": "5A) Basic Concepts"},
     "children": [
      {"_reference": "http://www.ehaweb.org/rdf/2011-passport#Item5AE"},
@@ -729,7 +860,7 @@ rforms.template.tests.template2 ={
     "selectable": false
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Immunohematology",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Immunohematology",
     "label": {"": "7B) Immunohematology"},
     "children": [
      {"_reference": "http://www.ehaweb.org/rdf/2011-passport#Item7BC"},
@@ -739,15 +870,15 @@ rforms.template.tests.template2 ={
     "selectable": false
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item4BD",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item4BD",
     "label": {"": "4Bd) Tumor vaccines"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item3CB",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item3CB",
     "label": {"": "3Cb) Classical HL"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#LaboratoryManagement",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#LaboratoryManagement",
     "label": {"": "6A) Laboratory Management"},
     "children": [
      {"_reference": "http://www.ehaweb.org/rdf/2011-passport#Item6AB"},
@@ -757,39 +888,39 @@ rforms.template.tests.template2 ={
     "selectable": false
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item2BA",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item2BA",
     "label": {"": "2Ba) AML with recurrent genetic abnormalities"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item6CD",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item6CD",
     "label": {"": "6Cd) Von Willebrand’s disease"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item1AK",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item1AK",
     "label": {"": "1Ak) Other congenital anemias (CDA, sideroblastic anemia)"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item5FB",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item5FB",
     "label": {"": "5Fb) Polymerase chain reaction for the detection of gene mutations, fusion genes, clonality assessment, and gene expression (e.g. reverse transcription-polymerase chain reaction, qualitative and quantitative, sequencing)"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item8BC",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item8BC",
     "label": {"": "8Bc) Applying the Appendix 2 to the Guideline on the evaluation of Anticancer Medicinal Products in Man on confirmatory studies in hematological malignancies (European Medicines Agency)"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item2BE",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item2BE",
     "label": {"": "2Be) Myeloid proliferations related to Down syndrome"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item1CE",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item1CE",
     "label": {"": "1Ce) Hemophagocytic lymphohistiocytosis"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item8BE",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item8BE",
     "label": {"": "8Be) Obtaining the informed consent according to current regulations"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#PlateletDisordersAndAngiopathies",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#PlateletDisordersAndAngiopathies",
     "label": {"": "1D) Platelet Disorders and Angiopathies"},
     "children": [
      {"_reference": "http://www.ehaweb.org/rdf/2011-passport#Item1DB"},
@@ -800,27 +931,27 @@ rforms.template.tests.template2 ={
     "selectable": false
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item4AA",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item4AA",
     "label": {"": "4Aa) Indications, risks and benefits of autologous and allogeneic transplants"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item3EC",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item3EC",
     "label": {"": "3Ec) Plasma cell myeloma (Multiple myeloma)"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item4CC",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item4CC",
     "label": {"": "4Cc) Short and long term complications of chemotherapy and radiotherapy (including infertility and secondary neoplasias)"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item7EC",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item7EC",
     "label": {"": "7Ec) Laboratory work-up of immune hemolytic anemias"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item7EB",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item7EB",
     "label": {"": "7Eb) Neonatal thrombocytopenia and neutropenia"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#B-CellNeoplasms",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#B-CellNeoplasms",
     "label": {"": "3A) B-Cell Neoplasms"},
     "children": [
      {"_reference": "http://www.ehaweb.org/rdf/2011-passport#Item3AA"},
@@ -836,19 +967,19 @@ rforms.template.tests.template2 ={
     "selectable": false
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item6BD",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item6BD",
     "label": {"": "6Bd) Bleeding related to anticoagulants and antithrombotic therapy"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item7DA",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item7DA",
     "label": {"": "7Da) Information to the patient "}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item4DE",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item4DE",
     "label": {"": "4De) Other viral infections in immunocompromised hosts"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#HematologicalCareInTheElderlyPatient",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#HematologicalCareInTheElderlyPatient",
     "label": {"": "8G) Hematological Care in the Elderly Patient"},
     "children": [
      {"_reference": "http://www.ehaweb.org/rdf/2011-passport#Item8GB"},
@@ -858,59 +989,59 @@ rforms.template.tests.template2 ={
     "selectable": false
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item7AC",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item7AC",
     "label": {"": "7Ac) Donor preparation; venesection, donation screening, donation associated adverse events "}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item1DC",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item1DC",
     "label": {"": "1Dc) Thrombotic thrombocytopenic purpura and microangiopathic hemolytic anemia"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item5AC",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item5AC",
     "label": {"": "5Ac) Chromosome and gene structure"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item7EJ",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item7EJ",
     "label": {"": "7Ej) Performing therapeutic phlebotomy"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item5BB",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item5BB",
     "label": {"": "5Bb) Laboratory quality management (incl. internal and external quality control)"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item7DC",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item7DC",
     "label": {"": "7Dc) Proper identification of the unit and recipient"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item2AA",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item2AA",
     "label": {"": "2Aa) Chronic myeloid leukemia"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item8BA",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item8BA",
     "label": {"": "8Ba) Identifying the different phases, types and purposes of clinical trials (e.g., phase 1-4, observational studies) as well as understanding the differences between industry-driven and investigator-driven clinical trials "}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item4EB",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item4EB",
     "label": {"": "4Eb) Spinal cord compression"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item8CA",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item8CA",
     "label": {"": "8Ca) Using terms relevant to drug-related harms (e.g., serious adverse event, adverse drug reaction, risk-benefit ratio, toxicity, medication error)"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item6BG",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item6BG",
     "label": {"": "6Bg) Adverse effects of treatment used in acute bleeding (blood products, pro-haemostatic drugs  )"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item3DB",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item3DB",
     "label": {"": "3Db) Cutaneous lymphomas"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item5CE",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item5CE",
     "label": {"": "5Ce) Cytochemical and special stains of blood and bone marrow smears"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#StemCellTransplantation",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#StemCellTransplantation",
     "label": {"": "4A) Stem Cell Transplantation"},
     "children": [
      {"_reference": "http://www.ehaweb.org/rdf/2011-passport#Item4AF"},
@@ -925,11 +1056,11 @@ rforms.template.tests.template2 ={
     "selectable": false
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item6CG",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item6CG",
     "label": {"": "6Cg) Safety of treatment with blood products and factor concentrates"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#SectionClinicalHematologyBenign",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#SectionClinicalHematologyBenign",
     "label": {"": "1) Clinical Hematology: Benign"},
     "children": [
      {"_reference": "http://www.ehaweb.org/rdf/2011-passport#RedCellDisorders"},
@@ -941,11 +1072,11 @@ rforms.template.tests.template2 ={
     "selectable": false
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item1DD",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item1DD",
     "label": {"": "1Dd) Pseudothrombocytopenia"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Pharmacovigilance",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Pharmacovigilance",
     "label": {"": "8C) Pharmacovigilance"},
     "children": [
      {"_reference": "http://www.ehaweb.org/rdf/2011-passport#Item8CB"},
@@ -956,51 +1087,51 @@ rforms.template.tests.template2 ={
     "selectable": false
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item7CB",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item7CB",
     "label": {"": "7Cb) Granulocytes "}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item8EC",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item8EC",
     "label": {"": "8Ec) Communication within a multi-disciplinary team"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item8CC",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item8CC",
     "label": {"": "8Cc) National and EU legislation regarding pharmacovigilance systems"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item8AE",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item8AE",
     "label": {"": "8Ae) Promotion by the industry and its effect on the rational use of diagnostic and therapeutic strategies."}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item1BA",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item1BA",
     "label": {"": "1Ba) Acquired aplastic anemia"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item5ED",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item5ED",
     "label": {"": "5Ed) Post-analytical phase (data analysis and determination of the lineage of cells of interest, clonality and specific subtype of hematological condition)"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item5EE",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item5EE",
     "label": {"": "5Ee) Applications, limitations and prognostic impact for diagnosis and classification, evaluation of minimal residual disease, stem cell quantification"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item4AF",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item4AF",
     "label": {"": "4Af) Pulmonary complications, veno-occlusive disease of the liver, and hemorrhagic cystitis"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item2AE",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item2AE",
     "label": {"": "2Ae) Chronic eosinophilic leukemia"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item1AI",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item1AI",
     "label": {"": "1Ai) Acquired immune hemolytic anemias"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item1EE",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item1EE",
     "label": {"": "1Ee) Hematological manifestations in HIV and other infectious diseases"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#InfectiousComplications",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#InfectiousComplications",
     "label": {"": "4D) Infectious Complications"},
     "children": [
      {"_reference": "http://www.ehaweb.org/rdf/2011-passport#Item4DE"},
@@ -1012,23 +1143,23 @@ rforms.template.tests.template2 ={
     "selectable": false
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item8FA",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item8FA",
     "label": {"": "8Fa) Responding to normal psychological reactions to hematological diseases "}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item6AB",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item6AB",
     "label": {"": "6Ab) Assays for inhibitors (incl. anti-phospholipid antibodies) "}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item7EE",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item7EE",
     "label": {"": "7Ee) Red cell exchange"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item4AB",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item4AB",
     "label": {"": "4Ab) Criteria for selection of myeloablative or reduced dose preparative regimens"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#ManagementOfSpecialConditions",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#ManagementOfSpecialConditions",
     "label": {"": "7E) Management of Special Conditions"},
     "children": [
      {"_reference": "http://www.ehaweb.org/rdf/2011-passport#Item7EE"},
@@ -1046,47 +1177,47 @@ rforms.template.tests.template2 ={
     "selectable": false
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item8DB",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item8DB",
     "label": {"": "8Db) The purpose and function of the Research Ethics Committee (ERC) and other regulatory bodies that oversee the conduct of clinical investigations"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item3BC",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item3BC",
     "label": {"": "3Bc) Anaplastic large cell lymphoma"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item8DG",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item8DG",
     "label": {"": "8Dg) Assessing quality of life measures"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item5CA",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item5CA",
     "label": {"": "5Ca) Automated complete blood count with white blood cell differential; “flagging”; causes of erroneous blood counts"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item4BA",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item4BA",
     "label": {"": "4Ba) Clinical potential and limits of embryonic and adult stem cell therapy. Ethical considerations"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item1AE",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item1AE",
     "label": {"": "1Ae) Thalassemia"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item7EK",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item7EK",
     "label": {"": "7Ek) Special components (Leukoreduced, CMV safe, washed, gamma irradiated, pathogen reduced, cryopreserved)"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item1CB",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item1CB",
     "label": {"": "1Cb) Granulocytopenia/agranulocytosis"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item6CF",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item6CF",
     "label": {"": "6Cf) Considerations in carriers of hemophilia in relation to pregnancy and management of neonates with hemophilia"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item7EG",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item7EG",
     "label": {"": "7Eg) Leukapheresis (therapeutic)"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#ThromboticDisorders",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#ThromboticDisorders",
     "label": {"": "6E) Thrombotic Disorders"},
     "children": [
      {"_reference": "http://www.ehaweb.org/rdf/2011-passport#Item6EJ"},
@@ -1103,11 +1234,11 @@ rforms.template.tests.template2 ={
     "selectable": false
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item7EH",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item7EH",
     "label": {"": "7Eh) Donation by apheresis"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#PlateletDisorders",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#PlateletDisorders",
     "label": {"": "6D) Platelet Disorders"},
     "children": [
      {"_reference": "http://www.ehaweb.org/rdf/2011-passport#Item6DA"},
@@ -1118,11 +1249,11 @@ rforms.template.tests.template2 ={
     "selectable": false
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item4BC",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item4BC",
     "label": {"": "4Bc) Mesenchymal cells and NK cell therapy"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#CommunicationSkills",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#CommunicationSkills",
     "label": {"": "8E) Communication Skills"},
     "children": [
      {"_reference": "http://www.ehaweb.org/rdf/2011-passport#Item8EC"},
@@ -1133,7 +1264,7 @@ rforms.template.tests.template2 ={
     "selectable": false
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#T-CellLymphomasAndNK-CellNeoplasms",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#T-CellLymphomasAndNK-CellNeoplasms",
     "label": {"": "3B) T-Cell Lymphomas And NK-Cell Neoplasms"},
     "children": [
      {"_reference": "http://www.ehaweb.org/rdf/2011-passport#Item3BD"},
@@ -1144,15 +1275,15 @@ rforms.template.tests.template2 ={
     "selectable": false
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item6EE",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item6EE",
     "label": {"": "6Ee) Thrombophilia (e.g. F V Leiden, II G20210A)"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item4CA",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item4CA",
     "label": {"": "4Ca) Drug therapy including targeted drugs: mechanisms of action, pharmacology and drug resistance "}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#SectionClinicalHematologyMyeloidMalignancies",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#SectionClinicalHematologyMyeloidMalignancies",
     "label": {"": "2) Clinical Hematology: Myeloid Malignancies"},
     "children": [
      {"_reference": "http://www.ehaweb.org/rdf/2011-passport#MyeloproliferativeAndMyelodysplasticNeoplasms"},
@@ -1161,11 +1292,11 @@ rforms.template.tests.template2 ={
     "selectable": false
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item7DH",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item7DH",
     "label": {"": "7Dh) Hemovigilance programs"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#SupportiveAndEmergencyCare",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#SupportiveAndEmergencyCare",
     "label": {"": "4E) Supportive and Emergency Care"},
     "children": [
      {"_reference": "http://www.ehaweb.org/rdf/2011-passport#Item4EA"},
@@ -1179,11 +1310,11 @@ rforms.template.tests.template2 ={
     "selectable": false
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item3AG",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item3AG",
     "label": {"": "3Ag) Other indolent B-cell lymphomas (e.g. lymphoplasmacytic lymphoma/Waldenström´s macroglobulinemia, hairy cell leukemia)"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#SectionTransfusionMedicine",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#SectionTransfusionMedicine",
     "label": {"": "7) Transfusion Medicine"},
     "children": [
      {"_reference": "http://www.ehaweb.org/rdf/2011-passport#GuidelinesAndRegulationsForUseOfBloodAndBloodComponents"},
@@ -1195,27 +1326,27 @@ rforms.template.tests.template2 ={
     "selectable": false
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item8AD",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item8AD",
     "label": {"": "8Ad) Definition and disclosure of conflict of interest as well as current conflict-of-interest policies, (e.g., standards of conduct in collaboration between physicians and industry)"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item1BD",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item1BD",
     "label": {"": "1Bd) Other inherited bone marrow failure syndromes (e.g. Blackfan-Diamond, Schwachman)"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item4CD",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item4CD",
     "label": {"": "4Cd) Administration of immunosuppressive agents and growth factors"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item1AM",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item1AM",
     "label": {"": "1Am) Primary hemochromatosis"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item7DE",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item7DE",
     "label": {"": "7De) Fetal, neonatal and pediatric transfusion"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#GoodClinicalPracticeClinicalTrials",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#GoodClinicalPracticeClinicalTrials",
     "label": {"": "8B) Good Clinical Practice / Clinical Trials"},
     "children": [
      {"_reference": "http://www.ehaweb.org/rdf/2011-passport#Item8BA"},
@@ -1228,23 +1359,23 @@ rforms.template.tests.template2 ={
     "selectable": false
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item6CB",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item6CB",
     "label": {"": "6Cb) Taking a relevant bleeding history (previous challenges and family history) with a focused clinical examination"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item4AD",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item4AD",
     "label": {"": "4Ad) Identification and selection of HPC source"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item1AH",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item1AH",
     "label": {"": "1Ah) Red blood cell enzymopathy (e.g. G6PD)"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item1AO",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item1AO",
     "label": {"": "1Ao) Porphyria"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#NonMalignantWhiteBloodCellDisorders",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#NonMalignantWhiteBloodCellDisorders",
     "label": {"": "1C) Non Malignant White Blood Cell Disorders"},
     "children": [
      {"_reference": "http://www.ehaweb.org/rdf/2011-passport#Item1CF"},
@@ -1257,11 +1388,11 @@ rforms.template.tests.template2 ={
     "selectable": false
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item5DC",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item5DC",
     "label": {"": "5Dc) Laboratory work-up on iron metabolism and vitamin deficiencies"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#HodgkinLymphoma",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#HodgkinLymphoma",
     "label": {"": "3C) Hodgkin Lymphoma"},
     "children": [
      {"_reference": "http://www.ehaweb.org/rdf/2011-passport#Item3CA"},
@@ -1270,19 +1401,19 @@ rforms.template.tests.template2 ={
     "selectable": false
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item8DE",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item8DE",
     "label": {"": "8De) The relationship between healthcare providers and national and European authorities, tissue banks, insurance companies, including legislation"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item6CA",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item6CA",
     "label": {"": "6Ca)  Mechanisms in hemostasis"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item1AB",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item1AB",
     "label": {"": "1Ab) Anemia of chronic disease"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#ImmunophenotypingByFlowCytometry",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#ImmunophenotypingByFlowCytometry",
     "label": {"": "5E) Immunophenotyping by Flow Cytometry"},
     "children": [
      {"_reference": "http://www.ehaweb.org/rdf/2011-passport#Item5ED"},
@@ -1294,151 +1425,151 @@ rforms.template.tests.template2 ={
     "selectable": false
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item5CB",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item5CB",
     "label": {"": "5Cb) Performing aspiration and biopsy of bone marrow, lumbar puncture and lymph node fine needle aspiration and preparation of slides, touch preparations and trephine rolls"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item5FA",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item5FA",
     "label": {"": "5Fa) Karyotyping (e.g. conventional cytogenetics and fluorescence in situ hybridization)"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item7AB",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item7AB",
     "label": {"": "7Ab) Epidemiology of infectious diseases in the area "}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item4EF",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item4EF",
     "label": {"": "4Ef) Venous access management"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item3DC",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item3DC",
     "label": {"": "3Dc) Primary CNS lymphoma"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item4EE",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item4EE",
     "label": {"": "4Ee) Neurological and psychiatric disturbances"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item5DA",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item5DA",
     "label": {"": "5Da) Hemoglobin analyses (e.g. hemoglobin electrophoresis)"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item8GC",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item8GC",
     "label": {"": "8Gc) Patients’ care based on a geriatric assessment "}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item7CA",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item7CA",
     "label": {"": "7Ca) Red Cells, Platelets, Plasma"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item2AD",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item2AD",
     "label": {"": "2Ad) Essential thrombocythemia"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item5EA",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item5EA",
     "label": {"": "5Ea) Pre-analytical and analytical phase of flow cytometry of blood, bone marrow, and body fluids (e.g. specimen processing, surface vs. intracytoplasmic staining, acquiring data, gating strategies) "}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item4DC",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item4DC",
     "label": {"": "4Dc) Fungal disease"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item8EB",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item8EB",
     "label": {"": "8Eb) Communication with patients’ relatives"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item5CD",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item5CD",
     "label": {"": "5Cd) Examination of blood and bone marrow smears for RBC parasites"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item1CD",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item1CD",
     "label": {"": "1Cd) Inherited immune deficiency syndromes"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item6DB",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item6DB",
     "label": {"": "6Db) Congenital platelet disorders, (e.g. Bernard-Soulier syndrome) "}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item1CA",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item1CA",
     "label": {"": "1Ca) Granulocyte dysfunction disorders"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item6BB",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item6BB",
     "label": {"": "6Bb) Disseminated intravascular coagulation (DIC)"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item6BE",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item6BE",
     "label": {"": "6Be) Acquired bleeding disorders in adults (inhibitors to F VIII and vWF) "}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item1EB",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item1EB",
     "label": {"": "1Eb) Hematological manifestations of congenital metabolism disorders"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item7CD",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item7CD",
     "label": {"": "7Cd) Alternatives to allogeneic blood transfusion (autologous blood; use of r-huEPO, iron etc)"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item4EA",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item4EA",
     "label": {"": "4Ea) Hyperleukocytosis, hyperviscosity, and tumor lysis syndrome"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item5BD",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item5BD",
     "label": {"": "5Bd) Normal ranges of laboratory values, with relevance to gender, age and ethnicity"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item7BB",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item7BB",
     "label": {"": "7Bb) HLA typing and anti-HLA antibody detection"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item8HF",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item8HF",
     "label": {"": "8Hf) Best practice in the last hours and days of life, including use of effective symptomatic treatment for patients approaching death"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item8AB",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item8AB",
     "label": {"": "8Ab) Using scientific literature and critically evaluating information"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item6EC",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item6EC",
     "label": {"": "6Ec) Laboratory monitoring and dosing of anticoagulants"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item8DC",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item8DC",
     "label": {"": "8Dc) Professional responsibilities (e.g., respect for patient’s autonomy, non-maleficence, beneficence, justice)"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item5FD",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item5FD",
     "label": {"": "5Fd) Applications, limitations and prognostic impact of genetic and molecular aberrations for diagnosis and classification of hematological disorders, and for evaluating minimal residual disease"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item8CB",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item8CB",
     "label": {"": "8Cb) Recognizing, documenting and treating adverse drug events"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item4DA",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item4DA",
     "label": {"": "4Da) Neutropenic fever"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item6EA",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item6EA",
     "label": {"": "6Ea) Mechanisms and risk-factors in arterial and venous thromboembolism "}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item6EG",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item6EG",
     "label": {"": "6Eg) Treatment and prophylaxis  of venous thromboembolism in pregnancy"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item8ED",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item8ED",
     "label": {"": "8Ed) Presentation of clinical cases"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item7DF",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item7DF",
     "label": {"": "7Df) Transfusion reactions and complications (non-hemolytic, hemolytic, allergic, transfusion-related acute lung injury TRALI, transfusion associated GvHD)"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item8DF",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item8DF",
     "label": {"": "8Df) Cost-effectiveness reasoning and just allocation of scarce resources (e.g. rationalization, rationing, prioritization)"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#RedCellDisorders",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#RedCellDisorders",
     "label": {"": "1A) Red Cell Disorders"},
     "children": [
      {"_reference": "http://www.ehaweb.org/rdf/2011-passport#Item1AO"},
@@ -1460,35 +1591,35 @@ rforms.template.tests.template2 ={
     "selectable": false
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item1AF",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item1AF",
     "label": {"": "1Af) Sickle cell disease and other hemoglobinopathies"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item4AG",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item4AG",
     "label": {"": "4Ag) Evaluation of chimerism"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item5BC",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item5BC",
     "label": {"": "5Bc) Hazards and safety"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item7EF",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item7EF",
     "label": {"": "7Ef) Plateletpheresis"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item6BC",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item6BC",
     "label": {"": "6Bc) Bleeding associated with renal and liver disease"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item3DD",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item3DD",
     "label": {"": "3Dd) Histiocytic and dendritic cell neoplasms"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item4CB",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item4CB",
     "label": {"": "4Cb) Administration of standard chemotherapy "}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#SectionThrombosisAndHemostasis",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#SectionThrombosisAndHemostasis",
     "label": {"": "6) Thrombosis and Hemostasis"},
     "children": [
      {"_reference": "http://www.ehaweb.org/rdf/2011-passport#LaboratoryManagement"},
@@ -1500,11 +1631,11 @@ rforms.template.tests.template2 ={
     "selectable": false
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item2AC",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item2AC",
     "label": {"": "2Ac) Primary Myelofibrosis"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#HematologyPassport",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#HematologyPassport",
     "top": true,
     "label": {"": "Hematology Curriculum Passport"},
     "children": [
@@ -1520,11 +1651,11 @@ rforms.template.tests.template2 ={
     "selectable": false
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item5CG",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item5CG",
     "label": {"": "5Cg) Immunostaining in hematological malignancies (lymphoid-lineage, myeloid-lineage and differentiation markers)"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#OtherLaboratoryTechniques",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#OtherLaboratoryTechniques",
     "label": {"": "5D) Other Laboratory Techniques"},
     "children": [
      {"_reference": "http://www.ehaweb.org/rdf/2011-passport#Item5DB"},
@@ -1535,39 +1666,39 @@ rforms.template.tests.template2 ={
     "selectable": false
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item4ED",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item4ED",
     "label": {"": "4Ed) Mucositis, vomiting, and pain"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item6EH",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item6EH",
     "label": {"": "6Eh) Specific therapy in thrombotic disorders (e.g. caval filters)"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item1DB",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item1DB",
     "label": {"": "1Db) Immune thrombocytopenia"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item6DD",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item6DD",
     "label": {"": "6Dd) Thrombocytopenia in pregnancy"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item4DB",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item4DB",
     "label": {"": "4Db) Bacterial disease"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item1AA",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item1AA",
     "label": {"": "1Aa) Anemias due to deficiency (iron, B12, folate)"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item5DD",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item5DD",
     "label": {"": "5Dd) Detection of immunoglobulin abnormalities (e.g. protein electrophoresis, immunoelectrophoresis/ immunofixation, cryoglobulin detection, light chain assays) "}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item4AH",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item4AH",
     "label": {"": "4Ah) Mobilization, collection and manipulation of hemopoeitic stem cells"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#PlasmaCellNeoplasms",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#PlasmaCellNeoplasms",
     "label": {"": "3E) Plasma Cell Neoplasms"},
     "children": [
      {"_reference": "http://www.ehaweb.org/rdf/2011-passport#Item3ED"},
@@ -1578,71 +1709,71 @@ rforms.template.tests.template2 ={
     "selectable": false
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item1ED",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item1ED",
     "label": {"": "1Ed)  Hematological manifestations related to pregnancy"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item5AF",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item5AF",
     "label": {"": "5Af) Integrating data from various laboratory investigations, relate them to the clinical picture and formulate a diagnosis "}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item2AG",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item2AG",
     "label": {"": "2Ag) Neoplasms with eosinophilia and abnormalities of PDGFR and/or FGFR1"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item8DD",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item8DD",
     "label": {"": "8Dd) Multidisciplinary discussion about ethical dilemmas in clinical practice (e.g., managing patients with reduced autonomy)"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item6BA",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item6BA",
     "label": {"": "6Ba) Massive bleeding in obstetrics, trauma and surgery"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item7AA",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item7AA",
     "label": {"": "7Aa) Council of Europe and other relevant regulations for donor eligibility"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item3EA",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item3EA",
     "label": {"": "3Ea) Monoclonal gammopathy of undetermined significance (MGUS)"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item3AE",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item3AE",
     "label": {"": "3Ae) Mantle cell lymphoma"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item8BD",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item8BD",
     "label": {"": "8Bd) Informing patients with various social, cultural, religious etc. backgrounds of all aspects related to clinical trials"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item6EI",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item6EI",
     "label": {"": "6Ei) Purpura fulminans"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item5AD",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item5AD",
     "label": {"": "5Ad) The role of deoxyribonucleic acid (DNA), ribonucleic acid (RNA) and proteins in normal cellular processes"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item8FB",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item8FB",
     "label": {"": "8Fb) Recognizing psychological distress, socio-economic problems, and identifying the need for specialist resources "}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item2AI",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item2AI",
     "label": {"": "2Ai) MDS low risk disease"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item6BF",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item6BF",
     "label": {"": "6Bf) Acquired bleeding disorders in children"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item8BF",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item8BF",
     "label": {"": "8Bf) Treating and managing patients according to protocol requirements and knowing when to diverge from the protocol"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item8BB",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item8BB",
     "label": {"": "8Bb) Applying the current versions of clinical trial related guidelines and legislation (Directive 2001/20/EC on the implementation of Good Clinical Practice in Clinical Trials, World Medical Association Declaration of Helsinki (2008) on Ethical Principles for Medical Research Involving Human Subjects) "}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#OtherSpecialEntities",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#OtherSpecialEntities",
     "label": {"": "3D) Other Special Entities"},
     "children": [
      {"_reference": "http://www.ehaweb.org/rdf/2011-passport#Item3DC"},
@@ -1653,7 +1784,7 @@ rforms.template.tests.template2 ={
     "selectable": false
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#EvidenceBasedMedicineCriticalAppraisal",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#EvidenceBasedMedicineCriticalAppraisal",
     "label": {"": "8A) Evidence Based Medicine / Critical Appraisal"},
     "children": [
      {"_reference": "http://www.ehaweb.org/rdf/2011-passport#Item8AD"},
@@ -1668,11 +1799,11 @@ rforms.template.tests.template2 ={
     "selectable": false
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item8AH",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item8AH",
     "label": {"": "8Ah) Problem based learning techniques"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#GuidelinesAndRegulationsForUseOfBloodAndBloodComponents",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#GuidelinesAndRegulationsForUseOfBloodAndBloodComponents",
     "label": {"": "7C) Guidelines and Regulations for Use of Blood and Blood Components"},
     "children": [
      {"_reference": "http://www.ehaweb.org/rdf/2011-passport#Item7CB"},
@@ -1684,27 +1815,27 @@ rforms.template.tests.template2 ={
     "selectable": false
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item5BA",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item5BA",
     "label": {"": "5Ba) Principles of laboratory management and organization"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item2BF",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item2BF",
     "label": {"": "2Bf) Acute leukemia of ambiguous lineage"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item1BB",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item1BB",
     "label": {"": "1Bb) Paroxysmal Nocturnal Hemoglobinuria"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item7DB",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item7DB",
     "label": {"": "7Db) Routine vs. emergency transfusions "}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item1AC",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item1AC",
     "label": {"": "1Ac) Anemia due to toxic exposure"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#SectionLaboratoryDiagnosis",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#SectionLaboratoryDiagnosis",
     "label": {"": "5) Laboratory Diagnosis"},
     "children": [
      {"_reference": "http://www.ehaweb.org/rdf/2011-passport#GoodLaboratoryPractice"},
@@ -1717,55 +1848,55 @@ rforms.template.tests.template2 ={
     "selectable": false
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item8AF",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item8AF",
     "label": {"": "8Af) Applying evidence based practice to the management of the individual patient"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item2AF",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item2AF",
     "label": {"": "2Af) Mastocytosis"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item4EG",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item4EG",
     "label": {"": "4Eg) Nutrition"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item8GA",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item8GA",
     "label": {"": "8Ga) The effects of specific changes associated with aging and their impact on normal hematologic processes"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item2AB",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item2AB",
     "label": {"": "2Ab) Polycythemia Vera"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item1CC",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item1CC",
     "label": {"": "1Cc) Lymphopenia and lymphocyte dysfunction syndromes"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item8AC",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item8AC",
     "label": {"": "8Ac) Biostatistics that will allow the trainee to interpret published literature"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item5EC",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item5EC",
     "label": {"": "5Ec) General principles of disease-oriented antibody panels "}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item3AH",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item3AH",
     "label": {"": "3Ah) Marginal Zone lymphomas (e.g. MALT, SMZL)"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item5DB",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item5DB",
     "label": {"": "5Db) Other red blood cell laboratory techniques (e.g. sickling process,  oxygen affinity, red blood cell enzyme assays – pyruvate kinase, glucose-6-phosphate dehydrogenase)"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item1CF",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item1CF",
     "label": {"": "1Cf) Secondary Leukocytosis"}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item8DH",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item8DH",
     "label": {"": "8Dh) Current moral understanding of non-discrimination principles and human rights "}
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#CongenitalBleedingDisorders",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#CongenitalBleedingDisorders",
     "label": {"": "6C) Congenital Bleeding Disorders"},
     "children": [
      {"_reference": "http://www.ehaweb.org/rdf/2011-passport#Item6CG"},
@@ -1779,13 +1910,13 @@ rforms.template.tests.template2 ={
     "selectable": false
    },
    {
-    "d": "http://www.ehaweb.org/rdf/2011-passport#Item7ED",
+    "value": "http://www.ehaweb.org/rdf/2011-passport#Item7ED",
     "label": {"": "7Ed) Plasmapheresis "}
    }
   ],
   "http://localhost:8080/ontologies/Model0.rdf?constr=%7B%22http%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23type%22%3A%7B%22uri%22%3A%22http%3A%2F%2Fltsc.ieee.org%2Frdf%2Flomv1p0%2Flom%23Difficulty%22%7D%7D" : [
    {
-    "d": "http://ltsc.ieee.org/rdf/lomv1p0/vocabulary#Difficulty-veryDifficult",
+    "value": "http://ltsc.ieee.org/rdf/lomv1p0/vocabulary#Difficulty-veryDifficult",
     "top": true,
     "label": {
      "hu": "5: nagyon nehéz",
@@ -1801,7 +1932,7 @@ rforms.template.tests.template2 ={
     }
    },
    {
-    "d": "http://ltsc.ieee.org/rdf/lomv1p0/vocabulary#Difficulty-difficult",
+    "value": "http://ltsc.ieee.org/rdf/lomv1p0/vocabulary#Difficulty-difficult",
     "top": true,
     "label": {
      "hu": "4: nehéz",
@@ -1817,7 +1948,7 @@ rforms.template.tests.template2 ={
     }
    },
    {
-    "d": "http://ltsc.ieee.org/rdf/lomv1p0/vocabulary#Difficulty-easy",
+    "value": "http://ltsc.ieee.org/rdf/lomv1p0/vocabulary#Difficulty-easy",
     "top": true,
     "label": {
      "hu": "2: könnyű",
@@ -1833,7 +1964,7 @@ rforms.template.tests.template2 ={
     }
    },
    {
-    "d": "http://ltsc.ieee.org/rdf/lomv1p0/vocabulary#Difficulty-veryEasy",
+    "value": "http://ltsc.ieee.org/rdf/lomv1p0/vocabulary#Difficulty-veryEasy",
     "top": true,
     "label": {
      "hu": "1: nagyon könnyű",
@@ -1849,7 +1980,7 @@ rforms.template.tests.template2 ={
     }
    },
    {
-    "d": "http://ltsc.ieee.org/rdf/lomv1p0/vocabulary#Difficulty-medium",
+    "value": "http://ltsc.ieee.org/rdf/lomv1p0/vocabulary#Difficulty-medium",
     "top": true,
     "label": {
      "hu": "3: közepes",
@@ -1867,7 +1998,7 @@ rforms.template.tests.template2 ={
   ],
   "http://localhost:8080/ontologies/Model0.rdf?constr=%7B%22http%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23type%22%3A%7B%22uri%22%3A%22http%3A%2F%2Fltsc.ieee.org%2Frdf%2Flomv1p0%2Flom%23InteractivityType%22%7D%7D": [
    {
-    "d": "http://ltsc.ieee.org/rdf/lomv1p0/vocabulary#InteractivityType-mixed",
+    "value": "http://ltsc.ieee.org/rdf/lomv1p0/vocabulary#InteractivityType-mixed",
     "top": true,
     "label": {
      "hu": "vegyes",
@@ -1883,7 +2014,7 @@ rforms.template.tests.template2 ={
     }
    },
    {
-    "d": "http://ltsc.ieee.org/rdf/lomv1p0/vocabulary#InteractivityType-active",
+    "value": "http://ltsc.ieee.org/rdf/lomv1p0/vocabulary#InteractivityType-active",
     "top": true,
     "label": {
      "hu": "tevékeny",
@@ -1899,7 +2030,7 @@ rforms.template.tests.template2 ={
     }
    },
    {
-    "d": "http://ltsc.ieee.org/rdf/lomv1p0/vocabulary#InteractivityType-expositive",
+    "value": "http://ltsc.ieee.org/rdf/lomv1p0/vocabulary#InteractivityType-expositive",
     "top": true,
     "label": {
      "hu": "tapasztaló",
@@ -1917,7 +2048,7 @@ rforms.template.tests.template2 ={
   ],
   "http://localhost:8080/ontologies/Model0.rdf?constr=%7B%22http%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23type%22%3A%7B%22uri%22%3A%22http%3A%2F%2Fpurl.org%2Fdc%2Fterms%2FAgentClass%22%7D%7D": [
    {
-    "d": "http://ltsc.ieee.org/rdf/lomv1p0/vocabulary#IntendedEndUserRole-manager",
+    "value": "http://ltsc.ieee.org/rdf/lomv1p0/vocabulary#IntendedEndUserRole-manager",
     "top": true,
     "label": {
      "hu": "igazgató",
@@ -1933,7 +2064,7 @@ rforms.template.tests.template2 ={
     }
    },
    {
-    "d": "http://ltsc.ieee.org/rdf/lomv1p0/vocabulary#IntendedEndUserRole-learner",
+    "value": "http://ltsc.ieee.org/rdf/lomv1p0/vocabulary#IntendedEndUserRole-learner",
     "top": true,
     "label": {
      "hu": "tanuló",
@@ -1949,7 +2080,7 @@ rforms.template.tests.template2 ={
     }
    },
    {
-    "d": "http://ltsc.ieee.org/rdf/lomv1p0/vocabulary#IntendedEndUserRole-author",
+    "value": "http://ltsc.ieee.org/rdf/lomv1p0/vocabulary#IntendedEndUserRole-author",
     "top": true,
     "label": {
      "hu": "szerző",
@@ -1965,7 +2096,7 @@ rforms.template.tests.template2 ={
     }
    },
    {
-    "d": "http://ltsc.ieee.org/rdf/lomv1p0/vocabulary#IntendedEndUserRole-teacher",
+    "value": "http://ltsc.ieee.org/rdf/lomv1p0/vocabulary#IntendedEndUserRole-teacher",
     "top": true,
     "label": {
      "hu": "tanár",
@@ -2417,19 +2548,19 @@ rforms.template.tests.template2 ={
       "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#value",
       "choices": [
        {
-        "value": {"uri": "http://creativecommons.org/licenses/by/3.0/"},
+        "value": "http://creativecommons.org/licenses/by/3.0/",
         "label": {"en": "The owner ALLOWS commercial uses AND changes to the resource"}
        },
        {
-        "value": {"uri": "http://creativecommons.org/licenses/by-nd/3.0/"},
+        "value": "http://creativecommons.org/licenses/by-nd/3.0/",
         "label": {"en": "The owner ALLOWS commercial uses but does NOT allow changes to the resource"}
        },
        {
-        "value": {"uri": "http://creativecommons.org/licenses/by-nc/3.0/"},
+        "value": "http://creativecommons.org/licenses/by-nc/3.0/",
         "label": {"en": "The owner does NOT allow commercial uses but ALLOWS changes to the resource"}
        },
        {
-        "value": {"uri": "http://creativecommons.org/licenses/by-nc-nd/3.0/"},
+        "value": "http://creativecommons.org/licenses/by-nc-nd/3.0/",
         "label": {"en": "The owner does NOT allow commercial uses OR changes to the resource"}
        }
       ]
@@ -2495,7 +2626,7 @@ rforms.template.tests.template2 ={
     "description": {"en": "What is the type of the resource?"},
     "choices": [
      {
-      "value": {"uri": "http://organic-edunet.eu/LOM/rdf/voc#LearningResourceType-application"},
+      "value": "http://organic-edunet.eu/LOM/rdf/voc#LearningResourceType-application",
       "label": {
        "hu": "alkalmazás",
        "et": "rakendus",
@@ -2510,7 +2641,7 @@ rforms.template.tests.template2 ={
       }
      },
      {
-      "value": {"uri": "http://organic-edunet.eu/LOM/rdf/voc#LearningResourceType-assessment"},
+      "value": "http://organic-edunet.eu/LOM/rdf/voc#LearningResourceType-assessment",
       "label": {
        "hu": "Értékelés",
        "et": "Hinnang",
@@ -2525,7 +2656,7 @@ rforms.template.tests.template2 ={
       }
      },
      {
-      "value": {"uri": "http://organic-edunet.eu/LOM/rdf/voc#LearningResourceType-broadcast"},
+      "value": "http://organic-edunet.eu/LOM/rdf/voc#LearningResourceType-broadcast",
       "label": {
        "hu": "Mũsor",
        "et": "Ülekanne",
@@ -2540,7 +2671,7 @@ rforms.template.tests.template2 ={
       }
      },
      {
-      "value": {"uri": "http://organic-edunet.eu/LOM/rdf/voc#LearningResourceType-caseStudy"},
+      "value": "http://organic-edunet.eu/LOM/rdf/voc#LearningResourceType-caseStudy",
       "label": {
        "hu": "esettanulmány",
        "et": "Juhtumiuuring",
@@ -2555,7 +2686,7 @@ rforms.template.tests.template2 ={
       }
      },
      {
-      "value": {"uri": "http://organic-edunet.eu/LOM/rdf/voc#LearningResourceType-course"},
+      "value": "http://organic-edunet.eu/LOM/rdf/voc#LearningResourceType-course",
       "label": {
        "hu": "Kurzus",
        "et": "Suund",
@@ -2570,7 +2701,7 @@ rforms.template.tests.template2 ={
       }
      },
      {
-      "value": {"uri": "http://organic-edunet.eu/LOM/rdf/voc#LearningResourceType-demonstration"},
+      "value": "http://organic-edunet.eu/LOM/rdf/voc#LearningResourceType-demonstration",
       "label": {
        "hu": "Demonstráció",
        "et": "Esitlemine",
@@ -2585,7 +2716,7 @@ rforms.template.tests.template2 ={
       }
      },
      {
-      "value": {"uri": "http://organic-edunet.eu/LOM/rdf/voc#LearningResourceType-enquiryOrientedActivity"},
+      "value": "http://organic-edunet.eu/LOM/rdf/voc#LearningResourceType-enquiryOrientedActivity",
       "label": {
        "hu": "adatgyűjtés",
        "et": "küsimuspõhine tegevus",
@@ -2600,7 +2731,7 @@ rforms.template.tests.template2 ={
       }
      },
      {
-      "value": {"uri": "http://organic-edunet.eu/LOM/rdf/voc#LearningResourceType-educationalGame"},
+      "value": "http://organic-edunet.eu/LOM/rdf/voc#LearningResourceType-educationalGame",
       "label": {
        "hu": "Oktató játék",
        "et": "õppemäng",
@@ -2615,7 +2746,7 @@ rforms.template.tests.template2 ={
       }
      },
      {
-      "value": {"uri": "http://organic-edunet.eu/LOM/rdf/voc#LearningResourceType-drillAndPractice"},
+      "value": "http://organic-edunet.eu/LOM/rdf/voc#LearningResourceType-drillAndPractice",
       "label": {
        "hu": "Gyakorlat",
        "et": "treeni ja harjuta",
@@ -2630,7 +2761,7 @@ rforms.template.tests.template2 ={
       }
      },
      {
-      "value": {"uri": "http://organic-edunet.eu/LOM/rdf/voc#LearningResourceType-experiment"},
+      "value": "http://organic-edunet.eu/LOM/rdf/voc#LearningResourceType-experiment",
       "label": {
        "hu": "Kísérlet",
        "et": "Katse",
@@ -2645,7 +2776,7 @@ rforms.template.tests.template2 ={
       }
      },
      {
-      "value": {"uri": "http://organic-edunet.eu/LOM/rdf/voc#LearningResourceType-exploration"},
+      "value": "http://organic-edunet.eu/LOM/rdf/voc#LearningResourceType-exploration",
       "label": {
        "hu": "Kutatás",
        "et": "Uurimine",
@@ -2660,7 +2791,7 @@ rforms.template.tests.template2 ={
       }
      },
      {
-      "value": {"uri": "http://organic-edunet.eu/LOM/rdf/voc#LearningResourceType-glossary"},
+      "value": "http://organic-edunet.eu/LOM/rdf/voc#LearningResourceType-glossary",
       "label": {
        "hu": "szószedet",
        "et": "Sõnastik",
@@ -2675,7 +2806,7 @@ rforms.template.tests.template2 ={
       }
      },
      {
-      "value": {"uri": "http://organic-edunet.eu/LOM/rdf/voc#LearningResourceType-guide"},
+      "value": "http://organic-edunet.eu/LOM/rdf/voc#LearningResourceType-guide",
       "label": {
        "hu": "útmutató",
        "et": "juhend",
@@ -2690,7 +2821,7 @@ rforms.template.tests.template2 ={
       }
      },
      {
-      "value": {"uri": "http://organic-edunet.eu/LOM/rdf/voc#LearningResourceType-learningAsset-audio"},
+      "value": "http://organic-edunet.eu/LOM/rdf/voc#LearningResourceType-learningAsset-audio",
       "label": {
        "hu": "tananyag: audio",
        "et": "õppevara: audio",
@@ -2705,7 +2836,7 @@ rforms.template.tests.template2 ={
       }
      },
      {
-      "value": {"uri": "http://organic-edunet.eu/LOM/rdf/voc#LearningResourceType-learningAsset-data"},
+      "value": "http://organic-edunet.eu/LOM/rdf/voc#LearningResourceType-learningAsset-data",
       "label": {
        "hu": "tananyag: adatok",
        "et": "õppevara: andmed",
@@ -2720,7 +2851,7 @@ rforms.template.tests.template2 ={
       }
      },
      {
-      "value": {"uri": "http://organic-edunet.eu/LOM/rdf/voc#LearningResourceType-learningAsset-image"},
+      "value": "http://organic-edunet.eu/LOM/rdf/voc#LearningResourceType-learningAsset-image",
       "label": {
        "hu": "tananyag: image",
        "et": "õppevara: image",
@@ -2735,7 +2866,7 @@ rforms.template.tests.template2 ={
       }
      },
      {
-      "value": {"uri": "http://organic-edunet.eu/LOM/rdf/voc#LearningResourceType-learningAsset-model"},
+      "value": "http://organic-edunet.eu/LOM/rdf/voc#LearningResourceType-learningAsset-model",
       "label": {
        "hu": "tananyag: modell",
        "et": "õppevara: mudel",
@@ -2750,7 +2881,7 @@ rforms.template.tests.template2 ={
       }
      },
      {
-      "value": {"uri": "http://organic-edunet.eu/LOM/rdf/voc#LearningResourceType-learningAsset-text"},
+      "value": "http://organic-edunet.eu/LOM/rdf/voc#LearningResourceType-learningAsset-text",
       "label": {
        "hu": "tananyag: text",
        "et": "õppevara: tekst",
@@ -2765,7 +2896,7 @@ rforms.template.tests.template2 ={
       }
      },
      {
-      "value": {"uri": "http://organic-edunet.eu/LOM/rdf/voc#LearningResourceType-learningAsset-video"},
+      "value": "http://organic-edunet.eu/LOM/rdf/voc#LearningResourceType-learningAsset-video",
       "label": {
        "hu": "tananyag: videó",
        "et": "õppevara: video",
@@ -2780,7 +2911,7 @@ rforms.template.tests.template2 ={
       }
      },
      {
-      "value": {"uri": "http://organic-edunet.eu/LOM/rdf/voc#LearningResourceType-lessonPlan"},
+      "value": "http://organic-edunet.eu/LOM/rdf/voc#LearningResourceType-lessonPlan",
       "label": {
        "hu": "tanterv",
        "et": "tunnikava",
@@ -2795,7 +2926,7 @@ rforms.template.tests.template2 ={
       }
      },
      {
-      "value": {"uri": "http://organic-edunet.eu/LOM/rdf/voc#LearningResourceType-openActivity"},
+      "value": "http://organic-edunet.eu/LOM/rdf/voc#LearningResourceType-openActivity",
       "label": {
        "hu": "szabad tevékenység",
        "et": "lahtine üritus",
@@ -2810,7 +2941,7 @@ rforms.template.tests.template2 ={
       }
      },
      {
-      "value": {"uri": "http://organic-edunet.eu/LOM/rdf/voc#LearningResourceType-presentation"},
+      "value": "http://organic-edunet.eu/LOM/rdf/voc#LearningResourceType-presentation",
       "label": {
        "hu": "prezentáció",
        "et": "esitlus",
@@ -2825,7 +2956,7 @@ rforms.template.tests.template2 ={
       }
      },
      {
-      "value": {"uri": "http://organic-edunet.eu/LOM/rdf/voc#LearningResourceType-project"},
+      "value": "http://organic-edunet.eu/LOM/rdf/voc#LearningResourceType-project",
       "label": {
        "hu": "projekt",
        "et": "projekt",
@@ -2840,7 +2971,7 @@ rforms.template.tests.template2 ={
       }
      },
      {
-      "value": {"uri": "http://organic-edunet.eu/LOM/rdf/voc#LearningResourceType-reference"},
+      "value": "http://organic-edunet.eu/LOM/rdf/voc#LearningResourceType-reference",
       "label": {
        "hu": "hivatkozás",
        "et": "viide",
@@ -2855,7 +2986,7 @@ rforms.template.tests.template2 ={
       }
      },
      {
-      "value": {"uri": "http://organic-edunet.eu/LOM/rdf/voc#LearningResourceType-tool"},
+      "value": "http://organic-edunet.eu/LOM/rdf/voc#LearningResourceType-tool",
       "label": {
        "hu": "eszköz",
        "et": "vahend",
@@ -2870,7 +3001,7 @@ rforms.template.tests.template2 ={
       }
      },
      {
-      "value": {"uri": "http://organic-edunet.eu/LOM/rdf/voc#LearningResourceType-simulation"},
+      "value": "http://organic-edunet.eu/LOM/rdf/voc#LearningResourceType-simulation",
       "label": {
        "hu": "szimuláció",
        "et": "simulatsioon",
@@ -2885,7 +3016,7 @@ rforms.template.tests.template2 ={
       }
      },
      {
-      "value": {"uri": "http://organic-edunet.eu/LOM/rdf/voc#LearningResourceType-rolePlay"},
+      "value": "http://organic-edunet.eu/LOM/rdf/voc#LearningResourceType-rolePlay",
       "label": {
        "hu": "szerepjáték",
        "et": "rollimäng",
@@ -2900,7 +3031,7 @@ rforms.template.tests.template2 ={
       }
      },
      {
-      "value": {"uri": "http://organic-edunet.eu/LOM/rdf/voc#LearningResourceType-webResource-wiki"},
+      "value": "http://organic-edunet.eu/LOM/rdf/voc#LearningResourceType-webResource-wiki",
       "label": {
        "hu": "internetes forrás: Wiki",
        "et": "veebiressurss: Wiki",
@@ -2915,7 +3046,7 @@ rforms.template.tests.template2 ={
       }
      },
      {
-      "value": {"uri": "http://organic-edunet.eu/LOM/rdf/voc#LearningResourceType-webResource-webPage"},
+      "value": "http://organic-edunet.eu/LOM/rdf/voc#LearningResourceType-webResource-webPage",
       "label": {
        "hu": "internetes forrás: Weboldal",
        "et": "veebiressurss: Veebileht",
@@ -2930,7 +3061,7 @@ rforms.template.tests.template2 ={
       }
      },
      {
-      "value": {"uri": "http://organic-edunet.eu/LOM/rdf/voc#LearningResourceType-webResource-weblog"},
+      "value": "http://organic-edunet.eu/LOM/rdf/voc#LearningResourceType-webResource-weblog",
       "label": {
        "hu": "internetes forrás: internetes napló (weblog)",
        "et": "veebiressurss: blogi",
@@ -2945,7 +3076,7 @@ rforms.template.tests.template2 ={
       }
      },
      {
-      "value": {"uri": "http://organic-edunet.eu/LOM/rdf/voc#LearningResourceType-webResource-otherWebResource"},
+      "value": "http://organic-edunet.eu/LOM/rdf/voc#LearningResourceType-webResource-otherWebResource",
       "label": {
        "hu": "internetes forrás: egyéb internetes forrás",
        "et": "veebiressurss: muu veebiressurss",
@@ -2960,7 +3091,7 @@ rforms.template.tests.template2 ={
       }
      },
      {
-      "value": {"uri": "http://organic-edunet.eu/LOM/rdf/voc#LearningResourceType-other"},
+      "value": "http://organic-edunet.eu/LOM/rdf/voc#LearningResourceType-other",
       "label": {
        "hu": "egyéb",
        "et": "muu",

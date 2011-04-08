@@ -70,6 +70,9 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 	},
 	
 	addLabel: function(rowDiv, labelDiv, binding, item) {
+		if (item.hasClass("noneditable")) {
+			return this.inherited("addLabel", arguments);
+		}
 		var isGroup = item instanceof rforms.template.Group;
 		var label = dojo.create("span", {"innerHTML": item.getLabel()}, labelDiv);
 		dojo.addClass(labelDiv, "labelRow");
@@ -92,9 +95,15 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 	},
 
 	addGroup: function(fieldDiv, binding) {
+		if (binding.getItem().hasClass("noneditable")) {
+			return this.inherited("addGroup", arguments);
+		}
 		var subView = new rforms.view.Editor({binding: binding, template: this.template, topLevel: false}, fieldDiv);
 	},
 	addText: function(fieldDiv, binding, noCardinalityButtons) {
+		if (binding.getItem().hasClass("noneditable")) {
+			return this.inherited("addText", arguments);
+		}
 		var controlDiv = dojo.create("div", null, fieldDiv);
 		dojo.addClass(controlDiv, "fieldControl");
 		var item = binding.getItem();
@@ -184,6 +193,10 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 		}
 	},
 	addChoice: function(fieldDiv, binding, noCardinalityButtons) {
+		if (binding.getItem().hasClass("noneditable")) {
+			return this.inherited("addChoice", arguments);
+		}
+
 		var item = binding.getItem();
 		var choices = item.getChoices();
 		var controlDiv = dojo.create("div", null, fieldDiv);
@@ -197,8 +210,8 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 				dojo.create("span", { "class": "choiceLabel", innerHTML: item._getLocalizedValue(choices[ib].label).value }, divToUse);
 				var rb = new dijit.form.RadioButton({
 					name: "RadioButtonName"+rforms.template.uniqueRadioButtonNameNr,
-					value: choices[ib].d,
-					checked: choices[ib].d === binding.getValue()
+					value: choices[ib].value,
+					checked: choices[ib].value === binding.getValue()
 				}, inputToUse);
 				dojo.connect(rb, "onClick", dojo.hitch(this, function(){
 					binding.setValue(rb.getValue());
@@ -257,6 +270,10 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 	},
 	
 	addTable: function(newRow, firstBinding) {
+		if (firstBinding.getItem().hasClass("noneditable")) {
+			return this.inherited("addGroup", arguments);
+		}
+
 		var item = firstBinding.getItem(), childItems = item.getChildren();
 		var table = dojo.create("table", null, newRow);
 		dojo.addClass(table, "group");
@@ -267,30 +284,89 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 			var th = dojo.create("th", null, tHeadRow);
 			this.showInfo(item, dojo.create("span", {innerHTML: childItems[colInd].getLabel()}, th));
 		}
-		var addTh = dojo.create("th", {"class": "tableControl"}, tHeadRow);
-
-		var parentBinding = firstBinding.getParent();
-		var add = new dijit.form.Button({label: "add", onClick: dojo.hitch(this, function() {
-					var nBinding = rforms.model.create(parentBinding, item);
-					this._addTableRow(table, nBinding);
-				})
-			}, dojo.create("span", null, addTh));
-		var cardTr = firstBinding.getCardinalityTracker();
-		dojo.connect(cardTr, "cardinalityChanged", function() {
-			add.attr("disabled", cardTr.isMax());
-		});
+		if (!firstBinding.getItem().hasClass("firstcolumnfixedtable")) {
+			var addTh = dojo.create("th", {"class": "tableControl"}, tHeadRow);
+			var parentBinding = firstBinding.getParent();
 		
+			var add = new dijit.form.Button({label: "add", onClick: dojo.hitch(this, function() {
+						var nBinding = rforms.model.create(parentBinding, item);
+						this._addTableRow(table, nBinding);
+					})
+				}, dojo.create("span", null, addTh));
+			var cardTr = firstBinding.getCardinalityTracker();
+			dojo.connect(cardTr, "cardinalityChanged", function() {
+				add.attr("disabled", cardTr.isMax());
+			});
+		}
 		return table;
 	},
 	fillTable: function(table, bindings) {
 		if (bindings.length === 0) {
 			return;
 		}
+		var item = bindings[0].getItem();
+		if (item.hasClass("noneditable")) {
+			return this.inherited("addGroup", arguments);
+		}
+		
+		if (item.hasClass("firstcolumnfixedtable")) {
+			bindings = this._createChildBindingsForFirstFixedColumn(bindings);
+		}
+		
 		dojo.forEach(bindings, dojo.hitch(this, this._addTableRow, table));
 	},
 	//===================================================
 	// Private methods
 	//===================================================
+	_createChildBindingsForFirstFixedColumn: function(bindings) {
+			//Find choice column
+			//flesh out bindings from choices
+			//mark each fleshed out binding via .setExcludeFromTreeValidityCheck(true);
+		var nb = [];
+		var item = bindings[0].getItem();
+		var firstColumnItem = item.getChildren()[0]; //Must be a choice.
+		var choices = firstColumnItem.getChoices();
+		//Sort the choices goddamit!
+		choices = this._getCopiedLabeledChoices(choices, item);
+		choices.sort(function(a,b) {
+			//This assumes that there is always an "n" to be found (which is correct)
+			if (a.label > b.label) {
+				return 1;
+			} else if (a.label < b.label) {
+				return -1;
+			} else {
+				return 0;
+			}
+		});
+
+		
+		//index the existing bindings
+		var ebi = {};
+		dojo.forEach(bindings, function(binding) {
+			var igcb = binding.getItemGroupedChildBindings();
+			if (igcb.length > 0 && igcb[0].length > 0) {
+				var rowXcol1 = igcb[0][0];
+				ebi[rowXcol1.getValue()] = binding;		
+			}
+		});
+		
+		//Create one row for each choice
+		var parentBinding = bindings[0].getParent();
+		dojo.forEach(choices, function(choice) {
+			if(ebi[choice.value] != null) {
+				nb.push(ebi[choice.value]);
+			} else {
+				var newRowBinding = rforms.model.create(parentBinding, item);
+				var firstColumnBinding = rforms.model.create(newRowBinding, firstColumnItem);
+				firstColumnBinding.setExcludeFromTreeValidityCheck(true);
+				firstColumnBinding.setAncestorValid(false);
+				firstColumnBinding.setChoice(choice);
+				nb.push(newRowBinding);
+			}
+		});
+		
+		return nb;
+	},
 	_addCreateChildButton: function(rowDiv, labelDiv, binding) {
 		var parentBinding = binding.getParent(), item = binding.getItem();
 		var add = new dijit.form.Button({label: "add", onClick: dojo.hitch(this, function() {
@@ -375,36 +451,45 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 	},
 
 	_addTableRow: function(table, binding) {
+		var childItems = binding.getItem().getChildren();
 		var groupedBindings = binding.getItemGroupedChildBindings();
 		var trEl = dojo.create("tr", null, table);
 		
-		dojo.forEach(groupedBindings, function(bindings) {
+		dojo.forEach(groupedBindings, function(bindings, index) {
+			//Create those columns that are missing:
+			if (bindings.length === 0 && !childItems[index].hasClass("noneditable")) {
+				rforms.model.create(binding, childItems[index]);
+			}
+		});
+		dojo.forEach(groupedBindings, function(bindings, index) {
 			this.addComponent(dojo.create("td", null, trEl), bindings[0], true);
 		}, this);
 		
-		var lastTd = dojo.create("td", {"class": "tableControl"}, trEl);
-		var remove = new dijit.form.Button({label: "remove"}, dojo.create("span", null, lastTd));	
-		var cardTr = binding.getCardinalityTracker();
-		var cardConnect1 = dojo.connect(cardTr, "cardinalityChanged", function() {
-			remove.attr("disabled", cardTr.isMin());
-		});	
-		var removeConnect = dojo.connect(remove, "onClick", this, function() {
-			if (cardTr.getCardinality() === 1) {
-				var parentBinding = binding.getParent(), item = binding.getItem();
-				var nBinding = rforms.model.create(parentBinding, item);
-				this._addTableRow(table, nBinding);
-			} 
-			dojo.disconnect(cardConnect1);
-			dojo.disconnect(removeConnect);
-			binding.remove();
-			dojo.destroy(trEl);
-		});
+		if (!binding.getItem().hasClass("firstcolumnfixedtable")) {
+			var lastTd = dojo.create("td", {"class": "tableControl"}, trEl);
+			var remove = new dijit.form.Button({label: "remove"}, dojo.create("span", null, lastTd));	
+			var cardTr = binding.getCardinalityTracker();
+			var cardConnect1 = dojo.connect(cardTr, "cardinalityChanged", function() {
+				remove.attr("disabled", cardTr.isMin());
+			});	
+			var removeConnect = dojo.connect(remove, "onClick", this, function() {
+				if (cardTr.getCardinality() === 1) {
+					var parentBinding = binding.getParent(), item = binding.getItem();
+					var nBinding = rforms.model.create(parentBinding, item);
+					this._addTableRow(table, nBinding);
+				} 
+				dojo.disconnect(cardConnect1);
+				dojo.disconnect(removeConnect);
+				binding.remove();
+				dojo.destroy(trEl);
+			});
+		}
 	},
 
 	_getLabelForChoice: function(binding, item) {
 		var choice = binding.getChoice();
 		if (choice) {
-			return item._getLocalizedValue(choice.label).value;			
+			return item._getLocalizedValue(choice.label).value;
 		}
 	},
 	/*
@@ -418,15 +503,32 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 	 * From an array of choices that contains value and labels an 
 	 * DataStore is created and returned. The object inside 
 	 * the array should have the following structure:
-	 *  {"d": "Value",
+	 *  {"value": "Value",
 	 *  "label": {"en": "English-label", "sv": "Svensk label"}
 	 * }
 	 */
 	_getStoreFromArray: function(/*Array of objects*/objects, /*The item*/ item){
+		
+		//Adds an empty choice when min cardinality > 0
+		var itemsArray = this._getCopiedLabeledChoices(objects, item);
+		if (!(item.getCardinality().min > 0)) {
+			itemsArray.push({value: "", label: "No value", top: true});
+		}
+		var store = new rforms.view.SortedStore({
+			sortBy: "label",
+			data: {
+				identifier: "value",
+				label: "label",
+				items: itemsArray
+			}
+		});
+		return store;
+	},
+	_getCopiedLabeledChoices: function(objects, item) {
 		var itemsArray = [];
 		for (var i in objects){
 			var currentLabel = item._getLocalizedValue(objects[i].label);
-			var obj = {d: objects[i].d || (dojo.isString(objects[i].value) ? objects[i].value : objects[i].value.uri), label: currentLabel.value};
+			var obj = {value: objects[i].value, label: currentLabel.value};
 			if (objects[i].top === true) {
 				obj.top = true;
 			}
@@ -438,34 +540,23 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 			}
 			itemsArray.push(obj);
 		}
-		if (!(item.getCardinality().min > 0)) {
-			itemsArray.push({d: "", label: "", top: true});
-		}
-		var store = new rforms.view.SortedStore({
-			sortBy: "label",
-			data: {
-				identifier: "d",
-				label: "label",
-				items: itemsArray
-			}
-		});
-		return store;
+		return itemsArray;
 	},
 	/*
 	 * 
 	 * This method returns a list of language-codes and their label (in several translations)
 	 * An example for English looks like this:
-	 * {"d": "en",
+	 * {"value": "en",
 	 *  "label": {"en": "English", "sv": "Engelska"}
 	 * }
 	 *  
 	 * @return {Array} of languages.
 	 */
 	_getLanguagesList:function (){ //TODO: Take this list from some kind of configuration
-		var list = [{"d": "", label:{"en":"", "sv":""}},
-		            {"d": "en", label:{"en":"English", "sv":"Engelska"}},
-		            {"d": "de", label:{"en":"German", "sv":"Tyska"}},
-					{"d": "sv", label:{"en":"Swedish", "sv":"Svenska"}}];
+		var list = [{"value": "", label:{"en":"", "sv":""}},
+		            {"value": "en", label:{"en":"English", "sv":"Engelska"}},
+		            {"value": "de", label:{"en":"German", "sv":"Tyska"}},
+					{"value": "sv", label:{"en":"Swedish", "sv":"Svenska"}}];
 		return list;
 	}
 });

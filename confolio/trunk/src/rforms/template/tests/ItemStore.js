@@ -35,7 +35,7 @@ doh.register("Create-ItemStore", [
 	var c = t.getRoot().getChildren()[3];
 	doh.t(c instanceof rforms.template.Choice);
 	c.getDynamicChoices(function(choices) {
-		deferred.callback(choices.length === 2);
+		deferred.callback(choices.length === 3);
 	});
 	return deferred;
   }

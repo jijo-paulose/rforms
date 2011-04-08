@@ -74,7 +74,7 @@ dojo.declare("rforms.view.TreeOntologyChooser", [dijit.layout._LayoutWidget, dij
 	},
 	_doneClicked: function() {
 		dojo.forEach(this._choices, function(choice) {
-			if (this.selectedValue === choice.d) {
+			if (this.selectedValue === choice.value) {
 				this.binding.setChoice(choice);				
 			}
 		}, this);
@@ -86,7 +86,7 @@ dojo.declare("rforms.view.TreeOntologyChooser", [dijit.layout._LayoutWidget, dij
 	 * From an array of choices that contains value and labels an 
 	 * DataStore is created and returned. The object inside 
 	 * the array should have the following structure:
-	 *  {"d": "Value",
+	 *  {"value": "Value",
 	 *  "label": {"en": "English-label", "sv": "Svensk label"}
 	 * }
 	 */
@@ -94,7 +94,7 @@ dojo.declare("rforms.view.TreeOntologyChooser", [dijit.layout._LayoutWidget, dij
 		var objects = item.getChoices(), itemsArray = [];
 		for (var i in objects){
 			var currentLabel = item._getLocalizedValue(objects[i].label);
-			var obj = {d: objects[i].d || (dojo.isString(objects[i].value) ? objects[i].value : objects[i].value.uri), label: currentLabel.value};
+			var obj = {value: objects[i].value, label: currentLabel.value};
 			if (objects[i].top === true) {
 				obj.top = true;
 			}
@@ -110,7 +110,7 @@ dojo.declare("rforms.view.TreeOntologyChooser", [dijit.layout._LayoutWidget, dij
 		var store = new rforms.view.SortedStore({
 			sortBy: "label",
 			data: {
-				identifier: "d",
+				identifier: "value",
 				label: "label",
 				items: itemsArray
 			}
@@ -126,10 +126,10 @@ dojo.declare("rforms.view.TreeOntologyChooser", [dijit.layout._LayoutWidget, dij
 			if(item == null) {
 				return "";
 			}
-			var value = this._store.getValue(item, "d");
+			var value = this._store.getValue(item, "value");
 			if(this._store.getValue(item, "selectable") === false) {
 				return "notselectable";
-			} if (this.binding.getChoice() && this.binding.getChoice().d === value) {
+			} if (this.binding.getChoice() && this.binding.getChoice().value === value) {
 				return "currentselection";				
 			}
 			return "default";
@@ -161,9 +161,9 @@ dojo.declare("rforms.view.TreeOntologyChooser", [dijit.layout._LayoutWidget, dij
 			dijit.focus(this.tooltipDialog.domNode);*/
 	},
 	_showValue: function(item) {
-		var choice, d = this._store.getValue(item,"d");
+		var choice, value = this._store.getValue(item,"value");
 		dojo.forEach(this._choices, function(c) {
-			if (d === c.d) {
+			if (value === c.value) {
 				choice = c;
 			}
 		}, this);
@@ -177,11 +177,11 @@ dojo.declare("rforms.view.TreeOntologyChooser", [dijit.layout._LayoutWidget, dij
 			dojo.attr(this.labelNode, "innerHTML", "");
 			dojo.attr(this.descriptionNode, "innerHTML", "");			
 		} else {
-			this.selectedValue = choice.d;
+			this.selectedValue = choice.value;
 			dojo.attr(this.uriNode, "innerHTML", this.selectedValue);
 			dojo.attr(this.labelNode, "innerHTML", item._getLocalizedValue(choice.label).value || "(No label given.)");
 			dojo.attr(this.descriptionNode, "innerHTML", item._getLocalizedValue(choice.description).value || "(No description given.)");
-			if (choice.selectable !== false && (this.binding.getChoice() == null || this.binding.getChoice().d !== this.selectedValue)) {
+			if (choice.selectable !== false && (this.binding.getChoice() == null || this.binding.getChoice().value !== this.selectedValue)) {
 				this.doneButton.set("disabled", false);
 			} else {
 				this.doneButton.set("disabled", true);

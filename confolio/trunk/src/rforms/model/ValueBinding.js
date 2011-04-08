@@ -16,6 +16,7 @@ dojo.declare("rforms.model.ValueBinding", rforms.model.Binding, {
 	//===================================================
 	_validObject: true,
 	_validPredicate: true,
+	_excludeFromTreeValidityCheck: false,
 
 	//===================================================
 	// Public API
@@ -35,7 +36,7 @@ dojo.declare("rforms.model.ValueBinding", rforms.model.Binding, {
 		if (this._isValidValue(value)) {
 			this._statement.setValue(value);
 			this._validObject = true;
-			if (oValidObject !== true && this._validPredicate === true) {
+			if (oValidObject !== true && this._validPredicate === true && !this._excludeFromTreeValidityCheck) {
 				this._parent.oneChildValidityChanged(true);
 			}
 		} else {
@@ -97,7 +98,10 @@ dojo.declare("rforms.model.ValueBinding", rforms.model.Binding, {
 	setDatatype: function(dt) {
 		this._statement.setDatatype(dt);
 	},
-
+	
+	setExcludeFromTreeValidityCheck: function(value) {
+		this._excludeFromTreeValidityCheck = value;
+	},
 	//===================================================
 	// Inherited methods
 	//===================================================
@@ -117,6 +121,6 @@ dojo.declare("rforms.model.ValueBinding", rforms.model.Binding, {
 		this._statement.setAsserted(assert);
 	},
 	isValid: function() {
-		return this._validObject && this._validPredicate;
+		return this._validObject && this._validPredicate && !this._excludeFromTreeValidityCheck;
 	}
 });
