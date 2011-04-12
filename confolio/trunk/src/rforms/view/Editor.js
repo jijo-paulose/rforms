@@ -170,7 +170,7 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 		if(nodeType === "LANGUAGE_LITERAL" || nodeType === "PLAIN_LITERAL"){
 			var langSpan = dojo.create("span", null, controlDiv);
 			var langList = this._getLanguagesList();
-			var langStore = this._getStoreFromArray(langList,binding.getItem());
+			var langStore = this._getStoreFromArray(langList,binding.getItem(), true);
 			var languageSelector = new dijit.form.FilteringSelect({
 					store: langStore,
 					searchAttr: "label"
@@ -507,11 +507,11 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 	 *  "label": {"en": "English-label", "sv": "Svensk label"}
 	 * }
 	 */
-	_getStoreFromArray: function(/*Array of objects*/objects, /*The item*/ item){
+	_getStoreFromArray: function(/*Array of objects*/objects, /*The item*/ item, noEmptyValue){
 		
 		//Adds an empty choice when min cardinality > 0
 		var itemsArray = this._getCopiedLabeledChoices(objects, item);
-		if (!(item.getCardinality().min > 0)) {
+		if (noEmptyValue !== true && !(item.getCardinality().min > 0)) {
 			itemsArray.push({value: "", label: "No value", top: true});
 		}
 		var store = new rforms.view.SortedStore({
