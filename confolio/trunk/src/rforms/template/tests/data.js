@@ -3110,3 +3110,142 @@ rforms.template.tests.template3 ={
   ]
  }
 }
+
+rforms.template.tests.template4 = {
+ "label": {
+  "en": "Default Base formlet in compound formlets",
+  "sv": "Default formulet bas i sammansatta formuletter"
+ },
+ "description": {
+  "en": "This is the formlet used as base in compound formlets by default. The formlets consists of a query with only a base variable and a minimal form specification. If the base formlet is not loaded (i.e. the containing formlet set) many compound formlets will break.",
+  "sv": "Denna formuletten används som bas i många sammansatta formuletter som default. Formuletten består av en fråga med endast en basvariabel samt en minimal formulärspecifikation. Om denna basformulett inte är laddad (egentligen den omgivande formulett mängden) så kommer många sammansatta formuletter inte att fungera."
+ },
+ "root": {
+  "nodetype": "RESOURCE",
+  "label": {
+   "de": "Ressource",
+   "en": "Resource",
+   "sv": "Resurs"
+  },
+  "@type": "group",
+  "content": [{
+   "styles": ["GroupFormItem"],
+   "nodetype": "BLANK",
+   "cardinality": {
+    "min": 0,
+    "pref": 1,
+    "max": 1
+   },
+   "label": {"": "1 CLINICAL HEMATOLOGY: Benign "},
+   "@type": "group",
+   "cls": ["table", "firstcolumnfixedtable"],
+   "property": "http://scam.sf.net/schema#hasCompetence",
+   "content": [
+    {
+     "styles": ["ChoiceFormItem"],
+     "nodetype": "URI",
+     "cardinality": {
+      "min": 0,
+      "pref": 1,
+      "max": 1
+     },
+     "label": {"en": "1A: RED CELL DISORDERS "},
+     "@type": "choice",
+	 "cls": ["noneditable"],
+     "property": "http://scam.sf.net/schema#competencyDefinition",
+     "choices": [
+      {
+       "value": {"uri": "http://www.ehaweb.org/rdf/2011-passport#Item1AA"},
+       "label": {"en": "a) Anemias due to deficiency (iron, B12, folate)"}
+      },
+      {
+       "value": {"uri": "http://www.ehaweb.org/rdf/2011-passport#Item1AB"},
+       "label": {"en": "b) Anemia of chronic disease"}
+      },
+      {
+       "value": {"uri": "http://www.ehaweb.org/rdf/2011-passport#Item1AC"},
+       "label": {"en": "c) Anemia due to toxic exposure"}
+      },
+      {
+       "value": {"uri": "http://www.ehaweb.org/rdf/2011-passport#Item1AD"},
+       "label": {"en": "d) Pure red cell aplasia"}
+      },
+      {
+       "value": {"uri": "http://www.ehaweb.org/rdf/2011-passport#Item1AE"},
+       "label": {"en": "e) Thalassemia"}
+      },
+      {
+       "value": {"uri": "http://www.ehaweb.org/rdf/2011-passport#Item1AF"},
+       "label": {"en": "f) Sickle cell disease and other hemoglobinopathies"}
+      },
+      {
+       "value": {"uri": "http://www.ehaweb.org/rdf/2011-passport#Item1AG"},
+       "label": {"en": "g) Red blood cell membrane disorders (e.g.Spherocytosis)"}
+      },
+      {
+       "value": {"uri": "http://www.ehaweb.org/rdf/2011-passport#Item1AH"},
+       "label": {"en": "h) Red blood cell enzymopathy (e.g. G6PD)"}
+      },
+      {
+       "value": {"uri": "http://www.ehaweb.org/rdf/2011-passport#Item1AI"},
+       "label": {"en": "i) Acquired immune hemolytic anemias"}
+      },
+      {
+       "value": {"uri": "http://www.ehaweb.org/rdf/2011-passport#Item1AJ"},
+       "label": {"en": "j) Acquired non-immune hemolytic anemias"}
+      },
+      {
+       "value": {"uri": "http://www.ehaweb.org/rdf/2011-passport#Item1AK"},
+       "label": {"en": "k) Other congenital anemias (CDA, sideroblastic anemia)"}
+      },
+      {
+       "value": {"uri": "http://www.ehaweb.org/rdf/2011-passport#Item1AL"},
+       "label": {"en": "l) Erythrocytosis (other than PV)"}
+      },
+      {
+       "value": {"uri": "http://www.ehaweb.org/rdf/2011-passport#Item1AM"},
+       "label": {"en": "m) Primary hemochromatosis"}
+      },
+      {
+       "value": {"uri": "http://www.ehaweb.org/rdf/2011-passport#Item1AN"},
+       "label": {"en": "n) Secondary hemochromatosis"}
+      },
+      {
+       "value": {"uri": "http://www.ehaweb.org/rdf/2011-passport#Item1AO"},
+       "label": {"en": "o) Porphyria"}
+      }
+     ]
+    },
+    {
+     "styles": ["ChoiceFormItem"],
+     "nodetype": "URI",
+     "cardinality": {
+      "min": 0,
+      "pref": 1,
+      "max": 1
+     },
+     "label": {"en": "Level"},
+     "@type": "choice",
+     "property": "http://scam.sf.net/schema#competenceLevel",
+     "description": {"en": "The level in this section is defined as..."},
+     "choices": [
+      {
+       "value": {"uri": "http://testuri.se/level1"},
+       "label": {"en": "Level 1"}
+      },
+      {
+       "value": {"uri": "http://testuri.se/level2"},
+       "label": {"en": "Level 2"}
+      },
+      {
+       "value": {"uri": "http://testuri.se/level3"},
+       "label": {"en": "Level 3"}
+      }
+     ]
+    }
+   ],
+   "constraints": {"http://www.w3.org/2004/02/skos/core#related": {"uri": "http://www.ehaweb.org/rdf/2011-passport#RedCellDisorders"}}
+  }]
+ },
+ "ontologies": ["http://localhost:8080/ontologies/Model0.rdf"]
+}
