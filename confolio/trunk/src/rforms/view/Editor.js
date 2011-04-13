@@ -56,9 +56,19 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 	 */
 	prepareBindings: function(item, bindings) {
 		var card = item.getCardinality();
-		var target = card.pref > 0 ? card.pref : card.min > 0 ? card.min : 1;
-		if (item instanceof rforms.template.Group) {
-			target = 0;
+		var target;
+		if (card.pref > 0) {
+			target = card.pref;
+		} else if (card.min > 0) {
+			target = card.min;
+		} else if (item instanceof rforms.template.Group) {
+			if (item.getProperty() == null) {
+				target = 1;
+			} else {
+				target = 0;
+			}
+		} else {
+			target = 1;
 		}
 		if (target > bindings.length) {
 			bindings = bindings.concat([]);
