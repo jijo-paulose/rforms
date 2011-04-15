@@ -17,7 +17,7 @@ dojo.declare("rforms.template.Group", rforms.template.Item, {
 	//===================================================	
 	getChildren: function() {
 		if (this._children == null) {
-			this._children = this._itemStore._createItems(this._source.content || [], this._forceChildrenClones);
+			this._children = this._itemStore._createItems(this._source.content || this._source.items || [], this._forceChildrenClones);
 			if (this._source.automatic) {
 				this.sortChildren();
 			}
