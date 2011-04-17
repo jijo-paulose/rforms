@@ -43,8 +43,8 @@ dojo.declare("rforms.template.ItemStore", null, {
 			this._ontologyStore.importRegistry(source.cachedChoices);
 		}
 		var t = new rforms.template.Template(source, this._createItem(source.root), this);
-		if (t["@id"]) {
-			this._tRegistry[t["@id"]] = t;
+		if (t.id || t["@id"]) {
+			this._tRegistry[t.id || t["@id"]] = t;
 		}
 		return t;
 	},
@@ -78,9 +78,9 @@ dojo.declare("rforms.template.ItemStore", null, {
 		}, this);
 	},
 	_createItem: function(source, forceClone) {
-		var item;
-		if (source.hasOwnProperty("@type")) {
-			switch(source["@type"]) {
+		var item, id = source.id || source["@id"], type = source["type"] || source["@type"];
+		if (type != null) {
+			switch(type) {
 			case "text":
 				item = new rforms.template.Text(source);
 				break;
@@ -100,21 +100,21 @@ dojo.declare("rforms.template.ItemStore", null, {
 					item.priority = this.priorities[source.property];
 				}
 			}
-			if (source["@id"] != null && this._registry[source["@id"]] == null) {
-				this._registry[source["@id"]] = item;
+			if (id != null && this._registry[id] == null) {
+				this._registry[id] = item;
 			}
 			return item;
 		} else {
-			if (source["@id"] === undefined) {
+			if (id === undefined) {
 				throw "Cannot create subitem, '@type' for creating new or '@id' for referencing external are required.";
 			}
-			if (this._registry[source["@id"]] === undefined) {
-				throw "Cannot find referenced subitem using identifier: "+source["@id"];
+			if (this._registry[id] === undefined) {
+				throw "Cannot find referenced subitem using identifier: "+id;
 			}
 			if (forceClone === true) {
-				return this._createItem(dojo.clone(this._registry[source["@id"]]._source));
+				return this._createItem(dojo.clone(this._registry[id]._source));
 			} else {
-				return this._registry[source["@id"]];				
+				return this._registry[id];
 			}
 		}
 	}

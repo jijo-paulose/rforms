@@ -15,7 +15,7 @@ dojo.declare("rforms.template._BaseItem", null, {
 	// Public API
 	//===================================================
 	getId: function() {
-		return this._source["@id"];
+		return this._source.id || this._source["@id"];
 	},
 	getLabel: function(returnDetails) {
 		return returnDetails ? this._getLocalizedValue(this._source.label) : this._getLocalizedValue(this._source.label).value;

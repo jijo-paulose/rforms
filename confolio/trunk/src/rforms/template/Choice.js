@@ -45,41 +45,43 @@ dojo.declare("rforms.template.Choice", rforms.template.Item, {
 	 * @return {Array} of choice objects, only provided if method called without callback.
 	 */
 	getDynamicChoices: function(callback) {
-		if (this._dynamicChoicesUrl === undefined) {
-			var params = [];
-			params.push("constr="+encodeURIComponent(dojo.toJson(this._source.constraints)));
-			if (this._source.parentproperty !== undefined) {
-				var pp = this._source.isparentpropertyinverted === true ? "ipp=" : "pp=";
-				params.push(pp+encodeURIComponent(this._source.parentproperty));
+		if (this._dynamicChoices == null) {
+			if (callback == null) {
+				this._dynamicChoices = this._ontologyStore.getChoices(this);
+				return this._dynamicChoices;
+			} else {
+				this._ontologyStore.getChoices(this, dojo.hitch(this, function(choices) {
+					this._dynamicChoices = choices;
+					if (choices == null) {
+						console.log("Failed lookup of choices for "+this.getLabel());
+						console.log("  OntologyUrl is: "+this._source.ontologyUrl);
+					}
+					callback(choices);				
+				}));
+				return;
 			}
-			if (this._source.hierarchyproperty !== undefined) {
-				var hp = this._source.ishierarchypropertyinverted === true ? "ihp=" : "hp=";
-				params.push(hp+encodeURIComponent(this._source.hierarchyproperty));
+		} else {
+			if (callback == null) {
+				return this._dynamicChoices;
+			} else {
+				callback(this._dynamicChoices);
 			}
-			this._dynamicChoicesUrl = this._source.ontologyUrl+"?"+params.join("&");
-		}
-		var arrChoices = this._ontologyStore.getChoices(this._dynamicChoicesUrl, callback);
-		if (arrChoices == null) {
-			console.log("Failed lookup of choices for "+this.getLabel());
-			console.log("  OntologyUrl is: "+this._source.ontologyUrl);
-			console.log("  Looking up via url: "+this._dynamicChoicesUrl);
-		}
-		return arrChoices;
+		}		
 	},
 	getOntologyUrl: function() {
 		return this._source.ontologyUrl;
 	},
 	getParentProperty: function() {
-		return this._source.parentproperty;
+		return this._source.parentProperty;
 	},
 	getHierarchyProperty: function() {
-		return this._source.hierarchyproperty;
+		return this._source.hierarchyProperty;
 	},
 	isParentPropertyInverted: function() {
-		return this._source.isparentpropertyinverted === undefined ? false : this._source.isparentpropertyinverted;
+		return this._source.isParentPropertyInverted === undefined ? false : this._source.isParentPropertyInverted;
 	},
 	isHierarchyPropertyInverted: function() {
-		return this._source.ishierarchypropertyinverted === undefined ? false : this._source.ishierarchypropertyinverted;
+		return this._source.isHierarchyPropertyInverted === undefined ? false : this._source.isHierarchyPropertyInverted;
 	},
 	
 	//===================================================

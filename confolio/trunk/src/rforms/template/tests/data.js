@@ -30,7 +30,7 @@ rforms.template.tests.template1 = {
 			"@type":"text",
 			"label":{"en":"Published"},
 			"description":{"en":"The date this book was first published"},
-			"nodetype":"LITERAL",
+			"nodetype":"DATATYPE_LITERAL",
 			"datatype":"http://www.w3.org/2001/XMLSchema.xsd#date",
 			"property":"http://purl.org/dc/terms/date"
 		},{
@@ -43,8 +43,8 @@ rforms.template.tests.template1 = {
 			"ontologyUrl": "http://example.com/bookOntology",
 			"property":"http://purl.org/dc/terms/subject",
 			"cardinality": {"min": 0, "max": 1},
-			"parentproperty": "http://something.se/doh",
-			"hierarchyproperty": "http://somethingel.se/doh"
+			"parentProperty": "http://something.se/doh",
+			"hierarchyProperty": "http://something.se/doh"
 		},{
 			"@id":"http://example.ch/people.sirff#author",
 			"@type":"group",
@@ -60,12 +60,12 @@ rforms.template.tests.template1 = {
 					"@type":"text",
 					"property":"http://xmlns.com/foaf/0.1/firstName",
 					"label":{"en":"First name"},
-					"nodetype":"LITERAL"
+					"nodetype":"ONLY_LITERAL"
 				},{
 					"@type":"text",
 					"property":"http://xmlns.com/foaf/0.1/surname",
 					"label":{"en":"Surname"},
-					"nodetype":"LITERAL"
+					"nodetype":"ONLY_LITERAL"
 				}
 			]
 		},{
@@ -89,14 +89,28 @@ rforms.template.tests.template1 = {
 	],
 	"ontologies":["http://example.ru/library.rdf"],
 	"cachedChoices": {
-		"http://example.com/bookOntology?constr=%7B%22http%3A%2F%2Fwww.w3.org%2F2004%2F02%2Fskos%2Fcore%23inScheme%22%3A%22http%3A%2F%2Fexample.com%2FbookSubjects%22%7D&pp=http%3A%2F%2Fsomething.se%2Fdoh&hp=http%3A%2F%2Fsomethingel.se%2Fdoh":
-			[{"top":true, value: "http://example.com/instanceTop", selectable: false, label: {"sv": "Toppen", "en":"Ze top!"}, children:[
-			    {"_reference": "http://example.com/instance1"},{"_reference": "http://example.com/instance2"}]},
-			 {value: "http://example.com/instance1", label: {"sv": "Matematik", "en":"Mathematics"}, description: {"sv": "Matematik är ett coolt ämne", "en":"Mathematics is a cool subject"}},
-			 {value: "http://example.com/instance2", label: {"sv": "Kemi", "en":"Chemistry"}}],
-		"http://example.com/DCOntology?constr=%7B%22http%3A%2F%2Fwww.w3.org%2F2004%2F02%2Fskos%2Fcore%23inScheme%22%3A%22http%3A%2F%2Fexample.com%2FauthorPredicates%22%7D":
-			[{value: "http://purl.org/dc/terms/creator", label: {"sv": "Skapare", "en":"Creator"}},
-			 {value: "http://purl.org/dc/terms/contributor", label: {"sv": "Bidragare", "en":"Contributor"}}]
+		"http://example.com/bookOntology": [{
+			constraints: {"http://www.w3.org/2004/02/skos/core#inScheme":"http://example.com/bookSubjects"},
+			parentProperty: "http://something.se/doh",
+			hierarchyProperty: "http://something.se/doh",
+			isParentPropertyInverted: false,
+			isHierarchyPropertyInverted: false,
+			choices: [
+				{"top":true, "value": "http://example.com/instanceTop", "selectable": false, 
+				 "label": {"sv": "Toppen", "en":"Ze top!"}, children:[
+				    {"_reference": "http://example.com/instance1"},
+					{"_reference": "http://example.com/instance2"}]},
+				{"value": "http://example.com/instance1", "label": {"sv": "Matematik", "en":"Mathematics"}, 
+				 "description": {"sv": "Matematik är ett coolt ämne", "en":"Mathematics is a cool subject"}},
+				{"value": "http://example.com/instance2", "label": {"sv": "Kemi", "en":"Chemistry"}}
+			]}], 
+		"http://example.com/DCOntology": [{
+			constraints: {"http://www.w3.org/2004/02/skos/core#inScheme":"http://example.com/authorPredicates"},
+			choices: [
+				{"value": "http://purl.org/dc/terms/creator", "label": {"sv": "Skapare", "en":"Creator"}},
+			 	{"value": "http://purl.org/dc/terms/contributor", "label": {"sv": "Bidragare", "en":"Contributor"}}
+			]
+		}]
 	}
 };
 
@@ -141,8 +155,8 @@ rforms.template.tests.template2 = {
 			"ontologyUrl": "http://example.com/bookOntology",
 			"property":"http://purl.org/dc/terms/subject",
 			"cardinality": {"min": 0, "max": 1},
-			"parentproperty": "http://something.se/doh",
-			"hierarchyproperty": "http://somethingel.se/doh"
+			"parentProperty": "http://something.se/doh",
+			"hierarchyProperty": "http://somethingel.se/doh"
 		},{
 			"@id":"http://example.ch/people.sirff#author",
 			"@type":"group",
@@ -219,14 +233,28 @@ rforms.template.tests.template2 = {
 	],
 	"ontologies":["http://example.ru/library.rdf"],
 	"cachedChoices": {
-		"http://example.com/bookOntology?constr=%7B%22http%3A%2F%2Fwww.w3.org%2F2004%2F02%2Fskos%2Fcore%23inScheme%22%3A%22http%3A%2F%2Fexample.com%2FbookSubjects%22%7D&pp=http%3A%2F%2Fsomething.se%2Fdoh&hp=http%3A%2F%2Fsomethingel.se%2Fdoh":
-			[{"top":true, value: "http://example.com/instanceTop", selectable: false, label: {"sv": "Toppen", "en":"Ze top!"}, children:[
-			    {"_reference": "http://example.com/instance1"},{"_reference": "http://example.com/instance2"}]},
-			 {value: "http://example.com/instance1", label: {"sv": "Matematik", "en":"Mathematics"}, description: {"sv": "Matematik är ett coolt ämne", "en":"Mathematics is a cool subject"}},
-			 {value: "http://example.com/instance2", label: {"sv": "Kemi", "en":"Chemistry"}}],
-		"http://example.com/DCOntology?constr=%7B%22http%3A%2F%2Fwww.w3.org%2F2004%2F02%2Fskos%2Fcore%23inScheme%22%3A%22http%3A%2F%2Fexample.com%2FauthorPredicates%22%7D":
-			[{value: "http://purl.org/dc/terms/creator", label: {"sv": "Skapare", "en":"Creator"}},
-			 {value: "http://purl.org/dc/terms/contributor", label: {"sv": "Bidragare", "en":"Contributor"}}]
+		"http://example.com/bookOntology": [{
+			constraints: {"http://www.w3.org/2004/02/skos/core#inScheme":"http://example.com/bookSubjects"},
+			parentProperty: "http://something.se/doh",
+			hierarchyProperty: "http://something.se/doh",
+			isParentPropertyInverted: false,
+			isHierarchyPropertyInverted: false,
+			choices: [
+				{"top":true, "value": "http://example.com/instanceTop", "selectable": false, 
+				 "label": {"sv": "Toppen", "en":"Ze top!"}, children:[
+				    {"_reference": "http://example.com/instance1"},
+					{"_reference": "http://example.com/instance2"}]},
+				{"value": "http://example.com/instance1", "label": {"sv": "Matematik", "en":"Mathematics"}, 
+				 "description": {"sv": "Matematik är ett coolt ämne", "en":"Mathematics is a cool subject"}},
+				{"value": "http://example.com/instance2", "label": {"sv": "Kemi", "en":"Chemistry"}}
+			]}], 
+		"http://example.com/DCOntology": [{
+			constraints: {"http://www.w3.org/2004/02/skos/core#inScheme":"http://example.com/authorPredicates"},
+			choices: [
+				{"value": "http://purl.org/dc/terms/creator", "label": {"sv": "Skapare", "en":"Creator"}},
+			 	{"value": "http://purl.org/dc/terms/contributor", "label": {"sv": "Bidragare", "en":"Contributor"}}
+			]
+		}]
 	}
 };
 
@@ -240,8 +268,9 @@ rforms.template.tests.template3 ={
   "sv": "Default formulet bas i sammansatta formuletter"
  },
  "cachedChoices": {
-  "http://localhost:8080/ontologies/Model0.rdf?constr=%7B%22http%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23type%22%3A%7B%22uri%22%3A%22http%3A%2F%2Fltsc.ieee.org%2Frdf%2Flomv1p0%2Flom%23InteractivityLevel%22%7D%7D": [
-   {
+ 	"http://localhost:8080/ontologies/Model0.rdf": [{
+		"constraints": {"http://www.w3.org/1999/02/22-rdf-syntax-ns#type": {"uri": "http://ltsc.ieee.org/rdf/lomv1p0/lom#InteractivityLevel"}},
+		"choices": [ {
     "value": "http://ltsc.ieee.org/rdf/lomv1p0/vocabulary#InteractivityLevel-low",
     "top": true,
     "label": {
@@ -256,8 +285,7 @@ rforms.template.tests.template3 ={
      "sv": "2: Låg",
      "ru": "2: низкий"
     }
-   },
-   {
+   }, {
     "value": "http://ltsc.ieee.org/rdf/lomv1p0/vocabulary#InteractivityLevel-medium",
     "top": true,
     "label": {
@@ -272,8 +300,7 @@ rforms.template.tests.template3 ={
      "sv": "3: Medium",
      "ru": "3: средний"
     }
-   },
-   {
+   }, {
     "value": "http://ltsc.ieee.org/rdf/lomv1p0/vocabulary#InteractivityLevel-veryLow",
     "top": true,
     "label": {
@@ -288,8 +315,7 @@ rforms.template.tests.template3 ={
      "sv": "1: Väldigt låg",
      "ru": "1: очень низкий"
     }
-   },
-   {
+   }, {
     "value": "http://ltsc.ieee.org/rdf/lomv1p0/vocabulary#InteractivityLevel-high",
     "top": true,
     "label": {
@@ -304,8 +330,7 @@ rforms.template.tests.template3 ={
      "sv": "4: Hög",
      "ru": "4: высокий"
     }
-   },
-   {
+   }, {
     "value": "http://ltsc.ieee.org/rdf/lomv1p0/vocabulary#InteractivityLevel-veryHigh",
     "top": true,
     "label": {
@@ -321,9 +346,14 @@ rforms.template.tests.template3 ={
      "ru": "5: очень высокий"
     }
    }
-  ],
-  "http://localhost:8080/ontologies/Model0.rdf?constr=%7B%22http%3A%2F%2Fwww.w3.org%2F2004%2F02%2Fskos%2Fcore%23inScheme%22%3A%7B%22uri%22%3A%22http%3A%2F%2Fwww.ehaweb.org%2Frdf%2F2011-passport%23CurriculumPassportScheme%22%7D%7D&ipp=http%3A%2F%2Fwww.w3.org%2F2004%2F02%2Fskos%2Fcore%23member&ihp=http%3A%2F%2Fwww.w3.org%2F2004%2F02%2Fskos%2Fcore%23member": [
-   {
+  ]}, {
+    "constraints": {"http://www.w3.org/2004/02/skos/core#inScheme": {"uri": "http://www.ehaweb.org/rdf/2011-passport#CurriculumPassportScheme"}},
+    "ontologyUrl": "http://localhost:8080/ontologies/Model0.rdf",
+	"parentProperty": "http://www.w3.org/2004/02/skos/core#member",
+	"hierarchyProperty": "http://www.w3.org/2004/02/skos/core#member",
+    "isParentPropertyInverted": true,
+	"isHierarchyPropertyInverted": true,
+	"choices" : [{
     "value": "http://www.ehaweb.org/rdf/2011-passport#Item4AE",
     "label": {"": "4Ae) Acute and chronic graft versus host disease"}
    },
@@ -1995,9 +2025,9 @@ rforms.template.tests.template3 ={
      "ru": "3: средний"
     }
    }
-  ],
-  "http://localhost:8080/ontologies/Model0.rdf?constr=%7B%22http%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23type%22%3A%7B%22uri%22%3A%22http%3A%2F%2Fltsc.ieee.org%2Frdf%2Flomv1p0%2Flom%23InteractivityType%22%7D%7D": [
-   {
+  ]}, {
+	"constraints": {"http://www.w3.org/1999/02/22-rdf-syntax-ns#type": {"uri": "http://ltsc.ieee.org/rdf/lomv1p0/lom#InteractivityType"}},
+	"choices": [ {
     "value": "http://ltsc.ieee.org/rdf/lomv1p0/vocabulary#InteractivityType-mixed",
     "top": true,
     "label": {
@@ -2045,8 +2075,9 @@ rforms.template.tests.template3 ={
      "ru": "объяснительный"
     }
    }
-  ],
-  "http://localhost:8080/ontologies/Model0.rdf?constr=%7B%22http%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23type%22%3A%7B%22uri%22%3A%22http%3A%2F%2Fpurl.org%2Fdc%2Fterms%2FAgentClass%22%7D%7D": [
+  ]}, {
+	"constraints": {"http://www.w3.org/1999/02/22-rdf-syntax-ns#type": {"uri": "http://purl.org/dc/terms/AgentClass"}},
+	"choices": [
    {
     "value": "http://ltsc.ieee.org/rdf/lomv1p0/vocabulary#IntendedEndUserRole-manager",
     "top": true,
@@ -2110,7 +2141,7 @@ rforms.template.tests.template3 ={
      "sv": "Lärare",
      "ru": "учитель"
     }
-   }
+   }]}
   ]
  },
  "description": {
@@ -2344,10 +2375,10 @@ rforms.template.tests.template3 ={
     "description": {"en": "Points to a part of the EHA CV-passport that this resource deals with"},
     "constraints": {"http://www.w3.org/2004/02/skos/core#inScheme": {"uri": "http://www.ehaweb.org/rdf/2011-passport#CurriculumPassportScheme"}},
     "ontologyUrl": "http://localhost:8080/ontologies/Model0.rdf",
-	"parentproperty": "http://www.w3.org/2004/02/skos/core#member",
-	"hierarchyproperty": "http://www.w3.org/2004/02/skos/core#member",
-    "isparentpropertyinverted": true,
-	"ishierarchypropertyinverted": true
+	"parentProperty": "http://www.w3.org/2004/02/skos/core#member",
+	"hierarchyProperty": "http://www.w3.org/2004/02/skos/core#member",
+    "isParentPropertyInverted": true,
+	"isHierarchyPropertyInverted": true
    },
    {
     "styles": ["ChoiceFormItem"],

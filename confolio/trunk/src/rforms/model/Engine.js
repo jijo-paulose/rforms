@@ -276,8 +276,11 @@ rforms.model._isNodeTypeMatch = function(item, stmt) {
 	var objectType = stmt.getType();
 	switch (item.getNodetype()) {
 		case "LITERAL":
+		case "ONLY_LITERAL":
 		case "LANGUAGE_LITERAL":
 			return objectType === "literal";
+		case "DATATYPE_LITERAL":
+			return objectType === "literal" && stmt.getDatatype() === item.getDatatype();
 		case "RESOURCE":
 			return objectType === "uri" || objectType === "bnode";
 	}
