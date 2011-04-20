@@ -36,17 +36,18 @@
 			//remove any use of doh to allow independent debugging.
 			//-------------------------START----------------------------------------
 
-		this.itemStore = new rforms.template.ItemStore();
-	this.template = this.itemStore.createTemplate(rforms.template.tests.template1);
-	this.graph = new rdfjson.Graph(rdfjson.tests.graph2);
-			var binding = rforms.model.match(this.graph, "http://example.org/about", this.template);
-		doh.t(binding instanceof rforms.model.GroupBinding);
-		doh.t(binding.getChildBindings().length === 5); //A publisher, two titles, a subject and a creator.
-		doh.t(binding.getItemGroupedChildBindings()[0].length === 1); //One publisher
-		doh.t(binding.getItemGroupedChildBindings()[1].length === 2); //Two titles
-		doh.t(binding.getItemGroupedChildBindings()[2].length === 0); //No date
-		doh.t(binding.getItemGroupedChildBindings()[3].length === 1); //One subject
-		doh.t(binding.getItemGroupedChildBindings()[4].length === 1); //One contributor
+			this.graph = new rdfjson.Graph({});
+	this.s1 = this.graph.create(rdfjson.tests.uris[0], rdfjson.tests.predicates[0]);
+	this.s2 = this.graph.create(rdfjson.tests.uris[0], rdfjson.tests.predicates[1], {"type": "literal", "value": "Hepp"});
+	this.is = new rforms.template.ItemStore();
+	this.t1 = this.is.createTemplate(rforms.template.tests.template1);
+	this.b1 = new rforms.model.GroupBinding({item: this.t1.getRoot()});
+	this.b2 = new rforms.model.ValueBinding({item: this.t1.getRoot().getChildren()[1], statement: this.s2});
+		doh.t(this.b1.getChildBindings().length === 0);
+		this.b1.addChildBinding(this.b2);
+		doh.t(this.b1.getChildBindings().length === 1);
+		this.b1.removeChildBinding(this.b2);
+		doh.t(this.b1.getChildBindings().length === 0);
 			//-------------------------END----------------------------------------
 			console.log("A sensless log entry, to be able to step over last code row in firebug above.")
 		});

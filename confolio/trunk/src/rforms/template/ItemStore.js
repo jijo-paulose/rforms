@@ -35,6 +35,9 @@ dojo.declare("rforms.template.ItemStore", null, {
 	getItemByProperty: function(property) {
 		return this._registryByProperty[property];
 	},
+	detectTemplate: function(graph, uri, requiredItems) {
+		return rforms.model.constructTemplate(graph, uri, this, requiredItems);
+	},
 	createTemplate: function(source) {
 		if (dojo.isArray(source.auxilliary)) {
 			this._createItems(source.auxilliary);
@@ -43,8 +46,8 @@ dojo.declare("rforms.template.ItemStore", null, {
 			this._ontologyStore.importRegistry(source.cachedChoices);
 		}
 		var t = new rforms.template.Template(source, this._createItem(source.root), this);
-		if (t.id || t["@id"]) {
-			this._tRegistry[t.id || t["@id"]] = t;
+		if (source.id || source["@id"]) {
+			this._tRegistry[source.id || source["@id"]] = t;
 		}
 		return t;
 	},
@@ -57,6 +60,38 @@ dojo.declare("rforms.template.ItemStore", null, {
 	},
 	setPriorities: function(priorities) {
 		this.priorities = priorities;
+	},
+	populate: function(configArr, callback) {
+		var countdown = configArr.length;
+		var down = function() {
+			countdown--;
+			if (countdown === 0) {
+				callback();
+			}
+		}
+		dojo.forEach(configArr, function(config) {
+			var converter;
+			switch(config.type) {
+				case "exhibit":
+					if (converter == null) {
+						converter = new rforms.template.Converter(this);						
+					}
+					converter.convertExhibit(config.url, down);
+					break;
+				case "sirff":
+					var xhrArgs = {
+						url: config.url,
+						handleAs: "json-comment-optional",
+						load: dojo.hitch(this, function(data) {
+							this.createTemplate(data);
+							down();
+						}),
+						error: down
+					};
+					dojo.xhrGet(xhrArgs);
+					break;
+			}
+		}, this);
 	},
 
 	//===================================================

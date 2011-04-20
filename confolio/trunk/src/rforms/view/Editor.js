@@ -223,9 +223,12 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 					value: choices[ib].value,
 					checked: choices[ib].value === binding.getValue()
 				}, inputToUse);
-				dojo.connect(rb, "onClick", dojo.hitch(this, function(){
-					binding.setValue(rb.getValue());
-				}));
+				dojo.connect(rb, "onChange", dojo.hitch(this, function(but){
+					var val = but.get("value");
+					if (val !== false) {
+						binding.setValue(val);
+					}
+				}, rb));
 			}
 			rforms.template.uniqueRadioButtonNameNr++;
 			

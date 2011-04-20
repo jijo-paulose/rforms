@@ -32,15 +32,54 @@ rforms.model.match = function(graph, uri, template) {
 	return rootBinding;
 };
 
-rforms.model.constructTemplate = function(graph, uri, itemStore) {
+/**
+ * Constructs a template by finding an item per outgoing property for provided graph and resource starting point.
+ * 
+ * @param {Object} graph
+ * @param {Object} uri
+ * @param {Object} itemStore
+ * @param {Array} requiredItems an array of required items specified by id or property that will be 
+ * enforced independent of corresponding property exists in the graph or not.
+ * @return {rforms.template.Template} the constructed template.
+ */
+rforms.model.constructTemplate = function(graph, uri, itemStore, requiredItems) {
 	var props = graph.findProperties(uri);
 	var items = [];
+	var fixedProps = {};
+	if (requiredItems != null) {
+		var addItem = function(item) {
+			if (item != null) {
+				if (item.getProperty() != null) {
+					fixedProps[item.getProperty()] = true;
+				}
+				items.push(item);
+			}			
+		};
+		dojo.forEach(requiredItems, function(id) {
+			var item = itemStore.getItem(id) || itemStore.getTemplate(id);
+			if (item != null) {
+				if (item instanceof rforms.template.Group && item.getProperty() == null) {
+					dojo.forEach(item.getChildren(), addItem);
+				} else if (item instanceof rforms.template.Template) {
+					dojo.forEach(item.getRoot().getChildren(), addItem);
+				} else {
+					addItem(item);					
+				}
+			} else {
+				addItem(itemStore.getItemByProperty(id));
+			}
+		});
+	}
 	dojo.forEach(props, function(prop) {
+		if (fixedProps[prop]) {
+			return;
+		}
 		var item = itemStore.getItemByProperty(prop);
 		if (item != null) {
 			items.push(item);
 		}
 	}, this);
+	//TODO sort according to priority.
 	return itemStore.createTemplateFromChildren(items);
 };
 
@@ -81,7 +120,15 @@ rforms.model._createTextItem = function(parentBinding, item) {
 
 rforms.model._createChoiceItem = function(parentBinding, item) {
 	var graph = parentBinding.getGraph();
-	var stmt = graph.create(parentBinding.getChildrenRootUri(), item.getProperty(), {type: "uri", value: ""}, false);
+	var nt = item.getNodetype(), obj;
+	if (nt === "LITERAL") {
+		obj = {type: "literal", value: ""};
+	} else if (nt === "DATATYPE_LITERAL") {
+		obj = {type: "literal", value: "", datatype: item.getDatatype()};
+	} else {
+		obj = {type: "uri", value: ""}
+	}
+	var stmt = graph.create(parentBinding.getChildrenRootUri(), item.getProperty(), obj, false);
 	var nbinding = new rforms.model.ChoiceBinding({item: item, statement: stmt});
 	parentBinding.addChildBinding(nbinding);
 	return nbinding;
@@ -283,6 +330,10 @@ rforms.model._isNodeTypeMatch = function(item, stmt) {
 			return objectType === "literal" && stmt.getDatatype() === item.getDatatype();
 		case "RESOURCE":
 			return objectType === "uri" || objectType === "bnode";
+		case "URI":
+			return objectType === "uri";
+		case "BLANK":
+		 	return objectType === "bnode";
 	}
 	return false;
 };
