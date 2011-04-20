@@ -21,7 +21,7 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 	// Public attributes
 	//===================================================
 	filterTranslations: false,
-	styleCls: "editor",
+	styleCls: "rformsEditor",
 	ontologyPopupWidget: null,
 	includeLevel: "optional",
 
@@ -80,13 +80,13 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 	},
 	
 	addLabel: function(rowDiv, labelDiv, binding, item) {
-		if (item.hasClass("noneditable")) {
+		if (item.hasClass("rformsNoneditable")) {
 			return this.inherited("addLabel", arguments);
 		}
 		var isGroup = item instanceof rforms.template.Group;
 		var label = dojo.create("span", {"innerHTML": item.getLabel()}, labelDiv);
-		dojo.addClass(labelDiv, "labelRow");
-		dojo.addClass(label, "label");
+		dojo.addClass(labelDiv, "rformsLabelRow");
+		dojo.addClass(label, "rformsLabel");
 		this.showInfo(item, label);
 		
 		if (binding == null) {
@@ -105,17 +105,17 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 	},
 
 	addGroup: function(fieldDiv, binding) {
-		if (binding.getItem().hasClass("noneditable")) {
+		if (binding.getItem().hasClass("rformsNoneditable")) {
 			return this.inherited("addGroup", arguments);
 		}
 		var subView = new rforms.view.Editor({binding: binding, template: this.template, topLevel: false}, fieldDiv);
 	},
 	addText: function(fieldDiv, binding, noCardinalityButtons) {
-		if (binding.getItem().hasClass("noneditable")) {
+		if (binding.getItem().hasClass("rformsNoneditable")) {
 			return this.inherited("addText", arguments);
 		}
 		var controlDiv = dojo.create("div", null, fieldDiv);
-		dojo.addClass(controlDiv, "fieldControl");
+		dojo.addClass(controlDiv, "rformsFieldControl");
 		var item = binding.getItem();
 		var nodeType = item.getNodetype();
 		var datatype = item.getDatatype();
@@ -173,7 +173,7 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 					binding.setValue(this.attr("value"));
 				}
 			}, dojo.create("div", null, fieldDiv));
-			dojo.addClass(tb.domNode, "fieldInput");
+			dojo.addClass(tb.domNode, "rformsFieldInput");
 		}
 				
 		//If the language can be set
@@ -189,9 +189,9 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 			dojo.connect(languageSelector, "onChange", dojo.hitch(this, function(){
 					binding.setLanguage(languageSelector.getValue());
 				}));
-			dojo.addClass(langSpan, "language");
-			dojo.addClass(fieldDiv,"langcontrolledfield");
-			dojo.addClass(controlDiv, "langFieldControl");
+			dojo.addClass(langSpan, "rformsLanguage");
+			dojo.addClass(fieldDiv,"rformsLangcontrolledfield");
+			dojo.addClass(controlDiv, "rformsLangFieldControl");
 		}
 		if (noCardinalityButtons !== true) {
 			this._addRemoveButton(fieldDiv, binding, controlDiv, function() {
@@ -203,21 +203,21 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 		}
 	},
 	addChoice: function(fieldDiv, binding, noCardinalityButtons) {
-		if (binding.getItem().hasClass("noneditable")) {
+		if (binding.getItem().hasClass("rformsNoneditable")) {
 			return this.inherited("addChoice", arguments);
 		}
 
 		var item = binding.getItem();
 		var choices = item.getChoices();
 		var controlDiv = dojo.create("div", null, fieldDiv);
-		dojo.addClass(controlDiv, "fieldControl");
+		dojo.addClass(controlDiv, "rformsFieldControl");
 		var divToUse =  dojo.create("div", null, fieldDiv);
 		var hierarchy = item.getParentProperty() && item.getHierarchyProperty();
 		//Check if radiobuttons can be created, i.e. when few chioces and max-cardinality == 1 
 		if (!hierarchy && choices.length < 5 && item.getCardinality().max === 1) {
 			for (var ib in choices) {
 				var inputToUse = dojo.create("input", null, divToUse);
-				dojo.create("span", { "class": "choiceLabel", innerHTML: item._getLocalizedValue(choices[ib].label).value }, divToUse);
+				dojo.create("span", { "class": "rformsChoiceLabel", innerHTML: item._getLocalizedValue(choices[ib].label).value }, divToUse);
 				var rb = new dijit.form.RadioButton({
 					name: "RadioButtonName"+rforms.template.uniqueRadioButtonNameNr,
 					value: choices[ib].value,
@@ -236,7 +236,7 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 			var fSelect, cNode, dialog;
 			//Check if a tree-hierarchy should be created
 			if(hierarchy){
-				cNode = dojo.create("div", {"class": "choiceValue"}, divToUse);
+				cNode = dojo.create("div", {"class": "rformsChoiceValue"}, divToUse);
 				dojo.attr(cNode, "innerHTML", this._getLabelForChoice(binding, item) || "");				
 				var oc;
 				var ddButton = new dijit.form.Button({label:  "Browse", onClick: dojo.hitch(this, function() {
@@ -283,13 +283,13 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 	},
 	
 	addTable: function(newRow, firstBinding) {
-		if (firstBinding.getItem().hasClass("noneditable")) {
+		if (firstBinding.getItem().hasClass("rformsNoneditable")) {
 			return this.inherited("addGroup", arguments);
 		}
 
 		var item = firstBinding.getItem(), childItems = item.getChildren();
 		var table = dojo.create("table", null, newRow);
-		dojo.addClass(table, "group");
+		dojo.addClass(table, "rformsGroup");
 
 		tHead = dojo.create("thead", null, table);
 		tHeadRow = dojo.create("tr", null, table);
@@ -297,8 +297,8 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 			var th = dojo.create("th", null, tHeadRow);
 			this.showInfo(item, dojo.create("span", {innerHTML: childItems[colInd].getLabel()}, th));
 		}
-		if (!firstBinding.getItem().hasClass("firstcolumnfixedtable")) {
-			var addTh = dojo.create("th", {"class": "tableControl"}, tHeadRow);
+		if (!firstBinding.getItem().hasClass("rformsFirstcolumnfixedtable")) {
+			var addTh = dojo.create("th", {"class": "rformsTableControl"}, tHeadRow);
 			var parentBinding = firstBinding.getParent();
 		
 			var add = new dijit.form.Button({label: "add", onClick: dojo.hitch(this, function() {
@@ -318,11 +318,11 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 			return;
 		}
 		var item = bindings[0].getItem();
-		if (item.hasClass("noneditable")) {
+		if (item.hasClass("rformsNoneditable")) {
 			return this.inherited("addGroup", arguments);
 		}
 		
-		if (item.hasClass("firstcolumnfixedtable")) {
+		if (item.hasClass("rformsFirstcolumnfixedtable")) {
 			bindings = this._createChildBindingsForFirstFixedColumn(bindings);
 		}
 		
@@ -470,7 +470,7 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 		
 		dojo.forEach(groupedBindings, function(bindings, index) {
 			//Create those columns that are missing:
-			if (bindings.length === 0 && !childItems[index].hasClass("noneditable")) {
+			if (bindings.length === 0 && !childItems[index].hasClass("rformsNoneditable")) {
 				rforms.model.create(binding, childItems[index]);
 			}
 		});
@@ -478,8 +478,8 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 			this.addComponent(dojo.create("td", null, trEl), bindings[0], true);
 		}, this);
 		
-		if (!binding.getItem().hasClass("firstcolumnfixedtable")) {
-			var lastTd = dojo.create("td", {"class": "tableControl"}, trEl);
+		if (!binding.getItem().hasClass("rformsFirstcolumnfixedtable")) {
+			var lastTd = dojo.create("td", {"class": "rformsTableControl"}, trEl);
 			var remove = new dijit.form.Button({label: "remove"}, dojo.create("span", null, lastTd));	
 			var cardTr = binding.getCardinalityTracker();
 			var cardConnect1 = dojo.connect(cardTr, "cardinalityChanged", function() {
@@ -566,10 +566,12 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 	 * @return {Array} of languages.
 	 */
 	_getLanguagesList:function (){ //TODO: Take this list from some kind of configuration
-		var list = [{"value": "", label:{"en":"", "sv":""}},
+		if (this.languages == null) {
+			this.languages = [{"value": "", label:{"en":"", "sv":""}},
 		            {"value": "en", label:{"en":"English", "sv":"Engelska"}},
 		            {"value": "de", label:{"en":"German", "sv":"Tyska"}},
 					{"value": "sv", label:{"en":"Swedish", "sv":"Svenska"}}];
-		return list;
+		}
+		return this.languages;
 	}
 });

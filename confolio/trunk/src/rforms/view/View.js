@@ -66,7 +66,7 @@ dojo.declare("rforms.view.View", dijit._Widget, {
 				return;
 		}
 		this.connect(aroundNode, "onclick", dojo.hitch(this, this._showInfo, item, aroundNode));
-		dojo.addClass(aroundNode, "hasInfo");		
+		dojo.addClass(aroundNode, "rformsHasInfo");		
 	},
 	
 	//===================================================
@@ -139,7 +139,7 @@ dojo.declare("rforms.view.View", dijit._Widget, {
 		} else {
 			//No new rowDiv since we have a repeated value under the same label.
 			fieldDiv = dojo.create("div", null, lastRow);
-			dojo.addClass(fieldDiv, "repeatedValue");
+			dojo.addClass(fieldDiv, "rformsRepeatedValue");
 		}
 		this.addComponent(fieldDiv, binding);
 		return newRow || lastRow;
@@ -153,7 +153,7 @@ dojo.declare("rforms.view.View", dijit._Widget, {
 			newRow = dojo.create("div", null, lastRow, "after");
 		}
 		if (this.topLevel) {
-			dojo.addClass(newRow, "topLevel");
+			dojo.addClass(newRow, "rformsTopLevel");
 		}
 		this.addLabel(newRow, dojo.create("div", null, newRow), binding, item);
 		return newRow;
@@ -161,19 +161,19 @@ dojo.declare("rforms.view.View", dijit._Widget, {
 	addComponent: function(fieldDiv, binding, noCardinalityButtons) {
 		//Taking care of the field, either group, choice or text.
 		if (binding instanceof rforms.model.GroupBinding) {
-			dojo.addClass(fieldDiv, "group");
+			dojo.addClass(fieldDiv, "rformsGroup");
 			this.addGroup(fieldDiv, binding, noCardinalityButtons);
 		} else if (binding instanceof rforms.model.ChoiceBinding ||
 					binding instanceof rforms.model.PropertyChoiceBinding) {
-			dojo.addClass(fieldDiv, "field");
+			dojo.addClass(fieldDiv, "rformsField");
 			this.addChoice(fieldDiv, binding, noCardinalityButtons);
 		} else if (binding instanceof rforms.model.ValueBinding) {
-			dojo.addClass(fieldDiv, "field");
+			dojo.addClass(fieldDiv, "rformsField");
 			this.addText(fieldDiv, binding, noCardinalityButtons);
 		}
 	},
 	showAsTable: function(item) {
-		return item instanceof rforms.template.Group && item.hasClass("table");
+		return item instanceof rforms.template.Group && item.hasClass("rformsTable");
 	},
 
 	//===================================================

@@ -10,7 +10,7 @@ dojo.declare("rforms.view.Presenter", rforms.view.View, {
 	//===================================================
 	showLanguage: true,
 	filterTranslations: true,
-	styleCls: "presenter",
+	styleCls: "rformsPresenter",
 	
 	//===================================================
 	// Public API
@@ -55,7 +55,7 @@ dojo.declare("rforms.view.Presenter", rforms.view.View, {
 	
 	addTable: function(newRow, firstBinding) {
 		var item = firstBinding.getItem(), childItems = item.getChildren();
-		var table = dojo.create("table", {"class": "group"}, newRow);
+		var table = dojo.create("table", {"class": "rformsGroup"}, newRow);
 		tHead = dojo.create("thead", null, table);
 		tHeadRow = dojo.create("tr", null, table);
 		for (colInd = 0;colInd < childItems.length;colInd++) {
@@ -84,7 +84,7 @@ dojo.declare("rforms.view.Presenter", rforms.view.View, {
 		var item = binding.getItem();
 		var isGroup = item instanceof rforms.template.Group;
 		dojo.attr(labelDiv, "innerHTML", item.getLabel());
-		dojo.addClass(labelDiv, "label");
+		dojo.addClass(labelDiv, "rformsLabel");
 		this.showInfo(binding.getItem(), labelDiv);
 	},
 	addGroup: function(fieldDiv, binding) {
@@ -93,7 +93,7 @@ dojo.declare("rforms.view.Presenter", rforms.view.View, {
 	addText: function(fieldDiv, binding) {
 		if (this.showLanguage && binding.getLanguage()) {
 			var lang = dojo.create("div", {"innerHTML": binding.getLanguage()}, fieldDiv);
-			dojo.addClass(lang, "language");
+			dojo.addClass(lang, "rformsLanguage");
 		}
 		dojo.create("div", {"innerHTML": binding.getValue()}, fieldDiv);
 	},

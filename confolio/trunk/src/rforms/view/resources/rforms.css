@@ -1,91 +1,91 @@
-.rforms .topLevel {
+.rformsTopLevel {
 	background: #E6E6E6;
  	padding: 0.3em;
  	margin-top: 0.2em;
 }
-.rforms .label {
+.rformsLabel {
 /*	font-style: italic;*/
 	color: black;
 }
 
-.rforms.presenter th span:hover,
-.rforms.editor th span:hover,
-.rforms .label.hasInfo:hover {
+.rformsPresenter th span:hover,
+.rformsEditor th span:hover,
+.rformsLabel.hasInfo:hover {
 	text-decoration: underline;
 	cursor: pointer;
 }
 
-.rforms.itemInfo .propertyLabel,
-.rforms.itemInfo .descriptionLabel {
+.rformsItemInfo .rformsPropertyLabel,
+.rformsItemInfo .rformsDescriptionLabel {
 	/*font-style: italic;*/
 }
 
-.rforms .group {
+.rformsGroup {
 	margin-left: 1em;
  }
  
-.rforms .field {
+.rformsField {
 	margin-left: 2em;
 }
 
-.rforms.presenter .repeatedValue {
+.rformsPresenter .rformsRepeatedValue {
  	border-top: 1px solid #E6E6E6;
 }
  
-.rforms.presenter .field {
+.rformsPpresenter .rformsField {
 	background: white;
 	padding-left: 0.3em;
 	padding-right: 0.3em;
 }
 
-.rforms.presenter th,
-.rforms.editor th {
+.rformsPresenter th,
+.rformsEditor th {
 	font-weight: normal;
 }
 
 
 
-.rforms.presenter table.group td,
-.rforms.editor table.group td {
+.rformsPresenter table.rformsGroup td,
+.rformsEditor table.rformsGroup td {
 	background: white;
 	border: 1px solid #E6E6E6;
 	padding-left: 0.3em;
 	padding-right: 0.3em;
 }
-.rforms.presenter table.group,
-.rforms.editor table.group {
+.rformsPresenter table.rformsGroup,
+.rformsEditor table.rformsGroup {
 	border-collapse: collapse;
 }
-.rforms.presenter table.group th,
-.rforms.editor table.group th {
+.rformsPresenter table.rformsGgroup th,
+.rformsEditor table.rformsGroup th {
 	padding-left: 0.3em;
 	padding-right: 0.3em;
 	border: 1px solid white;			
 }
-.rforms.presenter .language {
+.rformsPresenter .rformsLanguage {
  	float: right;
 	border-left: 1px solid #E6E6E6;
 	padding-left: 0.3em;
  }
- .rforms.editor .language {
+ .rformsEditor .rformsLanguage {
  	position: absolute;
 	float:left;
 	padding-left: 0.3em;
  }
- .rforms.editor .field {
+ .rformsEditor .rformsField {
  	padding-right: 4em;
 	position: relative;
  }
  
- .rforms.editor .field .choiceLabel {
+ .rformsEditor .rformsField .rformsChoiceLabel {
  	margin-left: 0.2em;
  	margin-right: 1em;
  }
- .rforms.editor .langcontrolledfield {
+ .rformsEditor .rformsLangcontrolledfield {
  	padding-right: 15em;
 	padding-left: 1em;
  }	
- .rforms.editor .fieldControl {
+ .rformsEditor .rformsFieldControl {
 	position: absolute;
 	width: 3.8em;
 	padding-right: 0.1em;
@@ -93,36 +93,36 @@
 	overflow-x: hidden;
 	padding-right: 0.1em;
  }
- .rforms.editor .langFieldControl {
+ .rformsEditor .rformsLangFieldControl {
 	width: 14em;
  }
-.rforms.editor .langFieldControl .dijitTextBox {
+.rformsEditor .rformsLangFieldControl .dijitTextBox {
 	width: 10em;
 }
-.rforms.editor .fieldControl .dijitButton {
+.rformsEditor .rformsFieldControl .dijitButton {
  	font-size: xx-small;
 	float:right;
 }
-.rforms.editor .labelRow .dijitButton,
-.rforms.editor .field .dijitButton {
+.rformsEditor .rformsLabelRow .dijitButton,
+.rformsEditor .rformsField .dijitButton {
  	font-size: xx-small;
 	margin-left: 1em;
 }
-.rforms.editor .tableControl .dijitButton {
+.rformsEditor .rformsTableControl .dijitButton {
  	font-size: xx-small;
 	margin-left: 1em;
 }
 
-.rforms.editor .langFieldControl .dijitButton {
+.rformsEditor .langFieldControl .dijitButton {
  	font-size: xx-small;
 	margin-left: 0.2em;
 }
  
- .rforms.editor .fieldInput {
+ .rformsEditor .rformsFieldInput {
  	width: 100%;
  }
  
- .rforms.editor .choiceValue {
+ .rformsEditor .rformsChoiceValue {
  	display: inline-block;
 	zoom:1;
 	*display: inline;
