@@ -62,9 +62,9 @@ dojo.declare("rforms.template.Converter", null, {
 		this._prepareExhibit(data);
 		dojo.forEach(data.items, function(item) {
 			if (item.type === "Property") {
-				var source = {"@id": item.id, "property": item.id, label: {"en": item.label}, description: {"en": item.description || item.comment}};
+				var source = {"id": item.id, "property": item.id, label: {"en": item.label}, description: {"en": item.description || item.comment}};
 				if (!item.ranges || item.ranges["http://www.w3.org/2000/01/rdf-schema#Literal"]) {
-					source["@type"] = "text";
+					source["type"] = "text";
 					source["nodetype"] = "LANGUAGE_LITERAL"
 					auxP.push(source);
 				} else {
@@ -72,11 +72,11 @@ dojo.declare("rforms.template.Converter", null, {
 					var propArr = [];
 					for (var p in props) {
 						if (props.hasOwnProperty(p)) {
-							propArr.push({"@id": p});
+							propArr.push({"id": p});
 						}
 					}
 //					if (propArr.length > 0) {
-						source["@type"] = "group";
+						source["type"] = "group";
 						source.automatic = true;
 						source.content = propArr;
 						auxP.push(source);
@@ -85,7 +85,7 @@ dojo.declare("rforms.template.Converter", null, {
 				}
 			} else if (item.type === "Class") {
 				var source = {
-					"@id": item.id, 
+					"id": item.id, 
 					label: {"en": item.label}, 
 					description: {"en": item.description || item.comment}
 				};
@@ -95,11 +95,11 @@ dojo.declare("rforms.template.Converter", null, {
 				var propArr = [];
 				for (var p in props) {
 					if (props.hasOwnProperty(p)) {
-						propArr.push({"@id": p});
+						propArr.push({"id": p});
 					}
 				}
 				if (propArr.length > 0) {
-					source["@type"] = "group";
+					source["type"] = "group";
 					source.content = propArr;
 					source.automatic = true;
 					auxC.push(source);
@@ -109,8 +109,8 @@ dojo.declare("rforms.template.Converter", null, {
 		this._itemStore._createItems(auxP);
 		this._itemStore._createItems(auxC);
 		return {
-				properties: dojo.map(auxP, function(item) {return item["@id"]}), 
-				classes: dojo.map(auxC, function(item) {return item["@id"]})
+				properties: dojo.map(auxP, function(item) {return item["id"]}), 
+				classes: dojo.map(auxC, function(item) {return item["id"]})
 			};
 	},
 	_prepareExhibit: function(exhibit) {

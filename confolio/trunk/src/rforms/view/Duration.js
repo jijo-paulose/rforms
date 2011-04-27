@@ -56,6 +56,7 @@ dojo.declare("rforms.view.Duration", rforms.view.DurationPresentation, {
 	}),
 	
 	postCreate: function() {
+		this.inherited("postCreate", arguments);
 		this.yearsSpinner.onChange = dojo.hitch(this, function () {this.onChange();});
 		this.monthsSpinner.onChange = dojo.hitch(this, function () {this.onChange();});
 		this.daysSpinner.onChange = dojo.hitch(this, function () {this.onChange();});
