@@ -1,0 +1,221 @@
+{
+	"label":{"en":"Telmap forms", "sv":"FOAF formulär"},
+	"auxilliary":[
+		{
+			"id":"Project aspects",
+			"type":"group",
+			"label":{"en":"Project"},
+			"description":{"en":""},
+			"cardinality": {"min": 1, "pref": 1, "max": 1},
+			"content":[
+				{"id": "Project context"}
+			]
+		},
+		{
+			"id":"Project context",
+			"type":"group",
+			"label":{"en":"Context"},
+			"description":{"en":"telmap context"},
+			"cardinality": {"min": 1, "pref": 1, "max": 1},
+			"cls": ["expandable"],
+			"content":[
+				{"id": "http://purl.org/telmap/isAbout"},
+				{"id": "http://purl.org/telmap/isSupportedBy"},
+				{"id": "http://purl.org/telmap/isContradictedBy"},
+				{"id": "http://purl.org/telmap/wouldBeUsefulFor"},
+				{"id": "http://purl.org/dc/terms/relation"},
+				{"id": "http://purl.org/telmap/isUsedBy"},
+				{"id": "http://purl.org/telmap/collaboratesWidth"},
+				{"id": "http://purl.org/telmap/predecessor"},
+				{"id": "http://purl.org/telmap/successor"},
+				{"id": "http://purl.org/telmap/partner"},
+				{"id": "http://purl.org/telmap/coordinator"}
+			]
+		},
+	  	{
+	  		"id": "http://purl.org/telmap/isUsedBy", 
+	  		"property": "http://purl.org/telmap/isUsedBy", 
+	  		"label": {
+	  			"en": "Is used by"
+	  		}, 
+	  		"description": {
+	  			"en": ""
+	  		},
+			"lookupProtocoll": "scam",
+	  		"type": "choice", 
+			"nodeType": "URI"
+  		},
+	  	{
+	  		"id": "http://purl.org/telmap/collaboratesWidth", 
+	  		"property": "http://purl.org/telmap/collaboratesWidth", 
+	  		"label": {
+	  			"en": "Collaborates width"
+	  		}, 
+	  		"description": {
+	  			"en": ""
+	  		},
+			"lookupProtocoll": "scam",
+	  		"type": "choice", 
+			"nodeType": "URI"
+  		},
+	  	{
+	  		"id": "http://purl.org/telmap/predecessor", 
+	  		"property": "http://purl.org/telmap/predecessor", 
+	  		"label": {
+	  			"en": "Predecessor"
+	  		}, 
+	  		"description": {
+	  			"en": ""
+	  		},
+			"lookupProtocoll": "scam",
+	  		"type": "choice", 
+			"nodeType": "URI"
+  		},
+	  	{
+	  		"id": "http://purl.org/telmap/successor", 
+	  		"property": "http://purl.org/telmap/successor", 
+	  		"label": {
+	  			"en": "Successor"
+	  		}, 
+	  		"description": {
+	  			"en": ""
+	  		},
+			"lookupProtocoll": "scam",
+	  		"type": "choice", 
+			"nodeType": "URI"
+  		},
+	  	{
+	  		"id": "http://purl.org/telmap/partner", 
+	  		"property": "http://purl.org/telmap/partner", 
+	  		"label": {
+	  			"en": "Partner"
+	  		}, 
+	  		"description": {
+	  			"en": ""
+	  		},
+			"lookupProtocoll": "scam",
+	  		"type": "choice", 
+			"nodeType": "URI"
+  		},
+	  	{
+	  		"id": "http://purl.org/telmap/coordinator",
+	  		"property": "http://purl.org/telmap/coordinator", 
+	  		"label": {
+	  			"en": "Coordinator"
+	  		}, 
+	  		"description": {
+	  			"en": ""
+	  		},
+			"lookupProtocoll": "scam",
+	  		"type": "choice", 
+			"nodeType": "URI"
+  		},
+
+	  	{
+	  		"id": "http://purl.org/telmap/isAbout",
+			"property": "http://purl.org/telmap/isAbout",
+			"label": {
+	  			"en": "is about"
+	  		},
+			"constraints":{"http://www.w3.org/TR/rdf-schema/type":"http://purl.org/telmap/Context"},
+	  		"description": {
+	  			"en": "yeada"
+	  		}, 
+	  		"type": "group", 
+	  		"content": [
+				{"id": "http://www.w3.org/TR/rdf-schema/seeAlso"},
+				{"id": "http://purl.org/dc/terms/description"}
+	  		]
+		},
+	  	{
+	  		"id": "http://purl.org/telmap/isSupportedBy",
+			"property": "http://purl.org/telmap/isSupportedBy",
+			"label": {
+	  			"en": "is supported by"
+	  		},
+			"constraints":{"http://www.w3.org/TR/rdf-schema/type":"http://purl.org/telmap/Context"},
+	  		"description": {
+	  			"en": "yeada"
+	  		}, 
+	  		"type": "group", 
+	  		"content": [
+				{"id": "http://www.w3.org/TR/rdf-schema/seeAlso"},
+				{"id": "http://purl.org/dc/terms/description"}
+	  		]
+		},
+		{
+	  		"id": "http://purl.org/telmap/isContradictedBy",
+			"property": "http://purl.org/telmap/isContradictedBy",
+			"label": {
+	  			"en": "is contradicted by"
+	  		},
+			"constraints":{"http://www.w3.org/TR/rdf-schema/type":"http://purl.org/telmap/Context"},
+	  		"description": {
+	  			"en": "yeada"
+	  		}, 
+	  		"type": "group", 
+	  		"content": [
+				{"id": "http://www.w3.org/TR/rdf-schema/seeAlso"},
+				{"id": "http://purl.org/dc/terms/description"}
+	  		]
+		},
+				{
+	  		"id": "http://purl.org/telmap/wouldBeUsefulFor",
+			"property": "http://purl.org/telmap/wouldBeUsefulFor",
+			"label": {
+	  			"en": "would be useful for"
+	  		},
+			"constraints":{"http://www.w3.org/TR/rdf-schema/type":"http://purl.org/telmap/Context"},
+	  		"description": {
+	  			"en": "yeada"
+	  		}, 
+	  		"type": "group", 
+	  		"content": [
+				{"id": "http://www.w3.org/TR/rdf-schema/seeAlso"},
+				{"id": "http://purl.org/dc/terms/description"}
+	  		]
+		},
+						{
+	  		"id": "http://purl.org/dc/terms/relation", 
+	  		"property": "http://purl.org/dc/terms/relation",
+			"label": {
+	  			"en": "is related to"
+	  		},
+			"constraints":{"http://www.w3.org/TR/rdf-schema/type":"http://purl.org/telmap/Context"},
+	  		"description": {
+	  			"en": "yeada"
+	  		}, 
+	  		"type": "group", 
+	  		"content": [
+				{"id": "http://www.w3.org/TR/rdf-schema/seeAlso"},
+				{"id": "http://purl.org/dc/terms/description"}
+	  		]
+		},
+
+	  	{
+	  		"id": "http://www.w3.org/TR/rdf-schema/seeAlso", 
+	  		"property": "http://www.w3.org/TR/rdf-schema/seeAlso", 
+	  		"label": {
+	  			"en": "seeAlso"
+	  		}, 
+	  		"description": {
+	  			"en": "yeada"
+	  		}, 
+	  		"type": "text", 
+			"nodeType": "URI"
+  		},
+	  	{
+	  		"id": "http://purl.org/dc/terms/description", 
+	  		"property": "http://purl.org/dc/terms/description", 
+			"cls": ["multiline"],
+	  		"label": {
+	  			"en": "description"
+	  		}, 
+	  		"description": {
+	  			"en": "yeada"
+	  		}, 
+	  		"type": "text", 
+			"nodeType": "LITERAL"
+  		}
+  ]
+}

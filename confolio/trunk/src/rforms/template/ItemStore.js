@@ -54,11 +54,13 @@ dojo.declare("rforms.template.ItemStore", null, {
 		if (dojo.isObject(source.cachedChoices)) {
 			this._ontologyStore.importRegistry(source.cachedChoices);
 		}
-		var t = new rforms.template.Template(source, this._createItem(source.root), this);
-		if (source.id || source["@id"]) {
-			this._tRegistry[source.id || source["@id"]] = t;
+		if (dojo.isObject(source.root)) {
+			var t = new rforms.template.Template(source, this._createItem(source.root), this);
+			if (source.id || source["@id"]) {
+				this._tRegistry[source.id || source["@id"]] = t;
+			}
+			return t;			
 		}
-		return t;
 	},
 	createTemplateFromChildren: function(children) {
 		var childrenObj = dojo.map(children || [], function(child) {

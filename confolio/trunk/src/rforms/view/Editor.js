@@ -2,7 +2,9 @@
 dojo.provide("rforms.view.Editor");
 dojo.require("rforms.view.Duration");
 dojo.require("rforms.view.Presenter");
+dojo.require("dijit.TitlePane");
 dojo.require("dijit.form.TextBox");
+dojo.require("dijit.form.Textarea");
 dojo.require("dijit.form.DateTextBox");
 dojo.require("dijit.form.Button");
 dojo.require("dijit.form.FilteringSelect");
@@ -108,7 +110,14 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 		if (binding.getItem().hasClass("rformsNoneditable")) {
 			return this.inherited("addGroup", arguments);
 		}
-		var subView = new rforms.view.Editor({binding: binding, template: this.template, topLevel: false}, fieldDiv);
+		if (binding.getItem().hasClass("expandable")) {
+			var titlePane = new dijit.TitlePane({}, fieldDiv);
+			var node = dojo.create("div");
+			titlePane.set("content", node);
+			var subView = new rforms.view.Editor({binding: binding, template: this.template, topLevel: false}, node);
+		} else {
+			var subView = new rforms.view.Editor({binding: binding, template: this.template, topLevel: false}, fieldDiv);
+		}
 	},
 	addText: function(fieldDiv, binding, noCardinalityButtons) {
 		if (binding.getItem().hasClass("rformsNoneditable")) {
@@ -167,12 +176,21 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 			}
 		}
 		else {
+			if (binding.getItem().hasClass("multiline")) {
+				tb = new dijit.form.Textarea({
+					value: binding.getValue(),
+					onChange: function(){
+						binding.setValue(this.attr("value"));
+					}
+				}, dojo.create("div", null, fieldDiv));
+			} else {
 			tb = new dijit.form.TextBox({
-				value: binding.getValue(),
-				onChange: function(){
-					binding.setValue(this.attr("value"));
-				}
-			}, dojo.create("div", null, fieldDiv));
+					value: binding.getValue(),
+					onChange: function(){
+						binding.setValue(this.attr("value"));
+					}
+				}, dojo.create("div", null, fieldDiv));
+			}
 			dojo.addClass(tb.domNode, "rformsFieldInput");
 		}
 				
@@ -213,8 +231,8 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 		dojo.addClass(controlDiv, "rformsFieldControl");
 		var divToUse =  dojo.create("div", null, fieldDiv);
 		var hierarchy = item.getParentProperty() && item.getHierarchyProperty();
-		//Check if radiobuttons can be created, i.e. when few chioces and max-cardinality == 1 
-		if (!hierarchy && choices.length < 5 && item.getCardinality().max === 1) {
+		//Check if radiobuttons can be created, i.e. when few choices and max-cardinality == 1 
+		if (!hierarchy && (!binding.getItem().hasClass("dropdown") && choices.length < 5) && item.getCardinality().max === 1) {
 			for (var ib in choices) {
 				var inputToUse = dojo.create("input", null, divToUse);
 				dojo.create("span", { "class": "rformsChoiceLabel", innerHTML: item._getLocalizedValue(choices[ib].label).value }, divToUse);
