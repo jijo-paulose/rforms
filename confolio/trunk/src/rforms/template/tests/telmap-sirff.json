@@ -35,7 +35,8 @@
 				{"id": "http://purl.org/telmap/predecessor"},
 				{"id": "http://purl.org/telmap/successor"},
 				{"id": "http://purl.org/telmap/fundedBy"},
-				{"id": "http://purl.org/telmap/funding"}
+				{"id": "http://purl.org/telmap/funding"},
+				{"id": "http://purl.org/telmap/fundingScheme"}
 			]
 		},
 		{
@@ -192,7 +193,33 @@
 	  			"en": ""
 	  		},
 	  		"type": "choice", 
-			"nodeType": "URI"
+			"nodeType": "URI",
+			choices: [
+				{"value": "http://purl.org/telmap/Funding-EC-FP5", "label": {"en":"FP5"}},
+			 	{"value": "http://purl.org/telmap/Funding-EC-FP6", "label": {"en":"FP6"}},
+			 	{"value": "http://purl.org/telmap/Funding-EC-FP7", "label": {"en":"FP7"}},
+			 	{"value": "http://purl.org/telmap/Funding-EC-ICTPSP", "label": {"en":"ICT PSP (incl. eContentplus)"}},
+			 	{"value": "http://purl.org/telmap/Funding-EC-LifelongLearning", "label": {"en": "Lifelong Learning"}},
+			 	{"value": "http://purl.org/telmap/Funding-EC-Other", "label": {"en":"Other EC-funded"}}
+			]
+  		},
+  		{
+	  		"id": "http://purl.org/telmap/fundingScheme",
+	  		"property": "http://purl.org/telmap/fundingScheme", 
+	  		"label": {
+	  			"en": "Funding Scheme"
+	  		}, 
+	  		"description": {
+	  			"en": ""
+	  		},
+	  		"type": "choice", 
+			"nodeType": "URI",
+			choices: [
+				{"value": "http://purl.org/telmap/Funding-EC-NoE", "label": {"en": "Network of Excellence"}},
+			 	{"value": "http://purl.org/telmap/Funding-EC-CP", "label": {"en": "Collaborative Project"}},
+			 	{"value": "http://purl.org/telmap/Funding-EC-CSA", "label": {"en": "Coordination and Support Action"}},
+			 	{"value": "http://purl.org/telmap/Funding-EC-Individual", "label": {"en": "Individual Project"}}
+			]
   		},
   		{
 	  		"id": "http://purl.org/telmap/funding",
