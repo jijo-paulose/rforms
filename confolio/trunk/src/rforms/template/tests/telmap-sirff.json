@@ -149,7 +149,7 @@
 	  		"property": "http://purl.org/telmap/partner", 
 	  		"label": {
 	  			"en": "Partner"
-	  		}, 
+	  		},
 	  		"description": {
 	  			"en": ""
 	  		},
@@ -159,10 +159,11 @@
   		},
 	  	{
 	  		"id": "http://purl.org/telmap/coordinator",
-	  		"property": "http://purl.org/telmap/coordinator", 
+	  		"property": "http://purl.org/telmap/coordinator",
+	  		"cardinality": {"min": 1, "pref": 1, "max": 1}, 
 	  		"label": {
 	  			"en": "Coordinator"
-	  		}, 
+	  		},
 	  		"description": {
 	  			"en": ""
 	  		},
