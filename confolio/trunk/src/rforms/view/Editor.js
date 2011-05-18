@@ -25,7 +25,7 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 	filterTranslations: false,
 	styleCls: "rformsEditor",
 	ontologyPopupWidget: null,
-	includeLevel: "optional",
+	includeLevel: "recommended",
 
 	//===================================================
 	// Inherited methods
@@ -44,9 +44,9 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 		var card = item.getCardinality();
 		switch(this.includeLevel) {
 			case "mandatory":
-				return card && card.min>1;
+				return card && card.min>=1;
 			case "recommended":
-				return card && card.pref>1;
+				return card && card.pref>=1;
 			default:
 				return true;
 		}
