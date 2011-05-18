@@ -1,10 +1,12 @@
 dojo.provide("rforms.formulator.StoreManager");
 dojo.require("dijit.layout._LayoutWidget");
 dojo.require("dijit.layout.ContentPane");
+dojo.require("dijit.layout.TabContainer");
 dojo.require("dijit.layout.BorderContainer");
 dojo.require("rdfjson.Graph");
 dojo.require("rforms.view.Editor");
 dojo.require("rforms.model.Engine");
+dojo.require("rforms.formulator.GroupEditor");
 
 dojo.declare("rforms.formulator.StoreManager", [dijit.layout._LayoutWidget, dijit._Templated], {	
 	//===================================================
@@ -46,9 +48,20 @@ dojo.declare("rforms.formulator.StoreManager", [dijit.layout._LayoutWidget, diji
 			var id = dojo.attr(event.target, "innerHTML");
 			if (id === "all") {
 				this._showAll();
+				this._showEditor();
 			} else {
-				this._showContent(this.itemStore.getItem(id));
+				var item = this.itemStore.getItem(id);
+				this._showContent(item);
+				this._showEditor(item);
 			}
+		}
+	},
+	_showEditor: function(item) {
+		if (this._editor !=null) {
+			this._editor.destroy();
+		}
+		if (item != null) {
+			this._editor = new rforms.formulator.GroupEditor({item: item}, dojo.create("div", null, this._editorNode));
 		}
 	},
 	_showContent: function(item) {
