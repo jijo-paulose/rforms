@@ -1,5 +1,5 @@
 {
-	"label":{"en":"Telmap forms", "sv":"FOAF formulär"},
+	"label":{"en":"Telmap forms"},
 	"auxilliary":[
 		{
 			"id":"TEL-Map Project Aspects",
@@ -8,6 +8,8 @@
 			"description":{"en":""},
 			"cardinality": {"min": 1, "pref": 1, "max": 1},
 			"content":[
+				{"id": "http://purl.org/dc/terms/title"},
+				{"id": "http://purl.org/telmap/isAbout"},
 				{"id": "Context"},
 				{"id": "Assumptions"},
 				{"id": "Goals"},
@@ -20,11 +22,9 @@
 			"type":"group",
 			"label":{"en":"Context"},
 			"description":{"en":"Project Context"},
-			"cardinality": {"min": 1, "pref": 1, "max": 1},
+			"cardinality": {"min": 1, "pref": 0, "max": 1},
 			"cls": ["expandable"],
 			"content":[
-				{"id": "http://purl.org/dc/terms/title"},
-				{"id": "http://purl.org/telmap/isAbout"},
 				{"id": "http://purl.org/telmap/coordinator"},
 				{"id": "http://purl.org/telmap/partner"},
 				{"id": "http://purl.org/telmap/stakeholder"},
@@ -44,7 +44,7 @@
 			"type":"group",
 			"label":{"en":"Assumptions"},
 			"description":{"en":"Project Assumptions"},
-			"cardinality": {"min": 1, "pref": 1, "max": 1},
+			"cardinality": {"min": 1, "pref": 0, "max": 1},
 			"cls": ["expandable"],
 			"content":[
 				{"id": "http://purl.org/dc/terms/relation#Assumptions"},
@@ -159,8 +159,7 @@
   		},
 	  	{
 	  		"id": "http://purl.org/telmap/coordinator",
-	  		"property": "http://purl.org/telmap/coordinator",
-	  		"cardinality": {"min": 1, "pref": 1, "max": 1}, 
+	  		"property": "http://purl.org/telmap/coordinator", 
 	  		"label": {
 	  			"en": "Coordinator"
 	  		},
@@ -244,6 +243,7 @@
 	  		"description": {
 	  			"en": ""
 	  		}, 
+	  		"cardinality": {"pref": 1},
 	  		"type": "group", 
 	  		"content": [
 				{"id": "http://www.w3.org/TR/rdf-schema/seeAlso"},
@@ -257,6 +257,7 @@
 	  			"en": "supported by"
 	  		},
 			"constraints":{"http://www.w3.org/TR/rdf-schema/type":"http://purl.org/telmap/Context"},
+			"cardinality": {"pref": 1},
 	  		"description": {
 	  			"en": ""
 	  		},
@@ -273,6 +274,7 @@
 	  			"en": "contradicted by"
 	  		},
 			"constraints":{"http://www.w3.org/TR/rdf-schema/type":"http://purl.org/telmap/Context"},
+			"cardinality": {"pref": 1},
 	  		"description": {
 	  			"en": ""
 	  		}, 
@@ -289,6 +291,7 @@
 	  			"en": "is related to"
 	  		},
 			"constraints":{"http://www.w3.org/TR/rdf-schema/type":"http://purl.org/telmap/Context"},
+			"cardinality": {"pref": 1},
 	  		"description": {
 	  			"en": ""
 	  		}, 
@@ -305,6 +308,7 @@
 	  			"en": "is related to"
 	  		},
 			"constraints":{"http://www.w3.org/TR/rdf-schema/type":"http://purl.org/telmap/Assumptions"},
+			"cardinality": {"pref": 1},
 	  		"description": {
 	  			"en": ""
 	  		}, 
@@ -382,6 +386,7 @@
 	  			"en": "influences"
 	  		},
 			"constraints":{"http://www.w3.org/TR/rdf-schema/type":"http://purl.org/telmap/Assumptions"},
+			"cardinality": {"pref": 1},
 	  		"description": {
 	  			"en": ""
 	  		}, 
@@ -398,6 +403,7 @@
 	  			"en": "contributes to"
 	  		},
 			"constraints":{"http://www.w3.org/TR/rdf-schema/type":"http://purl.org/telmap/Goals"},
+			"cardinality": {"pref": 1},
 	  		"description": {
 	  			"en": ""
 	  		}, 
@@ -414,6 +420,7 @@
 	  			"en": "obstructed by"
 	  		},
 			"constraints":{"http://www.w3.org/TR/rdf-schema/type":"http://purl.org/telmap/Goals"},
+			"cardinality": {"pref": 1},
 	  		"description": {
 	  			"en": ""
 	  		}, 
@@ -430,6 +437,7 @@
 	  			"en": "influences"
 	  		},
 			"constraints":{"http://www.w3.org/TR/rdf-schema/type":"http://purl.org/telmap/Goals"},
+			"cardinality": {"pref": 1},
 	  		"description": {
 	  			"en": ""
 	  		}, 
@@ -446,6 +454,7 @@
 	  			"en": "influences"
 	  		},
 			"constraints":{"http://www.w3.org/TR/rdf-schema/type":"http://purl.org/telmap/Impact"},
+			"cardinality": {"pref": 1},
 	  		"description": {
 	  			"en": ""
 	  		}, 
@@ -496,12 +505,10 @@
 	  		"property": "http://purl.org/telmap/basedOn", 
 	  		"label": {
 	  			"en": "based on"
-	  		}, 
-	  		"description": {
-	  			"en": ""
 	  		},
-	  		"type": "choice", 
-			"nodeType": "URI"
+	  		"cls": ["multiline"],
+	  		"type": "text", 
+			"nodeType": "LITERAL"
   		},
   		{
 	  		"id": "http://purl.org/telmap/uses#Approach",
@@ -510,6 +517,7 @@
 	  			"en": "uses"
 	  		},
 			"constraints":{"http://www.w3.org/TR/rdf-schema/type":"http://purl.org/telmap/Approach"},
+			"cardinality": {"pref": 1},
 	  		"description": {
 	  			"en": ""
 	  		}, 
