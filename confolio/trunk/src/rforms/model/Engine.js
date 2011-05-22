@@ -353,7 +353,7 @@ rforms.model._findStatementsForConstraints = function(graph, uri, item) {
 		constr = item.getConstraints();
 		for (var key in constr) {
 			if (constr.hasOwnProperty(key)) {
-				stmts = graph.find(uri, key, {type: "uri", value: constr[key].uri});
+				stmts = graph.find(uri, key, {type: "uri", value: constr[key]});
 				if (stmts.length == 1) {
 					results.push(stmts[0]);
 				} else {
