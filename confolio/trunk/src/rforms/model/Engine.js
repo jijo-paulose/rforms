@@ -139,7 +139,7 @@ rforms.model._createGroupItem = function(parentBinding, item, parentItems) {
 	if (item.getProperty() !== undefined) {
 		var graph = parentBinding.getGraph();
 		stmt = graph.create(parentBinding.getChildrenRootUri(), item.getProperty(), null, false);		
-		constr = rforms.model._createStatementsForConstraints(graph, stmt.getSubject(), item);
+		constr = rforms.model._createStatementsForConstraints(graph, stmt.getValue(), item);
 	}
 
 	var nBinding = new rforms.model.GroupBinding({item: item, statement: stmt, constraints: constr});
@@ -353,7 +353,7 @@ rforms.model._findStatementsForConstraints = function(graph, uri, item) {
 		constr = item.getConstraints();
 		for (var key in constr) {
 			if (constr.hasOwnProperty(key)) {
-				stmts = graph.find(uri, key, {type: "uri", value: constr[key]});
+				stmts = graph.find(uri, key, {type: "uri", value: constr[key].uri});
 				if (stmts.length == 1) {
 					results.push(stmts[0]);
 				} else {
@@ -373,7 +373,8 @@ rforms.model._createStatementsForConstraints = function(graph, uri, item) {
 		constr = item.getConstraints();
 		for (var key in constr) {
 			if (constr.hasOwnProperty(key)) {
-				results.push(graph.create(uri, key, {type: "uri", value: constr[key]}, false));
+				results.push(graph.create(uri, key, {type:"uri", value: constr[key].uri}, false));
+				//results.push(graph.create(uri, key, {type: "uri", value: constr[key]}, false));
 			}
 		}
 		return results;
