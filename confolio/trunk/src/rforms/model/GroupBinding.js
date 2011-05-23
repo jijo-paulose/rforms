@@ -162,6 +162,9 @@ dojo.declare("rforms.model.GroupBinding", rforms.model.Binding, {
 		}, this);
 	},
 	updateAssertions: function() {
+		if(this._oneValidChild === undefined){
+			this.isValid()
+		}
 		var assert = this._ancestorValid && this._oneValidChild && this._validPredicate;
 		if (this._statement !== undefined) {
 			this._statement.setAsserted(assert);
