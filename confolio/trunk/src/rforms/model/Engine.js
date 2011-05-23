@@ -373,8 +373,7 @@ rforms.model._createStatementsForConstraints = function(graph, uri, item) {
 		constr = item.getConstraints();
 		for (var key in constr) {
 			if (constr.hasOwnProperty(key)) {
-				results.push(graph.create(uri, key, {type:"uri", value: constr[key].uri}, false));
-				//results.push(graph.create(uri, key, {type: "uri", value: constr[key]}, false));
+				results.push(graph.create(uri, key, {type: "uri", value: constr[key]}, false));
 			}
 		}
 		return results;
