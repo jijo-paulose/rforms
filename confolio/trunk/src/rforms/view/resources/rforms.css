@@ -6,6 +6,7 @@
 .rformsLabel {
 /*	font-style: italic;*/
 	color: black;
+	font-weight:bold;
 }
 
 .rformsPresenter th span:hover,
@@ -125,7 +126,7 @@
  .rformsEditor .rformsChoiceValue {
  	display: inline-block;
 	zoom:1;
-	*display: inline;
+	display: inline;
 	background: whitesmoke;
 	min-height: 1em;
 	padding: 2px;
