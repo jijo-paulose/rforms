@@ -176,7 +176,13 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 			}
 		}
 		else {
-			if (binding.getItem().hasClass("multiline")) {
+			var itemToUse = binding.getItem();
+			var itemStyles = itemToUse.getStyles();
+			//TODO: Sort out if the textarea should be multiline using style or class...
+			if (itemToUse.hasClass("multiline") ||
+			    dojo.indexOf(itemStyles, "MultiLine") > -1||
+				dojo.indexOf(itemStyles, "Multiline") > -1||
+				dojo.indexOf(itemStyles, "multiline") > -1) {
 				tb = new dijit.form.Textarea({
 					value: binding.getValue(),
 					onChange: function(){
