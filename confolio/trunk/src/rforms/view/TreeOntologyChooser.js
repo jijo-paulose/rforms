@@ -180,7 +180,7 @@ dojo.declare("rforms.view.TreeOntologyChooser", [dijit.layout._LayoutWidget, dij
 			this.selectedValue = choice.value;
 			dojo.attr(this.uriNode, "innerHTML", this.selectedValue);
 			dojo.attr(this.labelNode, "innerHTML", item._getLocalizedValue(choice.label).value || "(No label given.)");
-			dojo.attr(this.descriptionNode, "innerHTML", item._getLocalizedValue(choice.description).value || "(No description given.)");
+			dojo.attr(this.descriptionNode, "innerHTML", item._getLocalizedValue(choice.description).value || "");
 			if (choice.selectable !== false && (this.binding.getChoice() == null || this.binding.getChoice().value !== this.selectedValue)) {
 				this.doneButton.set("disabled", false);
 			} else {
