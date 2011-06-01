@@ -30,6 +30,7 @@ rforms.template.tests.template1 = {
 			"@type":"text",
 			"label":{"en":"Published"},
 			"description":{"en":"The date this book was first published"},
+			"cardinality": {"min": 0, "pref": 1, "max": 1},
 			"nodetype":"DATATYPE_LITERAL",
 			"datatype":"http://www.w3.org/2001/XMLSchema.xsd#date",
 			"property":"http://purl.org/dc/terms/date"
