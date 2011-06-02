@@ -86,7 +86,7 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 			return this.inherited("addLabel", arguments);
 		}
 		var isGroup = item instanceof rforms.template.Group;
-		var label = dojo.create("span", {"innerHTML": item.getLabel()}, labelDiv);
+		var label = dojo.create("span", {"innerHTML": item.getLabel()||""}, labelDiv);
 		dojo.addClass(labelDiv, "rformsLabelRow");
 		dojo.addClass(label, "rformsLabel");
 		this.showInfo(item, label);
@@ -319,6 +319,7 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 		tHeadRow = dojo.create("tr", null, table);
 		for (colInd = 0;colInd < childItems.length;colInd++) {
 			var th = dojo.create("th", null, tHeadRow);
+			dojo.addClass(th, "rformsColumnHeader"+colInd);
 			this.showInfo(item, dojo.create("span", {innerHTML: childItems[colInd].getLabel()}, th));
 		}
 		if (!firstBinding.getItem().hasClass("rformsFirstcolumnfixedtable")) {
