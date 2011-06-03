@@ -8,6 +8,8 @@
 			"description":{"en":""},
 			"cardinality": {"min": 1, "pref": 1, "max": 1},
 			"content":[
+				// Overview, incl. title, about, webpage, logo, ...
+				// additional profiles for: participant, comment (incl. typed comments)
 				{"id": "http://purl.org/dc/terms/title"},
 				{"id": "http://purl.org/telmap/isAbout"},
 				{"id": "http://purl.org/dc/elements/1.1/subject"},
@@ -103,6 +105,7 @@
 			"cls": ["expandable"],
 			"content":[
 				{"id": "http://purl.org/telmap/basedOn"},
+				{"id": "http://purl.org/telmap/method"},
 				{"id": "http://purl.org/telmap/uses#Approach"}
 			]
 		},
@@ -556,6 +559,33 @@
 				{"id": "http://www.w3.org/TR/rdf-schema/seeAlso"},
 				{"id": "http://purl.org/dc/terms/description"}
 	  		]
-		}
+		},
+  		{
+	  		"id": "http://purl.org/telmap/method",
+	  		"property": "http://purl.org/telmap/method",
+	  		"label": {
+	  			"en": "Method"
+	  		},
+	  		"type": "choice",
+			"nodeType": "URI",
+			choices: [
+				{"value": "http://purl.org/telmap/Method-ActionResearch", "label": {"en": "Action research"}},			 	
+				{"value": "http://purl.org/telmap/Method-CaseStudy", "label": {"en": "Case study"}},
+				{"value": "http://purl.org/telmap/Method-FocusGroup", "label": {"en": "Focus group"}},
+			 	{"value": "http://purl.org/telmap/Method-GroundedTheory", "label": {"en": "Grounded theory"}},
+				{"value": "http://purl.org/telmap/Method-Interview", "label": {"en": "Interview"}},
+				{"value": "http://purl.org/telmap/Method-LabExperiments", "label": {"en": "Lab experiments"}},
+			 	{"value": "http://purl.org/telmap/Method-ParticipativeObservation", "label": {"en": "Participative observation"}},
+			 	{"value": "http://purl.org/telmap/Method-PhenomenologicalApproach", "label": {"en": "Phenomenological approach"}},
+			 	{"value": "http://purl.org/telmap/Method-Prototyping", "label": {"en": "Prototyping"}},
+			 	{"value": "http://purl.org/telmap/Method-Quantitative", "label": {"en": "Quantitative"}},
+			 	{"value": "http://purl.org/telmap/Method-Qualitative", "label": {"en": "Qualitative"}},
+			 	{"value": "http://purl.org/telmap/Method-ResponsiveEvaluationModel", "label": {"en": "Responsive evaluation model"}},
+			 	{"value": "http://purl.org/telmap/Method-Survey", "label": {"en": "Survey"}},
+			 	{"value": "http://purl.org/telmap/Method-StatisticalAnalysis", "label": {"en": "Statistical analysis"}},
+			 	{"value": "http://purl.org/telmap/Method-SocialNetworkAnalysis", "label": {"en": "Social network analysis"}},
+			 	{"value": "http://purl.org/telmap/Method-UsabilityStudy", "label": {"en": "Usability study"}}
+			]
+  		}
   ]
 }
