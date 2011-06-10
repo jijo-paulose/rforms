@@ -72,7 +72,7 @@ dojo.declare("rforms.formulator.StoreManager", [dijit.layout._LayoutWidget, diji
 		if (this._editorDijit != null) {
 			this._editorDijit.destroy();
 		}
-		this._editorDijit = new rforms.view.Editor({template: template, binding: binding}, dojo.create("div", null, this._previewNode));
+		this._editorDijit = new rforms.view.Editor({template: template, binding: binding, includeLevel: "optional"}, dojo.create("div", null, this._previewNode));
 	},
 	_showAll: function() {
 		var arr = [];
