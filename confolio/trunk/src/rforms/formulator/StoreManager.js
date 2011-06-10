@@ -66,7 +66,7 @@ dojo.declare("rforms.formulator.StoreManager", [dijit.layout._LayoutWidget, diji
 	},
 	_showContent: function(item) {
 		dojo.attr(this._contentsNode, "value", dojo.toJson(item._source, true, "  "));
-		var graph = new rdfjson.Graph({});
+		var graph = new rdfjson.Graph(this.data || {});
 		var template = this.itemStore.createTemplateFromChildren([item]);
 		var binding = rforms.model.match(graph, "http://example.org/about", template);
 		if (this._editorDijit != null) {
