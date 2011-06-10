@@ -34,10 +34,17 @@
 				handleAs: "json-comment-optional"
 			};
 			var req = dojo.xhrGet(xhrArgs);
-			req.addCallback(function(source) {
-				itemStore.createTemplate(source)
-				var storeManager = new rforms.formulator.StoreManager({itemStore: itemStore, data: }, "_node");
-				storeManager.startup();
+				req.addCallback(function(source) {
+					itemStore.createTemplate(source)
+					dojo.xhrGet({
+					url: "europeana-test.json",
+					sync: true,
+					handleAs: "json-comment-optional",
+					load: function(data) {
+						var storeManager = new rforms.formulator.StoreManager({itemStore: itemStore, data: data}, "_node");
+						storeManager.startup();
+					}
+				});
 			});
 		});
 	</script>
