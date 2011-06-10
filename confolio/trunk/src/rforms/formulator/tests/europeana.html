@@ -41,7 +41,7 @@
 					sync: true,
 					handleAs: "json-comment-optional",
 					load: function(data) {
-						var storeManager = new rforms.formulator.StoreManager({itemStore: itemStore, data: data}, "_node");
+						var storeManager = new rforms.formulator.StoreManager({itemStore: itemStore, data: data, resourceUri: "http://www.mapfre.com/documentacion/publico/i18n/catalogo_imagenes/imagen_id.cmd?idImagen=1024840"}, "_node");
 						storeManager.startup();
 					}
 				});
