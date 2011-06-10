@@ -114,9 +114,9 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 			var titlePane = new dijit.TitlePane({}, fieldDiv);
 			var node = dojo.create("div");
 			titlePane.set("content", node);
-			var subView = new rforms.view.Editor({languages: this.languages, binding: binding, template: this.template, topLevel: false}, node);
+			var subView = new rforms.view.Editor({languages: this.languages, binding: binding, template: this.template, topLevel: false, includeLevel: this.includeLevel}, node);
 		} else {
-			var subView = new rforms.view.Editor({languages: this.languages, binding: binding, template: this.template, topLevel: false}, fieldDiv);
+			var subView = new rforms.view.Editor({languages: this.languages, binding: binding, template: this.template, topLevel: false, includeLevel: this.includeLevel}, fieldDiv);
 		}
 	},
 	addText: function(fieldDiv, binding, noCardinalityButtons) {
