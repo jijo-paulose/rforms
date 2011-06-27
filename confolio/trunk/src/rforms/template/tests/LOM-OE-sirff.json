@@ -4497,6 +4497,43 @@
      ]
     }],
     "constraints": {"http://www.w3.org/1999/02/22-rdf-syntax-ns#type": "http://purl.org/dc/terms/LinguisticSystem"}
+   },
+   {
+      "id": "LOM-OE",
+      "type": "group",
+      "content": [
+          {"id": "LOM-OE-Title"},
+          {"id": "LOM-OE-Description"},
+          {"id": "LOM-OE-Identifier"},
+	  {"id": "LOM-OE-AggregationLevel"},
+	  {"id": "LOM-OE-Annotation"},
+	  {"id": "LOM-OE-Context"},
+	  {"id": "LOM-OE-Contribution"},
+	  {"id": "LOM-OE-CopyrightAndOtherRestrictions"},
+	  {"id": "LOM-OE-CopyrightDescription"},
+	  {"id": "LOM-OE-Cost"},
+	  {"id": "LOM-OE-Coverage"},
+	  {"id": "LOM-OE-Difficulty"},
+	  {"id": "LOM-OE-Duration"},
+	  {"id": "LOM-OE-EducationalDescription"},
+	  {"id": "LOM-OE-EducationalLanguage"},
+	  {"id": "LOM-OE-Format"},
+	  {"id": "LOM-OE-InstallationsRemarks"},
+	  {"id": "LOM-OE-IntendedEndUserRole"},
+	  {"id": "LOM-OE-InteractivityLevel"},
+	  {"id": "LOM-OE-InteractivityType"},
+	  {"id": "LOM-OE-Keyword"},
+	  {"id": "LOM-OE-Language"},
+	  {"id": "LOM-OE-OtherPlatformRequirements"},
+	  {"id": "LOM-OE-Requirement"},
+	  {"id": "LOM-OE-ResourceType"},
+	  {"id": "LOM-OE-SemanticDensity"},
+	  {"id": "LOM-OE-Status"},
+	  {"id": "LOM-OE-Structure"},
+	  {"id": "LOM-OE-TypicalAgeRange"},
+	  {"id": "LOM-OE-TypicalLearningTime"},
+	  {"id": "LOM-OE-Version"}
+      ]
    }
   ]
 }

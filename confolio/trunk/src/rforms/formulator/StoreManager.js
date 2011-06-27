@@ -38,8 +38,20 @@ dojo.declare("rforms.formulator.StoreManager", [dijit.layout._LayoutWidget, diji
 	// Private methods
 	//===================================================
 	_buildList: function() {
-		dojo.create("div", {innerHTML: "all"}, this._listNode);		
-		dojo.forEach(this.itemStore.getItems(), function(item) {
+		dojo.create("div", {innerHTML: "all"}, this._listNode);
+		var items = this.itemStore.getItems();
+		items.sort(function(i1, i2) {
+			var lab1 = i1.getId() || i1.getProperty();
+			var lab2 = i2.getId() || i2.getProperty();
+			if (lab1 > lab2) {
+				return 1;
+			} else if (lab1 < lab2) {
+				return -1;
+			} else {
+				return 0;
+			}
+		});
+		dojo.forEach(items, function(item) {
 			dojo.create("div", {innerHTML: item.getId() || item.getProperty()}, this._listNode);
 		}, this);
 	},
