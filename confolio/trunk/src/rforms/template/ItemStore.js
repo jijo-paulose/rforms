@@ -32,6 +32,23 @@ dojo.declare("rforms.template.ItemStore", null, {
 	getItem: function(id) {
 		return this._registry[id];
 	},
+	getItems: function() {
+		var arr = [];
+		for (var key in this._registry) {
+			if (this._registry.hasOwnProperty(key)) {
+				arr.push(this._registry[key]);
+			}
+		}
+		for (var key in this._registryByProperty) {
+			if (this._registryByProperty.hasOwnProperty(key)) {
+				var item = this._registryByProperty[key]
+				if (item.getId() == null) {
+					arr.push(item);
+				}
+			}
+		}
+		return arr;
+	},
 	getItemIds: function() {
 		var arr = [];
 		for (var key in this._registry) {

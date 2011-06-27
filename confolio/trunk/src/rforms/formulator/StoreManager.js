@@ -39,8 +39,8 @@ dojo.declare("rforms.formulator.StoreManager", [dijit.layout._LayoutWidget, diji
 	//===================================================
 	_buildList: function() {
 		dojo.create("div", {innerHTML: "all"}, this._listNode);		
-		dojo.forEach(this.itemStore.getItemIds(), function(id) {
-			dojo.create("div", {innerHTML: id}, this._listNode);
+		dojo.forEach(this.itemStore.getItems(), function(item) {
+			dojo.create("div", {innerHTML: item.getId() || item.getProperty()}, this._listNode);
 		}, this);
 	},
 	_itemIdClicked: function(event) {
@@ -50,7 +50,7 @@ dojo.declare("rforms.formulator.StoreManager", [dijit.layout._LayoutWidget, diji
 				this._showAll();
 				this._showEditor();
 			} else {
-				var item = this.itemStore.getItem(id);
+				var item = this.itemStore.getItem(id) || this.itemStore.getItemByProperty(id);
 				this._showContent(item);
 				this._showEditor(item);
 			}
@@ -76,8 +76,8 @@ dojo.declare("rforms.formulator.StoreManager", [dijit.layout._LayoutWidget, diji
 	},
 	_showAll: function() {
 		var arr = [];
-		dojo.forEach(this.itemStore.getItemIds(), function(id) {
-			arr.push(this.itemStore.getItem(id)._source);
+		dojo.forEach(this.itemStore.getItems(), function(item) {
+			arr.push(item._source);
 		}, this);
 
 		var str = dojo.toJson(arr, true, "  ");

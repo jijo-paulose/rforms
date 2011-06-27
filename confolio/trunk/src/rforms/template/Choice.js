@@ -36,6 +36,10 @@ dojo.declare("rforms.template.Choice", rforms.template.Item, {
 	 * @return {Array} of choices defined manually in the Template.
 	 */
 	getStaticChoices: function() {
+		if (this._source.choices && !this._staticIsSorted) {
+			rforms.template.sortChoices(this._source.choices);
+			this._staticIsSorted = true;
+		}
 		return this._source.choices;
 	},
 	/**
@@ -48,15 +52,16 @@ dojo.declare("rforms.template.Choice", rforms.template.Item, {
 		if (this._dynamicChoices == null) {
 			if (callback == null) {
 				this._dynamicChoices = this._ontologyStore.getChoices(this);
+				rforms.template.sortChoices(this._dynamicChoices);
 				return this._dynamicChoices;
 			} else {
 				this._ontologyStore.getChoices(this, dojo.hitch(this, function(choices) {
-					this._dynamicChoices = choices;
-					if (choices == null) {
+					rforms.template.sortChoices(choices);
+					if (this._dynamicChoices == null) {
 						console.log("Failed lookup of choices for "+this.getLabel());
 						console.log("  OntologyUrl is: "+this._source.ontologyUrl);
 					}
-					callback(choices);				
+					callback(this._dynamicChoices);
 				}));
 				return;
 			}
@@ -91,3 +96,17 @@ dojo.declare("rforms.template.Choice", rforms.template.Item, {
 		this._ontologyStore = ontologyStore;
 	}
 });
+
+rforms.template.sortChoices = function(choices) {
+	choices.sort(function(c1, c2) {
+		var lab1 = rforms.template.getLocalizedValue(c1.label).value || c1.value;
+		var lab2 = rforms.template.getLocalizedValue(c2.label).value || c2.value;
+		if (lab1 > lab2) {
+			return 1;
+		} else if (lab1 < lab2) {
+			return -1;
+		} else {
+			return 0;
+		}
+	});
+};

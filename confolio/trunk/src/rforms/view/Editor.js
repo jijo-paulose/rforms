@@ -99,6 +99,10 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 		if (this.showAsTable(item)) {
 			return;
 		}
+		var card = item.getCardinality();
+		if (card.max != null && card.max == card.min) {
+			return;
+		}
 		if (isGroup) {
 			this._addGroupButtons(rowDiv, labelDiv, binding);
 		} else {
@@ -142,7 +146,7 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 					dateStringValue = dojo.date.stamp.fromISOString(this.getValue());
 				}
 				tb = new dijit.form.DateTextBox({
-					value: dateStringValue,
+					value: dateStringValue || null,
 					disabled: !item.isEnabled(),
 					invalidMessage: "Proper date format is required, value will not be saved",
 					onChange: function(){
@@ -177,12 +181,8 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 		}
 		else {
 			var itemToUse = binding.getItem();
-			var itemStyles = itemToUse.getStyles();
 			//TODO: Sort out if the textarea should be multiline using style or class...
-			if (itemToUse.hasClass("multiline") ||
-			    dojo.indexOf(itemStyles, "MultiLine") > -1||
-				dojo.indexOf(itemStyles, "Multiline") > -1||
-				dojo.indexOf(itemStyles, "multiline") > -1) {
+			if (itemToUse.hasClass("multiline") || itemToUse.hasStyle("multiLine")) {
 				tb = new dijit.form.Textarea({
 					value: binding.getValue(),
 					onChange: function(){
@@ -238,14 +238,17 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 		var divToUse =  dojo.create("div", null, fieldDiv);
 		var hierarchy = item.getParentProperty() && item.getHierarchyProperty();
 		//Check if radiobuttons can be created, i.e. when few choices and max-cardinality == 1 
-		if (!hierarchy && (!binding.getItem().hasClass("dropdown") && choices.length < 5) && item.getCardinality().max === 1) {
-			for (var ib in choices) {
+		if (!hierarchy && (!item.hasClass("dropdown") && (choices.length < 5 || item.hasStyle("verticalRadioButtons") || item.hasStyle("horizontalRadioButtons"))) && item.getCardinality().max === 1) {
+			for (var ind=0;ind<choices.length;ind++) {
 				var inputToUse = dojo.create("input", null, divToUse);
-				dojo.create("span", { "class": "rformsChoiceLabel", innerHTML: item._getLocalizedValue(choices[ib].label).value }, divToUse);
+				dojo.create("span", { "class": "rformsChoiceLabel", innerHTML: item._getLocalizedValue(choices[ind].label).value }, divToUse);
+				if (item.hasStyle("verticalRadioButtons")) {
+					dojo.create("br", null, divToUse);
+				}
 				var rb = new dijit.form.RadioButton({
 					name: "RadioButtonName"+rforms.template.uniqueRadioButtonNameNr,
-					value: choices[ib].value,
-					checked: choices[ib].value === binding.getValue()
+					value: choices[ind].value,
+					checked: choices[ind].value === binding.getValue()
 				}, inputToUse);
 				dojo.connect(rb, "onChange", dojo.hitch(this, function(but){
 					var val = but.get("value");
@@ -550,7 +553,7 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 		//Adds an empty choice when min cardinality > 0
 		var itemsArray = this._getCopiedLabeledChoices(objects, item);
 		if (noEmptyValue !== true && !(item.getCardinality().min > 0)) {
-			itemsArray.push({value: "", label: "No value", top: true});
+			itemsArray.push({value: "", label: "", top: true});
 		}
 		var store = new rforms.view.SortedStore({
 			sortBy: "label",
