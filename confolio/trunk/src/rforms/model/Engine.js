@@ -170,7 +170,7 @@ rforms.model._createPropertyGroupItem = function(parentBinding, item) {
 	if (oItem instanceof rforms.template.Group) {
 		stmt = graph.create(parentBinding.getChildrenRootUri(), "", null, false);		
 		constr = rforms.model._createStatementsForConstraints(graph, stmt.getSubject(), oItem);
-	} else if (oItem instanceof rforms.model.Choice) {
+	} else if (oItem instanceof rforms.template.Choice) {
 		stmt = graph.create(parentBinding.getChildrenRootUri(), "", {type: "uri", value: ""}, false);
 	} else {
 		stmt = graph.create(parentBinding.getChildrenRootUri(), "", {type: "literal", value: ""}, false);
