@@ -98,6 +98,9 @@ dojo.declare("rforms.template.Choice", rforms.template.Item, {
 });
 
 rforms.template.sortChoices = function(choices) {
+	if (choices == null) {
+		return;
+	}
 	choices.sort(function(c1, c2) {
 		var lab1 = rforms.template.getLocalizedValue(c1.label).value || c1.value;
 		var lab2 = rforms.template.getLocalizedValue(c2.label).value || c2.value;
