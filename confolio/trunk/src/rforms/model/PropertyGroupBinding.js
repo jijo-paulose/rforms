@@ -36,7 +36,7 @@ dojo.declare("rforms.model.PropertyGroupBinding", rforms.model.GroupBinding, {
 		var pBinding, oBinding, pItem = children[0], oItem = children[1];
 		if (oItem instanceof rforms.template.Group) {
 			oBinding = new rforms.model.GroupBinding({item: oItem, statement: args.statement, constraints: args.constraints});
-		} else if (oItem instanceof rforms.model.Choice) {
+		} else if (oItem instanceof rforms.template.Choice) {
 			oBinding = new rforms.model.ChoiceBinding({item: oItem, statement: args.statement});
 		} else {
 			oBinding = new rforms.model.ValueBinding({item: oItem, statement: args.statement});
