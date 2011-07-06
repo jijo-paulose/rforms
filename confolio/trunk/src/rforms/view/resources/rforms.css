@@ -115,6 +115,9 @@
  	font-size: xx-small;
 	margin-left: 1em;
 }
+.rformsEditor .rformsField textarea {
+	font: inherit;
+}
 
 .rformsEditor .langFieldControl .dijitButton {
  	font-size: xx-small;
