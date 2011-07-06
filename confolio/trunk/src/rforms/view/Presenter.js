@@ -95,7 +95,7 @@ dojo.declare("rforms.view.Presenter", rforms.view.View, {
 			var lang = dojo.create("div", {"innerHTML": binding.getLanguage()}, fieldDiv);
 			dojo.addClass(lang, "rformsLanguage");
 		}
-		dojo.create("div", {"innerHTML": binding.getValue()}, fieldDiv);
+		dojo.create("div", {"innerHTML": binding.getValue().replace(/(\r\n|\r|\n)/g, "<br/>")}, fieldDiv);
 	},
 	addChoice: function(fieldDiv, binding) {
 		var item = binding.getItem();
