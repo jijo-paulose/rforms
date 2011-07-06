@@ -43,7 +43,7 @@ dojo.declare("rforms.template.Item", rforms.template._BaseItem, {
 	 * LITERAL, RESOURCE, URI, BLANK, PLAIN_LITERAL, ONLY_LITERAL, LANGUAGE_LITERAL, DATATYPE_LITERAL
 	 */
 	getNodetype: function() {
-		return this._source.nodetype;
+		return this._source.nodetype || this._source.nodeType; //Ugly fix because it is often wrong written in SIRFF.
 	},
 	getValue: function() {
 		return this._source.value;
