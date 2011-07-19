@@ -24,7 +24,7 @@
 		{	"id":"CORDIS",
 			"type":"group",
 			"label":{"en":"CORDIS"},
-			"cardinality": {"min": 1, "pref": 0, "max": 1},
+			"cardinality": {"min": 1, "pref": 1, "max": 1},
 			"cls": ["expandable"],
 			"content":[
 				{"id": "http://purl.org/telmap/cordis/title"},
@@ -120,7 +120,7 @@
 	  		},
 			"lookupProtocol": "scam",
 	  		"type": "choice",
-			"nodeType": "URI"
+			"nodetype": "URI"
   		},
 	  	{
 	  		"id": "http://purl.org/telmap/collaborator", 
@@ -339,13 +339,14 @@
 			"nodeType": "LITERAL"
   		},
 		{
-	  		"id": "http://purl.org/telmap/cordis/title", 
+	  		"id": "http://purl.org/telmap/cordis/title",
+			"cardinality": {"min": 0, "pref": 1}, 
 	  		"property": "http://purl.org/telmap/cordis/title", 
 	  		"label": {
 	  			"en": "Title"
 	  		},
 	  		"type": "text",
-			"nodeType": "LITERAL"
+			"nodetype": "LITERAL"
   		},
   		{
 	  		"id": "http://purl.org/telmap/cordis/abbreviation", 
