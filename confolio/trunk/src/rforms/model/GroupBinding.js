@@ -99,7 +99,12 @@ dojo.declare("rforms.model.GroupBinding", rforms.model.Binding, {
 	},
 	getChildBindings: function() {
 		if (this._cachedChildBindings === null) {
-			this._cachedChildBindings = Array.concat.apply([], this._childBindings);
+			if (this._childBindings && this._childBindings.length > 0) {
+				var arr = [];
+				this._cachedChildBindings = arr.concat.apply(arr,this._childBindings);
+			} else {
+				this._cachedChildBindings = [];
+			}
 		}
 		return this._cachedChildBindings;
 	},

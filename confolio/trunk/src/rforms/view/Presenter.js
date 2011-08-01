@@ -80,10 +80,14 @@ dojo.declare("rforms.view.Presenter", rforms.view.View, {
 			}
 		}
 	},
+	skipBinding: function(binding) {
+		return binding.getItem() instanceof rforms.template.Group && binding.getChildBindings().length === 0;
+	},
+
 	addLabel: function(rowDiv, labelDiv, binding) {
 		var item = binding.getItem();
 		var isGroup = item instanceof rforms.template.Group;
-		dojo.attr(labelDiv, "innerHTML", item.getLabel());
+		dojo.attr(labelDiv, "innerHTML", item.getLabel() || "");
 		dojo.addClass(labelDiv, "rformsLabel");
 		this.showInfo(binding.getItem(), labelDiv);
 	},

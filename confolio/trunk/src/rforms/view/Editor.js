@@ -80,6 +80,9 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 		}
 		return bindings;
 	},
+	skipBinding: function(binding) {
+		return false;
+	},
 	
 	addLabel: function(rowDiv, labelDiv, binding, item) {
 		if (item.hasClass("rformsNoneditable")) {

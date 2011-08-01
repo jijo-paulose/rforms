@@ -132,6 +132,10 @@ dojo.declare("rforms.view.View", dijit._Widget, {
 	addRow: function(lastRow, binding, includeLabel) {
 		var fieldDiv, newRow, item = binding.getItem();
 		
+		if (this.skipBinding(binding)) {
+			return;
+		}
+		
 		//Taking care of dom node structure plus label.
 		if (includeLabel || (includeLabel == null && binding instanceof rforms.model.GroupBinding)) {
 			newRow = this.addLabelClean(lastRow, binding, item);
@@ -144,8 +148,12 @@ dojo.declare("rforms.view.View", dijit._Widget, {
 		this.addComponent(fieldDiv, binding);
 		return newRow || lastRow;
 	},
+	skipBinding: function(binding) {
+		return false;
+	},
 	addLabelClean: function(lastRow, binding, item) {
 		var newRow;
+
 		//New rowDiv since we have a label
 		if (lastRow === undefined) {
 			newRow = dojo.create("div", null, this.domNode);

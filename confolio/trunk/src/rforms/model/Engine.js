@@ -47,11 +47,16 @@ rforms.model.constructTemplate = function(graph, uri, itemStore, requiredItems) 
 	var items = [];
 	var fixedProps = {};
 	if (requiredItems != null) {
+		var addProperty = function(item) {
+			if (item.getProperty() != null) {
+				fixedProps[item.getProperty()] = true;
+			} else if (item instanceof rforms.template.Group) {
+				dojo.forEach(item.getChildren(), addProperty);				
+			}
+		};
 		var addItem = function(item) {
 			if (item != null) {
-				if (item.getProperty() != null) {
-					fixedProps[item.getProperty()] = true;
-				}
+				addProperty(item);
 				items.push(item);
 			}			
 		};
@@ -112,7 +117,14 @@ rforms.model.create = function(parentBinding, item, parentItems) {
 //===============================================
 rforms.model._createTextItem = function(parentBinding, item) {
 	var graph = parentBinding.getGraph();
-	var stmt = graph.create(parentBinding.getChildrenRootUri(), item.getProperty(), {type: "literal", value: ""}, false);
+	var nt = item.getNodetype();
+	var obj = {value: "", type: "literal"};
+	if (item.getNodetype() === "URI") {
+		obj.type = "uri";
+	} else if (item.getNodetype() === "DATATYPE_LITERAL") {
+		obj.datatype = item.getDatatype();
+	}
+	var stmt = graph.create(parentBinding.getChildrenRootUri(), item.getProperty(), obj, false);
 	var nbinding = new rforms.model.ValueBinding({item: item, statement: stmt});
 	parentBinding.addChildBinding(nbinding);
 	return nbinding;

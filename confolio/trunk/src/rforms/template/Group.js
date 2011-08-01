@@ -53,5 +53,8 @@ dojo.declare("rforms.template.Group", rforms.template.Item, {
 	constructor: function(source, children, itemStore) {
 		this._children = children;
 		this._itemStore = itemStore;
+	},
+	getNodetype: function() {
+		return this.inherited("getNodetype", arguments) || "RESOURCE"; //Ugly fix because it is often wrong written in SIRFF.
 	}
 });
