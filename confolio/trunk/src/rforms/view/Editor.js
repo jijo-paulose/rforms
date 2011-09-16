@@ -154,7 +154,7 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 					invalidMessage: "Proper date format is required, value will not be saved",
 					onChange: function(){
 						if (tb.isValid()) {
-							binding.setValue(dojo.date.stamp.fromISOString(this.attr("value")));
+							binding.setValue(dojo.date.stamp.toISOString(this.attr("value")));
 						} else {
 							binding.setValue("");
 						}
