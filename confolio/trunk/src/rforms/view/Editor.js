@@ -5,7 +5,6 @@ dojo.require("rforms.view.Presenter");
 dojo.require("dijit.TitlePane");
 dojo.require("dijit.form.TextBox");
 dojo.require("dijit.form.Textarea");
-dojo.require("dijit.form.DateTextBox");
 dojo.require("dijit.form.Button");
 dojo.require("dijit.form.FilteringSelect");
 dojo.require("rforms.template._BaseItem");
@@ -15,6 +14,7 @@ dojo.require("dijit.Tree");
 dojo.require("dijit.TooltipDialog");
 dojo.require("rforms.view.TreeOntologyChooser");
 dojo.require("rforms.view.SortedStore");
+dojo.require("rforms.view.DateTime");
 
 rforms.template.uniqueRadioButtonNameNr = 0;
 
@@ -142,30 +142,12 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 			
 			//Special editing support implemented for integer, data and duration
 			
-			if (datatype === "http://www.w3.org/2001/XMLSchema.xsd#date" ||
-			datatype === "http://purl.org/dc/terms/W3CDTF") {
-				var dateStringValue = item.getValue() || "";
-				if (dateStringValue.length > 0) {
-					dateStringValue = dojo.date.stamp.fromISOString(this.getValue());
-				}
-				tb = new dijit.form.DateTextBox({
-					value: dateStringValue || null,
-					disabled: !item.isEnabled(),
-					invalidMessage: "Proper date format is required, value will not be saved",
-					onChange: function(){
-						if (tb.isValid()) {
-							binding.setValue(dojo.date.stamp.toISOString(this.attr("value")));
-						} else {
-							binding.setValue("");
-						}
-					}
-				}, dojo.create("div", null, fieldDiv));
-				
+			if (datatype === "http://www.w3.org/2001/XMLSchema.xsd#date" || datatype === "http://purl.org/dc/terms/W3CDTF") {
+				tb = new rforms.view.DateTime({binding: binding, item: item}, dojo.create("div", null, fieldDiv));				
 			} else if (datatype === "http://www.w3.org/2001/XMLSchema.xsd#duration") {
 				tb = new rforms.view.Duration({disabled: !item.isEnabled(), onChange: function(){
 					binding.setValue(tb.attr("value"));
 				}}, dojo.create("div", null, fieldDiv));
-			
 			} else if (datatype === "http://www.w3.org/2001/XMLSchema.xsd#integer") {
 				tb = new dijit.form.ValidationTextBox({
 					value: binding.getValue(),
