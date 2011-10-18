@@ -46,7 +46,7 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 			case "mandatory":
 				return card && card.min>=1;
 			case "recommended":
-				return card && card.pref>=1;
+				return card && (card.min>=1 || card.pref>=1);
 			default:
 				return true;
 		}
@@ -217,77 +217,110 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 		}
 
 		var item = binding.getItem();
-		var choices = item.getChoices();
-		var controlDiv = dojo.create("div", null, fieldDiv);
-		dojo.addClass(controlDiv, "rformsFieldControl");
-		var divToUse =  dojo.create("div", null, fieldDiv);
-		var hierarchy = item.getParentProperty() && item.getHierarchyProperty();
-		//Check if radiobuttons can be created, i.e. when few choices and max-cardinality == 1 
-		if (!hierarchy && (!item.hasClass("dropdown") && (choices.length < 5 || item.hasStyle("verticalRadioButtons") || item.hasStyle("horizontalRadioButtons"))) && item.getCardinality().max === 1) {
-			for (var ind=0;ind<choices.length;ind++) {
-				var inputToUse = dojo.create("input", null, divToUse);
-				dojo.create("span", { "class": "rformsChoiceLabel", innerHTML: item._getLocalizedValue(choices[ind].label).value }, divToUse);
-				if (item.hasStyle("verticalRadioButtons")) {
-					dojo.create("br", null, divToUse);
+		if (item.hasChoices()) {
+			var choices = item.getChoices();
+//			var controlDiv = dojo.create("div", null, fieldDiv);
+//			dojo.addClass(controlDiv, "rformsFieldControl");
+			var divToUse =  dojo.create("div", null, fieldDiv);
+			var hierarchy = item.getParentProperty() && item.getHierarchyProperty();
+			//Check if radiobuttons can be created, i.e. when few choices and max-cardinality == 1 
+			if (!hierarchy && (!item.hasClass("dropdown") && (choices.length < 5 || item.hasStyle("verticalRadioButtons") || item.hasStyle("horizontalRadioButtons"))) && item.getCardinality().max === 1) {
+				for (var ind=0;ind<choices.length;ind++) {
+					var inputToUse = dojo.create("input", null, divToUse);
+					dojo.create("span", { "class": "rformsChoiceLabel", innerHTML: item._getLocalizedValue(choices[ind].label).value }, divToUse);
+					if (item.hasStyle("verticalRadioButtons")) {
+						dojo.create("br", null, divToUse);
+					}
+					var rb = new dijit.form.RadioButton({
+						name: "RadioButtonName"+rforms.template.uniqueRadioButtonNameNr,
+						value: choices[ind].value,
+						checked: choices[ind].value === binding.getValue()
+					}, inputToUse);
+					dojo.connect(rb, "onChange", dojo.hitch(this, function(but){
+						var val = but.get("value");
+						if (val !== false) {
+							binding.setValue(val);
+						}
+					}, rb));
 				}
-				var rb = new dijit.form.RadioButton({
-					name: "RadioButtonName"+rforms.template.uniqueRadioButtonNameNr,
-					value: choices[ind].value,
-					checked: choices[ind].value === binding.getValue()
-				}, inputToUse);
-				dojo.connect(rb, "onChange", dojo.hitch(this, function(but){
-					var val = but.get("value");
-					if (val !== false) {
-						binding.setValue(val);
-					}
-				}, rb));
-			}
-			rforms.template.uniqueRadioButtonNameNr++;
-			
-		} else {
-			var fSelect, cNode, dialog;
-			//Check if a tree-hierarchy should be created
-			if(hierarchy){
-				cNode = dojo.create("div", {"class": "rformsChoiceValue"}, divToUse);
-				dojo.attr(cNode, "innerHTML", this._getLabelForChoice(binding, item) || "");				
-				var oc;
-				var ddButton = new dijit.form.Button({label:  "Browse", onClick: dojo.hitch(this, function() {
-					if (oc == null) {
-						oc = new rforms.view.TreeOntologyChooser({binding: binding, done: dojo.hitch(this, function() {
-							dojo.attr(cNode, "innerHTML", this._getLabelForChoice(binding, item));
-						})});
-					}
-					oc.show();
-				})}, dojo.create("span", null, divToUse));
-			
-			//Last option is the normal listing in a dropdown-menu
-			} else {
-				//Create an ItemFileReadStore with the correct language to use
-				var store = this._createChoiceStore(item);
-				var spanToUse = dojo.create("span", null, divToUse);
-				fSelect = new dijit.form.FilteringSelect({
-					store: store,
-					searchAttr: "label"
-				}, spanToUse);
+				rforms.template.uniqueRadioButtonNameNr++;
 				
-				//Sets the value if any
-				if (binding.getValue()) {
-					fSelect.set("value", binding.getValue());
+			} else {
+				var fSelect, cNode, dialog;
+				//Check if a tree-hierarchy should be created
+				if(hierarchy){
+					cNode = dojo.create("div", {"class": "rformsChoiceValue"}, divToUse);
+					dojo.attr(cNode, "innerHTML", this._getLabelForChoice(binding) || "");				
+					var oc;
+					var ddButton = new dijit.form.Button({label:  "Browse", onClick: dojo.hitch(this, function() {
+						if (oc == null) {
+							oc = new rforms.view.TreeOntologyChooser({binding: binding, done: dojo.hitch(this, function() {
+								dojo.attr(cNode, "innerHTML", this._getLabelForChoice(binding));
+							})});
+						}
+						oc.show();
+					})}, dojo.create("span", null, divToUse));
+				
+				//Last option is the normal listing in a dropdown-menu
 				} else {
-					fSelect.set("value", "");
+					//Create an ItemFileReadStore with the correct language to use
+					var store = this._createChoiceStore(item);
+					var spanToUse = dojo.create("span", null, divToUse);
+					fSelect = new dijit.form.FilteringSelect({
+						store: store,
+						searchAttr: "label"
+					}, spanToUse);
+					
+					//Sets the value if any
+					if (binding.getValue()) {
+						fSelect.set("value", binding.getValue());
+					} else {
+						fSelect.set("value", "");
+					}
+					//Callback when the user edits the value
+					fSelect.onChange = dojo.hitch(this, function (newvalue) {
+							binding.setValue(newvalue);
+					});
 				}
-				//Callback when the user edits the value
-				fSelect.onChange = dojo.hitch(this, function (newvalue) {
-						binding.setValue(newvalue);
-				});
+				
+				/*Code below is to correctly remove items in the form and their
+				 * values
+				 */
+				if (noCardinalityButtons !== true) {
+					this._addRemoveButton(fieldDiv, binding, divToUse, function() {
+						fSelect && fSelect.set("value", "");
+						cNode && dojo.attr(cNode, "innerHTML", "");
+					});
+				}
 			}
-			
+		} else if (rforms.getSystemChoice != null) {   //Depends on rforms.getSystemChoice and rforms.openSystemChoiceSelector methods being available
+			var divToUse =  dojo.create("div", null, fieldDiv);
+
+			cNode = dojo.create("div", {"class": "rformsChoiceValue"}, divToUse);
+			var choice = binding.getChoice();//rforms.getSystemChoice(item, binding.getValue());
+			if (choice) {
+				dojo.attr(cNode, "innerHTML", rforms.template.getLocalizedValue(choice.label).value || "");
+				if (choice.load != null) {
+					choice.load(function() {
+						dojo.attr(cNode, "innerHTML", rforms.template.getLocalizedValue(choice.label).value || "");						
+					});
+				}
+			}
+
+			var ddButton = new dijit.form.Button({label:  "Browse", onClick: dojo.hitch(this, function() {
+				rforms.openSystemChoiceSelector(binding, function(choice) {
+					binding.setChoice(choice);
+					if (choice) {
+						dojo.attr(cNode, "innerHTML", rforms.template.getLocalizedValue(choice.label).value || "");				
+					}
+				});
+			})}, dojo.create("span", null, divToUse));
 			/*Code below is to correctly remove items in the form and their
 			 * values
-			 */
+			*/
 			if (noCardinalityButtons !== true) {
 				this._addRemoveButton(fieldDiv, binding, divToUse, function() {
-					fSelect && fSelect.set("value", "");
+					binding.setValue("");
 					cNode && dojo.attr(cNode, "innerHTML", "");
 				});
 			}
@@ -512,10 +545,10 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 		}
 	},
 
-	_getLabelForChoice: function(binding, item) {
+	_getLabelForChoice: function(binding) {
 		var choice = binding.getChoice();
 		if (choice) {
-			return item._getLocalizedValue(choice.label).value;
+			return rforms.template.getLocalizedValue(choice.label).value;
 		}
 	},
 	/*
@@ -588,3 +621,16 @@ dojo.declare("rforms.view.Editor", rforms.view.Presenter, {
 		return this.languages;
 	}
 });
+
+/*
+rforms.getSystemChoice = function(item, value) {
+	return {"d": "http://example.com/choice1",
+	 		"label": {"en": "First choice", "sv": "Första valet"}};
+};
+
+rforms.openSystemChoiceSelector = function(binding, callback) {
+	alert("Choose your poison!");
+	callback({"d": "http://example.com/choice2",
+	 		"label": {"en": "Second choice", "sv": "Andra valet"}});
+};
+*/

@@ -18,96 +18,47 @@
  */
 
 dojo.provide("rforms.view.TreeOntologyChooser");
-dojo.require("dijit._Templated");
-dojo.require("dijit.Dialog");
-dojo.require("dijit.layout._LayoutWidget");
-dojo.require("dijit.layout.ContentPane");
-dojo.require("dijit.layout.BorderContainer");
-dojo.require("dijit.form.Button");
+dojo.require("rforms.view.Chooser");
 dojo.require("dijit.Tree");
 dojo.require("rforms.view.SortedStore");
 
-dojo.declare("rforms.view.TreeOntologyChooser", [dijit.layout._LayoutWidget, dijit._Templated], {
-	templatePath: dojo.moduleUrl("rforms.view", "TreeOntologyChooserTemplate.html"),
-	widgetsInTemplate: true,
-
-	//===================================================
-	// Public API
-	//===================================================
-	show: function() {
-		this._showValueFromChoice(this.binding.getChoice());
-		var viewport = dijit.getViewport();
-		dojo.style(this.bc.domNode, {
-                width: Math.floor(viewport.w * 0.70)+"px",
-                height: Math.floor(viewport.h * 0.70)+"px",
-                overflow: "auto",
-                position: "relative"    // workaround IE bug moving scrollbar or dragging dialog
-        });
-		this.bc.resize();
-		this.dialog.show();
-	},
-
-	//===================================================
-	// Public hooks
-	//===================================================
-	done: function() {
-	},
-
+dojo.declare("rforms.view.TreeOntologyChooser", rforms.view.Chooser, {
 	//===================================================
 	// Inherited methods
 	//===================================================
-	
 	postCreate: function() {
 		this.inherited("postCreate", arguments);
-		this._choices = this.binding.getItem().getChoices();
-		this._store = this._getStoreFromArray(this._choices, this.binding.getItem());
-		this._showAsTree(this.binding);
-		this.bc.startup();
-	},
-	
-	
-	//===================================================
-	// Private methods
-	//===================================================
-	_cancelClicked: function() {
-		this.dialog.hide();
-	},
-	_doneClicked: function() {
-		dojo.forEach(this._choices, function(choice) {
-			if (this.selectedValue === choice.value) {
-				this.binding.setChoice(choice);				
-			}
-		}, this);
-		this.dialog.hide();
-		this.done();
-	},
 
-	/*
-	 * From an array of choices that contains value and labels an 
-	 * DataStore is created and returned. The object inside 
-	 * the array should have the following structure:
-	 *  {"value": "Value",
-	 *  "label": {"en": "English-label", "sv": "Svensk label"}
-	 * }
-	 */
-	_getStoreFromArray: function(/*Array of objects*/objects, /*The item*/ item){
-		var objects = item.getChoices(), itemsArray = [];
-		for (var i in objects){
-			var currentLabel = item._getLocalizedValue(objects[i].label);
-			var obj = {value: objects[i].value, label: currentLabel.value};
-			if (objects[i].top === true) {
+		//Get the choices and prepare a store for the tree.
+		var choices = this.binding.getItem().getChoices();
+		//Prepare the value2choice index.
+		this._value2choice = {};
+		dojo.forEach(choices, function(choice) {
+			this._value2choice[choice.value] = choice;
+		}, this);
+
+		var itemsArray = dojo.map(choices, function(choice) {
+			//Only copy over label, description, top, children and selectable to be on the safe side.
+			var obj = {value: choice.value};
+			if (choice.label) {
+				obj.label = rforms.template.getLocalizedValue(choice.label).value;				
+			}
+			if (choice.description) {
+				obj.description = rforms.template.getLocalizedValue(choice.description).value;				
+			}
+			if (choice.top === true) {
 				obj.top = true;
 			}
-			if (objects[i].children != null) {
-				obj.children = dojo.clone(objects[i].children);
+			if (choice.children != null) {
+				obj.children = dojo.clone(choice.children);
 			}
-			if (objects[i].selectable === false) {
+			if (choice.selectable === false) {
 				obj.selectable = false;				
 			}
-			itemsArray.push(obj);
-		}
+			return obj;
+		});
 
-		var store = new rforms.view.SortedStore({
+		this._store = new rforms.view.SortedStore({
 			sortBy: "label",
 			data: {
 				identifier: "value",
@@ -115,77 +66,29 @@ dojo.declare("rforms.view.TreeOntologyChooser", [dijit.layout._LayoutWidget, dij
 				items: itemsArray
 			}
 		});
-		return store;
-	},
-	_showAsTree: function(binding){
-		var item = binding.getItem();
-		this.tree = new dijit.Tree({store: this._store,
-								childrenAttr: ["children"], 
-								query: {top: true}}, this.treeNode);
-		this.tree.getLabelClass = dojo.hitch(this, function(item) {
-			if(item == null) {
-				return "";
-			}
-			var value = this._store.getValue(item, "value");
-			if(this._store.getValue(item, "selectable") === false) {
-				return "notselectable";
-			} if (this.binding.getChoice() && this.binding.getChoice().value === value) {
-				return "currentselection";				
-			}
-			return "default";
-		});
 		
-								
-		this.tree.onClick = dojo.hitch(this, this._showValue);
-		this.tree.startup();
-/*		dojo.connect(node, "onClick",dojo.hitch(this, function(e){
-			if (this.toolTipNode === node) {
-				dijit.popup.close(ontologyPopupWidget);
-				this.toolTipNode = null;
-				return;
-			}
-				
-		}));
-*/		
-		/*if (this.toolTipNode === node) {
-				dijit.popup.close(this);
-				this.toolTipNode = null;
-				e.preventDefault();
-				return;
-			}
-			this.toolTipNode = node;
-			// stop the native click
-			this.tooltipDialog.attr("content", description.replace(/(\r\n|\r|\n)/g, "<br/>"));
-			e.preventDefault();
-			
-			dijit.focus(this.tooltipDialog.domNode);*/
-	},
-	_showValue: function(item) {
-		var choice, value = this._store.getValue(item,"value");
-		dojo.forEach(this._choices, function(c) {
-			if (value === c.value) {
-				choice = c;
-			}
-		}, this);
-		this._showValueFromChoice(choice);
-	},
-	_showValueFromChoice: function(choice) {
-		var item = this.binding.getItem();
-		if (choice == null) {
-			delete this.selectedValue;
-			dojo.attr(this.uriNode, "innerHTML", "");
-			dojo.attr(this.labelNode, "innerHTML", "");
-			dojo.attr(this.descriptionNode, "innerHTML", "");			
-		} else {
-			this.selectedValue = choice.value;
-			dojo.attr(this.uriNode, "innerHTML", this.selectedValue);
-			dojo.attr(this.labelNode, "innerHTML", item._getLocalizedValue(choice.label).value || "(No label given.)");
-			dojo.attr(this.descriptionNode, "innerHTML", item._getLocalizedValue(choice.description).value || "");
-			if (choice.selectable !== false && (this.binding.getChoice() == null || this.binding.getChoice().value !== this.selectedValue)) {
-				this.doneButton.set("disabled", false);
-			} else {
-				this.doneButton.set("disabled", true);
-			}			
-		}
+		//Init the tree
+		var tree = new dijit.Tree({store: this._store,
+						childrenAttr: ["children"], 
+						query: {top: true}, 
+						onClick: dojo.hitch(this, function(item) {
+							var v = this._store.getValue(item,"value")
+							var c = this._value2choice[v];
+							this._selectChoice(c);
+						}),
+						getLabelClass: dojo.hitch(this, function(item) {
+							if(item == null) {
+								return "";
+							}
+							var choice = this.binding.getChoice();
+							if(this._store.getValue(item, "selectable") === false) {
+								return "notselectable";
+							} if (choice != null && choice.value === this._store.getValue(item, "value")) {
+								return "currentselection";
+							}
+							return "default";
+						})}, this.selectionNode);
+		tree.startup();
+		this.bc.startup();
 	}
 });

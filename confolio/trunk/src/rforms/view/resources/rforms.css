@@ -140,3 +140,23 @@
 	width: 20em;
 	border: 1px solid lightgrey;
  }
+
+.chooser.rforms label {
+	font-weight:bold;
+	margin-left:5px;
+	margin-top:5px;
+	font-size:15px;
+	display: block;
+}
+
+.chooser.rforms .uriNode,
+.chooser.rforms .labelNode,
+.chooser.rforms .descriptionNode {
+	margin-left:20px;
+	font-size:15px;	
+}
+
+.chooser.rforms h2 {
+	text-align: center;
+	font-weight:bold;
+}

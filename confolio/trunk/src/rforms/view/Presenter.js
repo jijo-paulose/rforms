@@ -102,7 +102,12 @@ dojo.declare("rforms.view.Presenter", rforms.view.View, {
 		dojo.create("div", {"innerHTML": binding.getValue().replace(/(\r\n|\r|\n)/g, "<br/>")}, fieldDiv);
 	},
 	addChoice: function(fieldDiv, binding) {
-		var item = binding.getItem();
-		dojo.create("span", {"innerHTML": item._getLocalizedValue(binding.getChoice().label).value}, fieldDiv);
+		var choice = binding.getChoice();
+		var span = dojo.create("span", {"innerHTML": rforms.template.getLocalizedValue(choice.label).value}, fieldDiv);
+		if (choice.load != null) {
+			choice.load(function() {
+				dojo.attr(span, "innerHTML", rforms.template.getLocalizedValue(choice.label).value);
+			});
+		}
 	}
 });

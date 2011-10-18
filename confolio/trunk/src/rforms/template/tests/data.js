@@ -43,7 +43,7 @@ rforms.template.tests.template1 = {
 			"constraints": {"http://www.w3.org/2004/02/skos/core#inScheme":"http://example.com/bookSubjects"},
 			"ontologyUrl": "http://example.com/bookOntology",
 			"property":"http://purl.org/dc/terms/subject",
-			"cardinality": {"min": 0, "max": 1},
+			"cardinality": {"min": 0, "pref": 1, "max": 1},
 			"parentProperty": "http://something.se/doh",
 			"hierarchyProperty": "http://something.se/doh"
 		},{

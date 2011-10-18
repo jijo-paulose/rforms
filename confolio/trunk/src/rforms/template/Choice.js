@@ -32,6 +32,14 @@ dojo.declare("rforms.template.Choice", rforms.template.Item, {
 	getChoices: function() {
 		return this.getStaticChoices() || this.getDynamicChoices() || [];
 	},
+	
+	/**
+	 * @return {Boolean} true if there is an ontology or static choices.
+	 */
+	hasChoices: function() {
+		return this._source.ontologyUrl != null || this._source.choices != null;
+	},
+	
 	/**
 	 * @return {Array} of choices defined manually in the Template.
 	 */
