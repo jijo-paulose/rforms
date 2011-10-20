@@ -2,7 +2,7 @@
 
 = Installation =
 Before you can run any of the samples you have to make sure you have 
-downloaded and build dojo. Simply run:
+downloaded and build [http://dojotoolkit.orf dojo]. Simply run:
 {{{
 lib/INSTALL-dojo.sh
 }}}
@@ -26,4 +26,4 @@ In Firefox this is done by:
 In Chrome this is done by starting the browser with the following flag:
 `--allow-file-access-from-files`
 
-*NOTE:* XForms relies on the dojo library which loads files via XHR, even in built mode it loads the localization files, hence the workaround needed with the `file:///` protocol.
+*NOTE:* RForms relies on the dojo library which loads files via XHR, even in built mode it loads the localization files, hence the workaround needed with the `file:///` protocol.
