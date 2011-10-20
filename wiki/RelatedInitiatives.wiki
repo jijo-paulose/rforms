@@ -1,4 +1,4 @@
-#summary Initiatives that relate to RForms
+#sidebar Menu
 
 =[http://code.google.com/p/rdfquery/ rdfquery]=
 Is a jquery plugin that allows processing of RDF.
