@@ -1,4 +1,4 @@
-#summary Getting Started.
+#sidebar Menu
 
 = Installation =
 Before you can run any of the samples you have to make sure you have 
