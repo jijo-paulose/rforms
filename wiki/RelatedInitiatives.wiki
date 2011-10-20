@@ -1,5 +1,5 @@
 #sidebar Menu
 
-=[http://code.google.com/p/rdfquery/ rdfquery]=
+==[http://code.google.com/p/rdfquery/ rdfquery]==
 Is a jquery plugin that allows processing of RDF.
 It does not provide any specific editing capabilities in itself.
