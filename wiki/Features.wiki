@@ -1,5 +1,4 @@
-#summary RForms features
-
+#sidebar Menu
   * Form based editing and presentation of RDF
   * Forms are designed via RForm-templates
   * Handles both flat and deep RDF (non-cyclic with a single root)
