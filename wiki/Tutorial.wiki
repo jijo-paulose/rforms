@@ -1,4 +1,5 @@
-#sidebar menu
+#sidebar Menu
+<wiki:toc max_depth="3" />
 =A simple RForms driven editor=
 We start by going through a simple RForms driven editor, It does not illustrate all the strengths of RForms, rather the focus is on getting the basic understanding on how to include an editor in a webpage. Hence we will go through the  carefully.
 
@@ -7,8 +8,58 @@ The editor looks like this:
 <wiki:gadget url="http://rforms.googlecode.com/svn/trunk/samples/gadgetwrapper.xml" height="230" width="100%" border="0" up_url="http://rforms.googlecode.com/svn/trunk/samples/editorView-gcode.html"/> 
 This is an embedding via a simple gadget, you can also see it by following [http://rforms.googlecode.com/svn/trunk/samples/editorView-gcode.html this link]. Or view the [http://code.google.com/p/rforms/source/browse/trunk/samples/editorView-gcode.html code in SVN].
 This sample editor allows editing of titles and authors of a resource. And the authors are represented by their firstname and surname. Note how there are upper and lower restrictions on how many titles and authors that is allowed.
-==The code==
- 
+==Javascript library loading==
+To start with we need to make sure that the library is loaded. As RForms is built on top of dojo we need to load dojo base as well as the RForms library itself.
+{{{
+<script src="http://ajax.googleapis.com/ajax/libs/dojo/1.6.1/dojo/dojo.js" type="text/javascript"></script>
+<script type="text/javascript" src="http://rforms.googlecode.com/files/rforms_ROOT.js"></script>
+<script type="text/javascript" src="http://rforms.googlecode.com/files/rforms.js"></script>
+}}}
+Note that the `nls/rforms_ROOT.js` is for localization purposes and only provided to avoid cross domain loading issues which occurs when dojo and rforms is loaded from different domains (googleapis.com and googlecode.com). Hence, a proper installation of RForms, downloaded, built and integrated into your application of choice this script can, and should, be removed to benefit from the full localization of features that are provided with dojo.
+Compare with [http://code.google.com/p/rforms/source/browse/trunk/samples/editorView-gcode.html code in SVN] and [http://code.google.com/p/rforms/source/browse/trunk/samples/editorView-build.html editorView-build.html] (the localization file is included in the -build variant in the SVN to better support loading via file:///).
+
+Even though we already have included the libraries via script tags, it good custom to declare which classes we aim to use from this file, this is similar to the good practice of explicit import statements in java. In addition, if we are not running a built version of RForms, this step is neccessary as javascript is loaded on the fly.
+{{{
+dojo.require("rforms.template.ItemStore");		
+dojo.require("rdfjson.Graph");
+dojo.require("rforms.model.Engine");
+dojo.require("rforms.view.Editor");
+}}}
+The `dojo.require` statements have to be in a separate script tag that is after the script tags that bootstrap dojo and include RForms.
+==Include neccessary CSS==
+Here two things are important, first you need to include the dojo theme css and the RForms css:
+{{{
+<style>
+	@import "http://ajax.googleapis.com/ajax/libs/dojo/1.6.1/dijit/themes/tundra/tundra.css";
+	@import "http://rforms.googlecode.com/files/rforms.css";
+</style>
+}}}
+Secondly you need to provide the dojo theme class somewhere higher up in the DOM tree from where the editor is positioned, in this case it is on the body element:
+{{{
+<body class="tundra">
+}}}
+
+==Provide some RDF==
+
+==Provide an RForm-template==
+
+==Init the editor==
+To make sure we do not try to modify the document structure before it has finished loading, or before some javascript dependency indicated via `dojo.require` is loaded the code that initiates the editor has to be inside of a callback. Dojo provides such a mechanism:
+{{{
+dojo.addOnLoad(function() {
+		var itemStore = new rforms.template.ItemStore();
+	 	var template = itemStore.createTemplate(templateSrc);
+		var graph = new rdfjson.Graph(rdfSrc);
+		var binding = rforms.model.match(graph, "http://example.org/about", template);
+		new rforms.view.Editor({template: template, binding: binding}, "compactView");
+	});
+}}}
+Lets try to understand each of the five steps in the callback:
+===Creating an rforms.template.ItemStore===
+===Creating an rforms.template.Template===
+===Creating an rdfjson.Graph===
+===Creating an rforms.model.Binding===
+===Creating an rforms.view.Editor===
 
 =Experiment yourself=
 This small webapp provides four tabs containing an RForms editor, RForms presenter, a two text-editors containing an RForm-template and RDF data respectively. It allows you to experiment by changing the RDF data and see the results in the editor, or vice versa, change in the editor and see the result in the RDF data. You can also see how the RForms presenter shows the RDF data. Finally you can try to change the RForm-template, for instance to include more fields, both the editor and the presenter will reflect the changes.
