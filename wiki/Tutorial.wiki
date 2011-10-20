@@ -1,0 +1,2 @@
+=Simple editor=
+We will now look into how the [http://rforms.googlecode.com/svn/trunk/samples/editorView-gcode.html samples/editorView.html] code works.
