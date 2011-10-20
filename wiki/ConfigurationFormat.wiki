@@ -1,19 +1,17 @@
 #sidebar Menu
 <wiki:toc max_depth="1" />
+= RForms-templates =
 
-= RForms =
+An RForm-template is a hierarchy of form-items that comes in three flavours, group, text and choice form-item. RForm-templates always come inside of a container structure that contains descriptive information, a list of form items, and an optional default form-item when the container is supposed to correspond to a single RForm-template. The container also contains cached choices, i.e. preprepared values, drawn from ontologies, that are to be displayed and choosen from in dropdown menues etc. Below is the json representation of the RForm-template container, the three kinds of form-items and the choices described and examplified.
 
-RDF Forms provides a way to declarative describe how to generate editors and presentation views of RDF. Below is the syntax of the json based format explained and exemplified. The format describes form items that comes in three flavours, group, text and choice. There is also a toplevel container structure that contains some descriptive information, the form items, a default root form item and cached choices, i.e. preprepared values, drawn from ontologies, that are to be displayed and choosen from in dropdown menues etc.
-
-= Rforms container =
-
+= Rforms-templates container =
 
 == Reference ==
 
 || *Key* || *Explanation* ||
 || label || A user readable label for the entire container. The label is an object containing several translations of the label, the ISO language code is used as key, for example `{en: "Some text", sv: "En text"} ||
 || description || A user readable longer description to accompany the label, typically provided after the user clicks on the label or some help icon nearby. Same format as for the label. ||
-|| root || Points to a single group item that is the main rform of this container. ||
+|| root || Points to a single group item that is the default RForm-template of this container. ||
 || auxilliary || An array of items that this container wants to make available. ||
 || cachedChoices || An indexed set of choices, provided so the client can avoid additional requests. See section on choice item and cached choices further down. ||
 
