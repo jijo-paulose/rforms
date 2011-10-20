@@ -1,5 +1,5 @@
   * [Features]
   * [GettingStarted Getting Started]
-  * [ConfigurationFormat Configuration format]
+  * [ConfigurationFormat RForm-templates]
   * [ServerIntegration Server integration]
   * [RelatedInitiatives Related Initiatives]
