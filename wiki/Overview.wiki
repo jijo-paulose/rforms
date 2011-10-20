@@ -3,6 +3,6 @@
 = Introduction =
   * [Features]
   * [GettingStarted Getting Started]
-  * [ConfigurationFormat Configuraiton format]
+  * [ConfigurationFormat Configuration format]
   * [ServerIntegration Server integration]
   * [RelatedInitiatives Related Initiatives]
