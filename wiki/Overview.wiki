@@ -1,8 +1,3 @@
-#summary RForms overview
-
+#sidebar Menu
 = Introduction =
-  * [Features]
-  * [GettingStarted Getting Started]
-  * [ConfigurationFormat Configuration format]
-  * [ServerIntegration Server integration]
-  * [RelatedInitiatives Related Initiatives]
+RForms is a javascript library for editing and presenting RDF.
