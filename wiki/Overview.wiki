@@ -5,3 +5,4 @@
   * [GettingStarted Getting Started]
   * [ConfigurationFormat Configuraiton format]
   * [ServerIntegration Server integration]
+  * [RelatedInitiatives Related Initiatives]
