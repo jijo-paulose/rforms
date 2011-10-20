@@ -1,0 +1,5 @@
+#summary Initiatives that relate to RForms
+
+=[http://code.google.com/p/rdfquery/ rdfquery]=
+Is a jquery plugin that allows processing of RDF.
+It does not provide any specific editing capabilities in itself.
