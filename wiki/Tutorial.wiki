@@ -15,7 +15,7 @@ To start with we need to make sure that the library is loaded. As RForms is buil
 <script type="text/javascript" src="http://rforms.googlecode.com/files/rforms_ROOT.js"></script>
 <script type="text/javascript" src="http://rforms.googlecode.com/files/rforms.js"></script>
 }}}
-Note that the `nls/rforms_ROOT.js` is for localization purposes and only provided to avoid cross domain loading issues which occurs when dojo and rforms is loaded from different domains (googleapis.com and googlecode.com). Hence, a proper installation of RForms, downloaded, built and integrated into your application of choice this script can, and should, be removed to benefit from the full localization of features that are provided with dojo.
+Note that the `rforms_ROOT.js` is for localization purposes and only provided to avoid cross domain loading issues which occurs when dojo and rforms is loaded from different domains (googleapis.com and googlecode.com). Hence, a proper installation of RForms, downloaded, built and integrated into your application of choice this script can, and should, be removed to benefit from the full localization of features that are provided with dojo.
 Compare with [http://code.google.com/p/rforms/source/browse/trunk/samples/editorView-gcode.html code in SVN] and [http://code.google.com/p/rforms/source/browse/trunk/samples/editorView-build.html editorView-build.html] (the localization file is included in the -build variant in the SVN to better support loading via file:///).
 
 Even though we already have included the libraries via script tags, it good custom to declare which classes we aim to use from this file, this is similar to the good practice of explicit import statements in java. In addition, if we are not running a built version of RForms, this step is neccessary as javascript is loaded on the fly.
@@ -55,11 +55,11 @@ dojo.addOnLoad(function() {
 	});
 }}}
 Lets try to understand each of the five steps in the callback:
-===Creating an rforms.template.ItemStore===
-===Creating an rforms.template.Template===
-===Creating an rdfjson.Graph===
-===Creating an rforms.model.Binding===
-===Creating an rforms.view.Editor===
+===Creating an [http://code.google.com/p/rforms/source/browse/trunk/src/rforms/template/ItemStore.js rforms.template.ItemStore]===
+===Creating an [http://code.google.com/p/rforms/source/browse/trunk/src/rforms/template/Template.js rforms.template.Template]===
+===Creating an [http://code.google.com/p/rforms/source/browse/trunk/src/rdfjson/Graph.js rdfjson.Graph]===
+===Creating an [http://code.google.com/p/rforms/source/browse/trunk/src/rforms/model/Binding.js rforms.model.Binding]===
+===Creating an [http://code.google.com/p/rforms/source/browse/trunk/src/rforms/view/Editor.js rforms.view.Editor]===
 
 =Experiment yourself=
 This small webapp provides four tabs containing an RForms editor, RForms presenter, a two text-editors containing an RForm-template and RDF data respectively. It allows you to experiment by changing the RDF data and see the results in the editor, or vice versa, change in the editor and see the result in the RDF data. You can also see how the RForms presenter shows the RDF data. Finally you can try to change the RForm-template, for instance to include more fields, both the editor and the presenter will reflect the changes.
