@@ -1,5 +1,15 @@
-=Simple editor=
-We will now look into how the [http://rforms.googlecode.com/svn/trunk/samples/editorView-gcode.html samples/editorView.html] code works.
+#sidebar menu
+=A simple RForms driven editor=
+We start by going through a simple RForms driven editor, It does not illustrate all the strengths of RForms, rather the focus is on getting the basic understanding on how to include an editor in a webpage. Hence we will go through the  carefully.
 
-=Result=
+==Understanding the editor==
+The editor looks like this:
 <wiki:gadget url="http://rforms.googlecode.com/svn/trunk/samples/gadgetwrapper.xml" height="230" width="100%" border="0" up_url="http://rforms.googlecode.com/svn/trunk/samples/editorView-gcode.html"/> 
+This is an embedding via a simple gadget, you can also see it by following [http://rforms.googlecode.com/svn/trunk/samples/editorView-gcode.html this link]. Or view the [http://code.google.com/p/rforms/source/browse/trunk/samples/editorView-gcode.html code in SVN].
+This sample editor allows editing of titles and authors of a resource. And the authors are represented by their firstname and surname. Note how there are upper and lower restrictions on how many titles and authors that is allowed.
+==The code==
+ 
+
+=Experiment yourself=
+This small webapp provides four tabs containing an RForms editor, RForms presenter, a two text-editors containing an RForm-template and RDF data respectively. It allows you to experiment by changing the RDF data and see the results in the editor, or vice versa, change in the editor and see the result in the RDF data. You can also see how the RForms presenter shows the RDF data. Finally you can try to change the RForm-template, for instance to include more fields, both the editor and the presenter will reflect the changes.
+<wiki:gadget url="http://rforms.googlecode.com/svn/trunk/samples/gadgetwrapper.xml" height="500" width="100%" border="0" up_url="http://rforms.googlecode.com/svn/trunk/samples/tutorial-gcode.html"/> 
