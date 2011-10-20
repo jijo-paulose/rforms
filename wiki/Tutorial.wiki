@@ -1,2 +1,5 @@
 =Simple editor=
 We will now look into how the [http://rforms.googlecode.com/svn/trunk/samples/editorView-gcode.html samples/editorView.html] code works.
+
+=Result=
+<wiki:gadget url="http://rforms.googlecode.com/svn/trunk/samples/gadgetwrapper.xml" height="230" width="100%" border="0" up_url="http://rforms.googlecode.com/svn/trunk/samples/editorView-gcode.html"/> 
