@@ -82,7 +82,7 @@ templateSrc = {
 }}}
 
 ==Provide some RDF==
-The following RDF contains three statements on the `http://example.org/about`, two with the dcterms:title predicate and one with the dcterms:creator predicate pointing to a blank node. The blank node is the subject in three additional statements indicating it to be a foaf:Person (via the rdf:type predicate) and providing a foaf:firstName of "Anna" and a foaf:surname of "Wilder". In layman-terms, the rdf expressions expresses that the resource is titled "Anna's Homepage" in english and "Annas hemsida" in swedish and that it is created by a person named Anna Wilder. The format used is [http://docs.api.talis.com/platform-api/output-types/rdf-json RDF/JSON]. 
+The following RDF contains three statements on the `http://example.org/about`, two with the dcterms:title predicate and one with the dcterms:creator predicate pointing to a blank node. The blank node is the subject in three additional statements indicating it to be a foaf:Person (using the predicate rdf:type) and providing a foaf:firstName of "Anna" and a foaf:surname of "Wilder". In layman-terms, the rdf expressions expresses that the resource is titled "Anna's Homepage" in english and "Annas hemsida" in swedish and that it is created by a person named "Anna Wilder". The format used is [http://docs.api.talis.com/platform-api/output-types/rdf-json RDF/JSON]. 
 {{{
 rdfSrc = {
   "http://example.org/about" : {
@@ -97,7 +97,7 @@ rdfSrc = {
   }
 };
 }}}
-
+In the sample editor code the RDF is provided as a hardcoded object-literal assigned to the variable `rdfSrc`. This is realistic if the HTML page where the editor resides is being generated on the server. The server side typically has access to a database from where relevant RDF can be extracted. But this is not the only way to get a hold of RDF. Another option is to make an XHR request yielding the RDF. Information about how this is done, both for retrieving and saving rdf is discussed in ServerIntegration or for that matter in the javascript toolkit of your choice, for example dojo or jquery.
 
 ==Init the editor==
 To make sure we do not try to modify the document structure before it has finished loading, or before some javascript dependency indicated via `dojo.require` is loaded the code that initiates the editor has to be inside of a callback. Dojo provides such a mechanism:
