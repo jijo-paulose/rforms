@@ -39,25 +39,42 @@ Secondly you need to provide the dojo theme class somewhere higher up in the DOM
 <body class="tundra">
 }}}
 
+==Provide some RDF==
+The following RDF contains three statements on the `http://example.org/about`, two with the dcterms:title predicate and one with the dcterms:creator predicate pointing to a blank node. The blank node is the subject in three additional statements indicating it to be a foaf:Person (using the predicate rdf:type) and providing a foaf:firstName of "Anna" and a foaf:surname of "Wilder". In layman-terms, the rdf expressions expresses that the resource is titled "Anna's Homepage" in english and "Annas hemsida" in swedish and that it is created by a person named "Anna Wilder". The format used is [http://docs.api.talis.com/platform-api/output-types/rdf-json RDF/JSON]. 
+{{{
+rdfSrc = {
+  "http://example.org/about" : {
+	"http://purl.org/dc/terms/title"       : [ { "value" : "Anna's Homepage", "type" : "literal", "lang" : "en" },
+						   { "value" : "Annas hemsida", "type" : "literal", "lang" : "sv" } ],
+	"http://purl.org/dc/terms/creator"     : [ { "value" : "_:person", "type" : "bnode" } ]
+  },
+  "_:person" : {
+	"http://www.w3.org/TR/rdf-schema/type" : [ { "value" : "http://xmlns.com/foaf/0.1/Person", "type" : "uri"}],
+	"http://xmlns.com/foaf/0.1/firstName"  : [ { "value" : "Anna", "type" : "literal" } ] ,
+	"http://xmlns.com/foaf/0.1/surname"    : [ { "value" : "Wilder", "type" : "literal" } ]
+  }
+};
+}}}
+In the sample editor code the RDF is provided as a hardcoded object-literal assigned to the variable `rdfSrc`. This is realistic if the HTML page where the editor resides is being generated on the server. The server side typically has access to a database from where relevant RDF can be extracted. But this is not the only way to get a hold of RDF. Another option is to make an XHR request yielding the RDF. Information about how this is done, both for retrieving and saving rdf is discussed in the ServerIntegration page or for that matter in the javascript toolkit of your choice, for example [http://dojotoolkit.org Dojo] or [http://jquery.com/ jQuery].
+
 ==Provide an RForm-template==
+Below is an actual example of how a configuration, an RForm-template, looks like. We will go through to understand the general concepts, the full reference can be found in the [ConfigurationFormat RForm-template reference page].
 {{{
 templateSrc = {
     "root":{
 	"type":"group",
-	"constraints":{"http://www.w3.org/TR/rdf-schema/type":"http://xmlns.com/foaf/0.1/Document"},
-	"nodetype":"RESOURCE",
 	"content":[
 	    {
 		"type":"text",
 		"nodetype":"LANGUAGE_LITERAL",
-		"label":{"en":"Title"},
 		"property":"http://purl.org/dc/terms/title",
-		"cardinality": {"min": 2, "pref": "4", "max": 5}
+		"cardinality": {"min": 2, "pref": "4", "max": 5},
+		"label":{"en":"Title"},
+		"description":{"en":"A short title of the resource"}
 	    },{
 		"type":"group",
 		"nodetype":"RESOURCE",
 		"label":{"en":"Author"},
-		"description":{"en":"The author of the book"},
 		"property":"http://purl.org/dc/terms/creator",
 		"cardinality": {"min": 0, "max": 5},
 		"constraints":{"http://www.w3.org/TR/rdf-schema/type":"http://xmlns.com/foaf/0.1/Person"},
@@ -80,25 +97,34 @@ templateSrc = {
     }
 };
 }}}
+Just as for the section on RDF above, the RForm-template is provided as a hardcoded object-literal assigned to a variable, in this case to the variable `templateSrc`. Again, see the ServerIntegration page for other options on how to get a hold of RForm-templates.
 
-==Provide some RDF==
-The following RDF contains three statements on the `http://example.org/about`, two with the dcterms:title predicate and one with the dcterms:creator predicate pointing to a blank node. The blank node is the subject in three additional statements indicating it to be a foaf:Person (using the predicate rdf:type) and providing a foaf:firstName of "Anna" and a foaf:surname of "Wilder". In layman-terms, the rdf expressions expresses that the resource is titled "Anna's Homepage" in english and "Annas hemsida" in swedish and that it is created by a person named "Anna Wilder". The format used is [http://docs.api.talis.com/platform-api/output-types/rdf-json RDF/JSON]. 
+===The container and the root===
+In this example the RForm-templates container is a object with only a single attribute - `root`. Further attributes are possible in the container like `cachedChoices` and `auxilirary`, more on that in the [ConfigurationFormat#Rforms-templates_container RForm-template container reference].
+The root contains a [ConfigurationFormat#Group_items Group form item] which is indicated by the `type` attribute having the value `group`. A group always contains an array of children form items given by the `content` attribute.
+
+===The title===
+Lets take a closer look at the first child of the root, that is the first object in the `content` attribute of the root.
 {{{
-rdfSrc = {
-  "http://example.org/about" : {
-	"http://purl.org/dc/terms/title"       : [ { "value" : "Anna's Homepage", "type" : "literal", "lang" : "en" },
-						   { "value" : "Annas hemsida", "type" : "literal", "lang" : "sv" } ],
-	"http://purl.org/dc/terms/creator"     : [ { "value" : "_:person", "type" : "bnode" } ]
-  },
-  "_:person" : {
-	"http://www.w3.org/TR/rdf-schema/type" : [ { "value" : "http://xmlns.com/foaf/0.1/Person", "type" : "uri"}],
-	"http://xmlns.com/foaf/0.1/firstName"  : [ { "value" : "Anna", "type" : "literal" } ] ,
-	"http://xmlns.com/foaf/0.1/surname"    : [ { "value" : "Wilder", "type" : "literal" } ]
-  }
-};
+{
+	"type":"text",
+	"nodetype":"LANGUAGE_LITERAL",
+	"property":"http://purl.org/dc/terms/title",
+	"cardinality": {"min": 2, "pref": "4", "max": 5},
+	"label":{"en":"Title"},
+	"description":{"en":"A short title of the resource"}
+}
 }}}
-In the sample editor code the RDF is provided as a hardcoded object-literal assigned to the variable `rdfSrc`. This is realistic if the HTML page where the editor resides is being generated on the server. The server side typically has access to a database from where relevant RDF can be extracted. But this is not the only way to get a hold of RDF. Another option is to make an XHR request yielding the RDF. Information about how this is done, both for retrieving and saving rdf is discussed in ServerIntegration or for that matter in the javascript toolkit of your choice, for example dojo or jquery.
+This is a text form item becaus the `type` attribute says `text`. This means it is supposed to match a triple where the subject is the resource from the parent group form item (the root) and the predicate should be matched by the value of the `property` attribute. In addition, the object of any matched literal must correspond to what the `nodetype` attribute proscribes. In this case it says it should match a literal with a language. For other options see the [ConfigurationFormat#Text_items text form item reference]. 
 
+The cardinality specifies the `min` and `max` number of triples that should be supported by the editor. The `pref` indicates the amount of preferred fields that should be available when the editor is opened, that is, even if there is only two matching triples, two additional rows will be generated by default in the form.
+
+Finally the `label` attribute provides a set of language coded labels to show in front or above the text values, depending on the locale of your environment the most relevant language coded label will be displayed. The description provides a longer helpful text that typically is shown as a tooltip or after a click on the label.   
+
+Note that there are two more text form items in the RForm-template, corresponding to the firstname and surname of a foaf:Person, they have the same attributes and will not be further discussed.
+
+===The creator===
+TODO
 ==Init the editor==
 To make sure we do not try to modify the document structure before it has finished loading, or before some javascript dependency indicated via `dojo.require` is loaded the code that initiates the editor has to be inside of a callback. Dojo provides such a mechanism:
 {{{
