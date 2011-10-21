@@ -5,7 +5,7 @@ We start by going through a simple RForms driven editor, It does not illustrate 
 
 ==Understanding the editor==
 The editor looks like this:
-<wiki:gadget url="http://rforms.googlecode.com/svn/trunk/samples/gadgetwrapper.xml" height="230" width="100%" border="0" up_url="http://rforms.googlecode.com/svn/trunk/samples/editorView-gcode.html"/> 
+<wiki:gadget url="http://rforms.googlecode.com/svn/trunk/samples/gadgetwrapper.xml" height="250" width="100%" border="0" up_url="http://rforms.googlecode.com/svn/trunk/samples/editorView-gcode.html"/> 
 This is an embedding via a simple gadget, you can also see it by following [http://rforms.googlecode.com/svn/trunk/samples/editorView-gcode.html this link]. Or view the [http://code.google.com/p/rforms/source/browse/trunk/samples/editorView-gcode.html code in SVN].
 This sample editor allows editing of titles and authors of a resource. And the authors are represented by their firstname and surname. Note how there is an upper and a lower restrictions on how many titles that is allowed.
 ==Javascript library loading==
@@ -137,11 +137,17 @@ We use a group form item to capture a creator, that is, a blank node typed as `f
 	]
 }
 }}}
-Even though the group form item will have no explicit input field for itself as it relies on the children form items for this, it will provide the possibility to add new or remove entire person constructs. This is controlled by the `cardinality` attribute, just as how it works for text form items. Please, if unsure of how this works, take a look on the running example (for example the embedded form at the top of this page) and experiment with adding and removing creators. Note the difference between adding an entire creator and adding just an additional surname inside of one creator. In this case we have arbitrarily constrained the editor to allow only up to 5 creators.
+Even though the group form item will have no explicit input field for itself as it relies on the children form items for this, it will provide the possibility to add new or remove entire person constructs. This is controlled by the `cardinality` attribute, just as how it works for text form items. Please, if unsure of how this works, take a look on the running example (for example the embedded form at the [#A_simple_RForms_driven_editor top of this page]) and experiment with adding and removing creators. Note the difference between adding an entire creator and adding just an additional surname inside of one creator. In this case we have arbitrarily constrained the editor to allow only up to 5 creators.
 
 To make sure we match correct triples we have specified the property to be the `dcterms:creator`, the object to be a `RESOURCE` (which includes blank nodes) and also the `constraint` attribute that indicates that the blank node will have to be typed `foaf:Person`. 
 
 The children form items in the `content` attribute are not discussed further as they work just like the title, see discussion above.   
+
+Finally, the creator construction in the form is a bit bulky with two subrows for each creator added. An alternative is to use the table editing mode of RForms, this mode is triggered by adding the `rformsTable` class in the `cls` attribute on the group form item:
+{{{
+"cls": ["rformsTable"],
+}}}
+In this case all the children form items are forced to have a max and min cardinality of 1, hence the cardinality information can be left out for them. You can see how this looks in the embedded form at the [#Experiment_yourself bottom of this page], where you also can experiment by changing the RForm-template directly.
 
 ==Init the editor==
 To make sure we do not try to modify the document structure before it has finished loading, or before some javascript dependency indicated via `dojo.require` is loaded the code that initiates the editor has to be inside of a callback. Dojo provides such a mechanism:
