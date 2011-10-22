@@ -1,0 +1,2 @@
+#sidebar Menu
+<wiki:gadget url="http://rforms.googlecode.com/svn/trunk/samples/gadgetwrapper.xml" height="500" width="100%" border="0" up_url="http://rforms.googlecode.com/svn/trunk/samples/tutorial-gcode.html"/>
