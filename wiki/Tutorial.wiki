@@ -161,11 +161,17 @@ dojo.addOnLoad(function() {
 	});
 }}}
 Lets try to understand each of the five steps in the callback:
-===Creating an [http://code.google.com/p/rforms/source/browse/trunk/src/rforms/template/ItemStore.js rforms.template.ItemStore]===
-===Creating an [http://code.google.com/p/rforms/source/browse/trunk/src/rforms/template/Template.js rforms.template.Template]===
-===Creating an [http://code.google.com/p/rforms/source/browse/trunk/src/rdfjson/Graph.js rdfjson.Graph]===
-===Creating an [http://code.google.com/p/rforms/source/browse/trunk/src/rforms/model/Binding.js rforms.model.Binding]===
-===Creating an [http://code.google.com/p/rforms/source/browse/trunk/src/rforms/view/Editor.js rforms.view.Editor]===
+===Creating an `rforms.template.Template`===
+In addition to the JSON representation of the RForm-template there is a javascript class [http://code.google.com/p/rforms/source/browse/trunk/src/rforms/template/Template.js `rforms.template.Template`]. This class encapsulates some of the business logic associated with the JSON representation, especially when some of the form items are referenced rather than inline.
+The [http://code.google.com/p/rforms/source/browse/trunk/src/rforms/template/ItemStore.js `rforms.template.ItemStore`] is responsible for loading the JSON representation of the RForm-template containers into `rforms.template.Template`'s and their constituents as well as indexing and assembling them into larger templates when needed.
+  
+===Creating an `rdfjson.Graph`===
+Dealing directly with object-literal representations of RDF/JSON is quite easy, especially if compared with working with XML-DOM representations of RDF/XML. Still, the API provided by [http://code.google.com/p/rforms/source/browse/trunk/src/rdfjson/Graph.js `rdfjson.Graph`] is quite useful for protecting the developer from some idiosyncraties of the format, for instance managing repeated properties. It also provides additional functionality like a mechanism to search for triples as well as having a representation of a triple via the [http://code.google.com/p/rforms/source/browse/trunk/src/rdfjson/Statement.js Statement] class that allows a triple to be temporarily unasserted,
+
+===Creating an `rforms.view.Editor`===
+
+[http://code.google.com/p/rforms/source/browse/trunk/src/rforms/view/Editor.js `rforms.view.Editor`]
+[http://code.google.com/p/rforms/source/browse/trunk/src/rforms/model/Binding.js `rforms.model.Binding`]
 
 =Experiment yourself=
 This small webapp provides four tabs containing an RForms editor, RForms presenter, a two text-editors containing an RForm-template and RDF data respectively. It allows you to experiment by changing the RDF data and see the results in the editor, or vice versa, change in the editor and see the result in the RDF data. You can also see how the RForms presenter shows the RDF data. Finally you can try to change the RForm-template, for instance to include more fields, both the editor and the presenter will reflect the changes.
