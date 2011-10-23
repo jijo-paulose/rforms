@@ -218,9 +218,14 @@ TODO, describe the parameters in the url.
 
 =Style classes=
 
-TODO
-
-rformstable, rformsFirstcolumnfixedtable, rformsNoneditable, rformsmultiline, rformsexpandable
+|| *class* || *Description*||
+|| rformstable || May only be added to groups and assumes that all children form items has a cardinality of 1. There will be one row in the table for each matched group where every child form item get one column. ||
+|| rformsFirstcolumnfixedtable || A variant of th rformstable where the first child is assumed to be a choice form item. The editor automatically generates a row for each of the choices of the choice form item. Nothing will be exposed in the RDF for empty rows.||
+|| rformsNoneditable || Makes a text or choice form item noneditable. ||
+|| rformsmultiline || Only applies to text form items and makes the text editor to allow multiple lines of text to be edited.||
+|| rformsexpandable || Only applies to group form items, introduces an expandable section containing all the children. ||
+|| rformsverticalRadioButtons || Forces the radiobuttons to be vertically ordered.||
+|| rformshorizontalRadioButtons || Forces the radiobuttons to be horixontally ordered, this is the default. ||
 
 ==PropertyGroup item==
 
