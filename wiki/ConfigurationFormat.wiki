@@ -220,7 +220,7 @@ TODO, describe the parameters in the url.
 
 TODO
 
-table, firstcolumnfixedtable, noneditable
+rformstable, rformsFirstcolumnfixedtable, rformsNoneditable, rformsmultiline, rformsexpandable
 
 ==PropertyGroup item==
 
