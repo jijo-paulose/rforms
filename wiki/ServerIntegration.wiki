@@ -29,7 +29,7 @@ This is done by getting a clean copy of RDF/JSON from the `rdfjson.Graph` instan
 =XHR-based solution (AJAX)=
 See http://code.google.com/p/rforms/source/browse/trunk/samples/editor-gcode-XHR.html for an example where the RDF data and the RForm-template is loaded via XHR GET and later saved via an XHR POST. Note that this is only an example. A RESTful approach would load RDF data from specific urls and then doing an HTTP PUT to the same URL when saving the RDF data again.
 
-*Note* the XHR-based approach is limited by cross domain restrictions on the XHR object, that is, you cannot load RDF data or RForm-templates from other domains than from where the html page that contains the javascript is loaded from. There is several ways around this, HTTP proxies, [http://www.w3.org/TR/cors/ CORS], script loading with jsonp and client side proxy in java or flash. The HTTP proxy provided to OpenSocial Gadgets is outlined below.   
+*Note* the XHR-based approach is limited by cross domain restrictions on the XHR object, that is, you cannot load RDF data or RForm-templates from other domains than from where the html page that contains the javascript is loaded from. There is several ways around this, HTTP proxies, [http://www.w3.org/TR/cors/ CORS], script loading with jsonp and client side proxy in java or flash. The HTTP proxy provided to !OpenSocial Gadgets is outlined below.   
 
 =Open Social gadget http proxy=
 The following code is from [http://code.google.com/p/rforms/source/browse/trunk/samples/ExperimentGadget.xml the ExperimentGadget.xml] that loads RForm-templates (the templateSrc variable) by utilizing the `gadgets.io.makeRequest` call.
@@ -41,4 +41,4 @@ gadgets.io.makeRequest(templateSrc, function(response) {
 	e.startup();
 });
 }}}
-See for example http://code.google.com/p/opensocial-resources/wiki/GadgetsMakeRequest for a some examples of how to use the OpenSocial proxy.
+See for example http://code.google.com/p/opensocial-resources/wiki/GadgetsMakeRequest for some examples of how to use the !OpenSocial proxy.
