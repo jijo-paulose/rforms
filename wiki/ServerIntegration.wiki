@@ -1,0 +1,38 @@
+#sidebar Menu
+
+=Introduction=
+
+RForms does not provide any solutions for storing RDF. Hence, RForms need to be integrated with a server side solution for storing RDF.
+
+In general, as was explained in detail in the [Tutorial tutorial], a RForms editor requries the RForms javascript library, the RForms css, the RForms-template to use and finally the RDF data to edit. We will now focus on how to get the RDF data and the RForm-template from the server side solution.
+
+=HTML Form-based solution (non-AJAX)=
+A server side solution that generate html pages which contains RForms based editors or presentations could be based on a wide range of solutions, for instance ASP, PHP or java servlets. The RForms-template and RDF data can be included simply by inserting the corresponding object literals in script tags or as strings in textareas.
+See http://code.google.com/p/rforms/source/browse/trunk/samples/editor-gcode-inline.html for an example how it looks like with inline RDF data and RForm-template in a script tag.
+
+In the next step you have to post the data back to the server. This is simply done with a HTML form that has a save button and a hidden field (named rdfjson) that will contain the RDF data, or rather a rdf/json serialized version of it:
+{{{
+<form id="rforms_form" name="rforms" method="POST">
+	<input name="rdfjson" id="rdfjson" style="display:none;">
+	<input style="float:right;" id="save" type="submit" name="save" value="Save">
+</form>
+}}}
+There is a javacript that captures the submit event and get the RDF data from the RForms editor:
+{{{
+document.getElementById("rforms_form").onsubmit = function() {
+	var data = dojo.toJson(graph.exportRDFJSON(), 1);
+	document.getElementById("rdfjson").value = data;				
+};
+}}}
+This is done by getting a clean copy of RDF/JSON from the `rdfjson.Graph` instance via the `exportRDFJSON()` method, check [http://code.google.com/p/rforms/source/browse/trunk/samples/editor-gcode-inline.html the full code] for how the graph variable was initialized.
+
+The RDF data is now inserted into the input field with id `rdfjson` and the HTML Form is submittet via POST.
+
+=XHR-based solution (AJAX)=
+
+2) A more modern Web2.0 approach would expose the repository using a
+RESTful approach with separate URLs for each metadata record. The RForms
+editor is triggered on a specific metadata record, fetches it using an
+XHR GET request, updates the editor, and on save it does a XHR PUT on
+the corresponding metadata record without reloading the page the editor
+is on.
