@@ -1,7 +1,7 @@
 #sidebar Menu
 <wiki:toc max_depth="3" />
 =A simple RForms driven editor=
-We start by going through a simple RForms driven editor, It does not illustrate all the strengths of RForms, rather the focus is on getting the basic understanding on how to include an editor in a webpage. Hence we will go through the  carefully.
+We start by going through a simple RForms driven editor, It does not illustrate all the strengths of RForms, rather the focus is on getting the basic understanding on how to include an editor in a webpage.
 
 ==Understanding the editor==
 The editor looks like this:
@@ -17,9 +17,9 @@ To start with we need to make sure that the library is loaded. As RForms is buil
 <script type="text/javascript" src="testdata.js"></script>
 }}}
 Note that the `rforms_ROOT.js` is for localization purposes and only provided to avoid cross domain loading issues which occurs when dojo and rforms is loaded from different domains (googleapis.com and googlecode.com). Hence, a proper installation of RForms, downloaded, built and integrated into your application of choice this script can, and should, be removed to benefit from the full localization of features that are provided with dojo.
-Compare with [http://code.google.com/p/rforms/source/browse/trunk/samples/editorView-gcode.html code in SVN] and [http://code.google.com/p/rforms/source/browse/trunk/samples/editorView-build.html editorView-build.html] (the localization file is included in the -build variant in the SVN to better support loading via `file:///`).
+Compare with [http://code.google.com/p/rforms/source/browse/trunk/samples/editorView-gcode.html code in SVN] and [http://code.google.com/p/rforms/source/browse/trunk/samples/editorView-build.html editorView-build.html] (the localization file is included in the -build variant in the SVN to better support loading via the `file:///` protocol).
 
-We also load the testdata.js which contains the RDF data and the RForm-template, see below for a discussion of the format.
+We also load the [http://code.google.com/p/rforms/source/browse/trunk/samples/testdata.js testdata.js] javascript which contains some tes RDF data and an test RForm-template, see below for a discussion of the formats used.
 
 Even though we already have included the libraries via script tags, it good custom to declare which classes we aim to use from this file, this is similar to the good practice of explicit import statements in java. In addition, if we are not running a built version of RForms, this step is neccessary as javascript is loaded on the fly.
 {{{
@@ -158,8 +158,8 @@ To make sure we do not try to modify the document structure before it has finish
 {{{
 dojo.addOnLoad(function() {
 		var itemStore = new rforms.template.ItemStore();
-	 	var template = itemStore.createTemplate(templateSrc);
-		var graph = new rdfjson.Graph(rdfSrc);
+	 	var template = itemStore.createTemplate(tesdata.templateSrc);
+		var graph = new rdfjson.Graph(testdata.rdfSrc);
 		var binding = rforms.model.match(graph, "http://example.org/about", template);
 		new rforms.view.Editor({template: template, binding: binding}, "compactView");
 	});
@@ -168,7 +168,7 @@ Now, lets try to understand the code in the callback:
 ===Creating an `rforms.template.Template`===
 {{{
 		var itemStore = new rforms.template.ItemStore();
-	 	var template = itemStore.createTemplate(templateSrc);
+	 	var template = itemStore.createTemplate(testdata.templateSrc);
 }}}
 In addition to the JSON representation of the RForm-template there is a javascript class [http://code.google.com/p/rforms/source/browse/trunk/src/rforms/template/Template.js rforms.template.Template]. This class encapsulates some of the business logic associated with the JSON representation, especially when some of the form items are referenced rather than inline.
 The [http://code.google.com/p/rforms/source/browse/trunk/src/rforms/template/ItemStore.js rforms.template.ItemStore] is responsible for loading the JSON representation of the RForm-template containers into `rforms.template.Template`'s and their constituents as well as indexing and assembling them into larger templates when needed.
