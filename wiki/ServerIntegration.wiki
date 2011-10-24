@@ -8,7 +8,7 @@ In general, as was explained in detail in the [Tutorial tutorial], a RForms edit
 
 =HTML Form-based solution (non-AJAX)=
 A server side solution that generate html pages which contains RForms based editors or presentations could be based on a wide range of solutions, for instance ASP, PHP or java servlets. The RForms-template and RDF data can be included simply by inserting the corresponding object literals in script tags or as strings in textareas.
-See http://code.google.com/p/rforms/source/browse/trunk/samples/editor-gcode-inline.html for an example how it looks like with inline RDF data and RForm-template in a script tag.
+See http://code.google.com/p/rforms/source/browse/trunk/samples/editor-gcode-inline-FORM.html for an example how it looks like with inline RDF data and RForm-template in a script tag.
 
 In the next step you have to post the data back to the server. This is simply done with a HTML form that has a save button and a hidden field (named rdfjson) that will contain the RDF data, or rather a rdf/json serialized version of it:
 {{{
@@ -24,15 +24,21 @@ document.getElementById("rforms_form").onsubmit = function() {
 	document.getElementById("rdfjson").value = data;				
 };
 }}}
-This is done by getting a clean copy of RDF/JSON from the `rdfjson.Graph` instance via the `exportRDFJSON()` method, check [http://code.google.com/p/rforms/source/browse/trunk/samples/editor-gcode-inline.html the full code] for how the graph variable was initialized.
-
-The RDF data is now inserted into the input field with id `rdfjson` and the HTML Form is submittet via POST.
+This is done by getting a clean copy of RDF/JSON from the `rdfjson.Graph` instance via the `exportRDFJSON()` method, check [http://code.google.com/p/rforms/source/browse/trunk/samples/editor-gcode-inline-FORM.html the full code] for how the graph variable was initialized. The RDF data is now inserted into the input field with id `rdfjson` and the HTML Form is submittet via POST.
 
 =XHR-based solution (AJAX)=
+See http://code.google.com/p/rforms/source/browse/trunk/samples/editor-gcode-XHR.html for an example where the RDF data and the RForm-template is loaded via XHR GET and later saved via an XHR POST. Note that this is only an example. A RESTful approach would load RDF data from specific urls and then doing an HTTP PUT to the same URL when saving the RDF data again.
 
-2) A more modern Web2.0 approach would expose the repository using a
-RESTful approach with separate URLs for each metadata record. The RForms
-editor is triggered on a specific metadata record, fetches it using an
-XHR GET request, updates the editor, and on save it does a XHR PUT on
-the corresponding metadata record without reloading the page the editor
-is on.
+*Note* the XHR-based approach is limited by cross domain restrictions on the XHR object, that is, you cannot load RDF data or RForm-templates from other domains than from where the html page that contains the javascript is loaded from. There is several ways around this, HTTP proxies, [http://www.w3.org/TR/cors/ CORS], script loading with jsonp and client side proxy in java or flash. The HTTP proxy provided to OpenSocial Gadgets is outlined below.   
+
+=Open Social gadget http proxy=
+The following code is from [http://code.google.com/p/rforms/source/browse/trunk/samples/ExperimentGadget.xml the ExperimentGadget.xml] that loads RForm-templates (the templateSrc variable) by utilizing the `gadgets.io.makeRequest` call.
+{{{
+var params = {};
+params[gadgets.io.RequestParameters.CONTENT_TYPE] = gadgets.io.ContentType.JSON;
+gadgets.io.makeRequest(templateSrc, function(response) {
+	var e = new rforms.apps.Experiment({templateObj: dojo.fromJson(response.data), graphObj: {}}, "container");
+	e.startup();
+});
+}}}
+See for example http://code.google.com/p/opensocial-resources/wiki/GadgetsMakeRequest for a some examples of how to use the OpenSocial proxy.
