@@ -1,5 +1,6 @@
   * [Features]
   * [Demo]
+    * [demoLOM LOM]
   * [GettingStarted Getting Started]
   * [Tutorial]
   * [ConfigurationFormat RForm-templates]
