@@ -1,6 +1,7 @@
   * [Features]
   * [Demo]
     * [demoLOM LOM]
+    * [demoFOAF FOAF Person]
   * [GettingStarted Getting Started]
   * [Tutorial]
   * [ConfigurationFormat RForm-templates]
