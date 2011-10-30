@@ -3,3 +3,6 @@
 ==[http://code.google.com/p/rdfquery/ rdfquery]==
 Is a jquery plugin that allows processing of RDF.
 It does not provide any specific editing capabilities in itself.
+
+==[http://www.w3.org/2005/04/fresnel-info/ Fresnel - Display Vocabulary for RDF]==
+Is a vocabulary for describing how properties and resources should be presented. There is several implementations available. Fresnel does not support editing.
