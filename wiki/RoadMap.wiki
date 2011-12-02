@@ -11,3 +11,6 @@ Support for calculating choices from ontologies are today missing. The RForms-te
 
 =Server side support for managing RForms-templates=
 There is today no support for managing RForms-templates. As described in the [Tutorial] and the [ServerIntegration server integration] page the RForms-templates are today often made available inline or loaded into the application via script tags. A special service for managing RForms-templates could allow authors manage a stable library of RForms-templates for common vocabulary and also allow them to be combined easily without requiring copy paste. The service should also use the choice generation service described above to inline the choices to minimize the amount of requests from the client. It could also integrate the editor described above.
+
+=Support W3C RDF API (still an editors draft)=
+It would be nice if the rdfjson API implement the http://www.w3.org/2010/02/rdfa/sources/rdf-interfaces/
