@@ -11,4 +11,4 @@ You can join us on #rforms on Freenode IRC for more direct questions.
 If you can’t find anyone in IRC then please send a mail the mailing list instead.
 
 ==Commercial support==
-If you have questions regarding commercial support you should contact matthias or hannes at [http://metasolutions.se|metasolutions.se].
+If you have questions regarding commercial support you should contact matthias or hannes at [http://metasolutions.se metasolutions.se].
