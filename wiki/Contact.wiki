@@ -1,6 +1,6 @@
 #sidebar Menu
 ==General Technical Questions==
-We try to document as much as possible in the wiki here on google code, so take a look there first. We hope that also the demos can provide some insight.
+We try to document as much as possible in the wiki on google code, so take a look there first. We hope that also the demos can provide some insight.
 
 ==Mailing List==
 
