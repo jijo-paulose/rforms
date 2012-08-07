@@ -8,4 +8,5 @@
   * [ConfigurationFormat RForms-templates reference]
   * [RoadMap]
   * [RelatedInitiatives Related Initiatives]
+  * [Contact]
   * [About]
