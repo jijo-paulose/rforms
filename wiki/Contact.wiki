@@ -4,7 +4,7 @@ We try to document as much as possible in the wiki on google code, so take a loo
 
 ==Mailing List==
 
-You can always use the [http://groups.google.com/group/rforms-discuss|google group mailinglist] for specific questions on how to use or develop rForms, write rForms-templates etc.
+You can always use the [http://groups.google.com/group/rforms-discuss google group mailinglist] for specific questions on how to use or develop rForms, write rForms-templates etc.
 
 ==Internet Relay Chat (IRC)==
 You can join us on #rforms on Freenode IRC for more direct questions.
