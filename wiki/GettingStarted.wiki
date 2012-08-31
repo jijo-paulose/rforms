@@ -1,6 +1,6 @@
 #sidebar Menu
 = Try out the samples = 
-All samples are html files located in the trunk/samples directory. Those that have "-gcode" somewhere in their name can be tried directly as they rely on scripts available from google code and in the cloud. You can browse the SVN here on google code, see some of them embedded in the wiki, or checkout the SVN and point your browser to the local directory.
+All samples are html files located in the trunk/samples directory. Those that have "-gcode" somewhere in their name can be tried directly as they rely on scripts available from google code and in the cloud. To access these samples you can browse the SVN here on google code, see some of them embedded in the wiki, or, checkout the code from SVN and point your browser to the local directory.
 
 Those that does not have "-gcode" in their name requires an installation to work.
 = Installation =
