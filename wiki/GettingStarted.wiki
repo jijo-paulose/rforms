@@ -29,10 +29,10 @@ In Firefox this is done by:
 
 In Chrome this is done by starting the browser with the following flag:
 {{{
-`--allow-file-access-from-files`
+--allow-file-access-from-files
 }}}
 For OS X users, start chrome in the Terminal with:
 {{{
-'open '/Applications/Google Chrome.app' --new --args -allow-file-access-from-files'
+open '/Applications/Google Chrome.app' --new --args -allow-file-access-from-files
 }}}
 *NOTE:* RForms relies on the dojo library which loads files via XHR, even in built mode it loads the localization files, hence the workaround needed with the `file:///` protocol.
