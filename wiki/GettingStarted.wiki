@@ -25,7 +25,7 @@ the `file:///` protocol. This option is useful when doing development, but it re
 
 In Firefox this is done by:
   # go into the config mode by typing about:config in the locationbar.
-  # earch and change the `security.fileuri.strict_origin_policy` to `false`.
+  # search and change the `security.fileuri.strict_origin_policy` to `false`.
 
 In Chrome this is done by starting the browser with the following flag:
 {{{
