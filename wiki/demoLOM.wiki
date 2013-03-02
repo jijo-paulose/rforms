@@ -1,3 +1,3 @@
 #sidebar Menu
 The RForms-template used are http://code.google.com/p/rforms/source/browse/trunk/src/rforms/common/LOM.json.
-<wiki:gadget url="http://kmr.nada.kth.se/~matthias/ExperimentGadget.xml" height="650" width="100%" border="0" up_templateSrc="http://rforms.googlecode.com/svn/trunk/src/rforms/common/LOM.json"/>
+<wiki:gadget url="http://kmr.nada.kth.se/~matthias/ExperimentGadget2.xml" height="650" width="100%" border="0" up_templateSrc="http://rforms.googlecode.com/svn/trunk/src/rforms/common/LOM.json"/>
