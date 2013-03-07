@@ -2,7 +2,7 @@
   * [Demo]
     * [demoLOM LOM]
     * [demoFOAF FOAF Person]
-    * [demoFOAFFormlets Formlets for FOAF
+    * [demoFOAFFormlets Formlets for FOAF]
     * [demoDCTermsFormlets Formlets for Dublin Core Terms] 
     * [demoSKOS Formlets for SKOS]
   * [GettingStarted Getting Started]
