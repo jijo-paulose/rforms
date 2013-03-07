@@ -1,0 +1,4 @@
+#sidebar Menu
+Automatically generated formlets for FOAF (Friend Of A Friend), you can see the source here: http://code.google.com/p/rforms/source/browse/trunk/src/rforms/common/foaf/terms.js. 
+
+<wiki:gadget url="http://rforms.googlecode.com/svn/trunk/samples/FormulatorGadget.xml" height="660" width="100%" border="0" up_formletSrc="http://rforms.googlecode.com/svn/trunk/src/rforms/common/foaf/terms.js"/>
