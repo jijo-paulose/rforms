@@ -1,0 +1,6 @@
+RForms is a redesign of the [SHAME library](http://kmr.nada.kth.se/shame/wiki/Overview/Main) ([code on sorceforge](http://sourceforge.net/projects/shame/)) which was initiated already in 2001 by the [KMR group](http://kmr.csc.kth.se/). The SHAME library went through a number of phases starting from an JSP application, to a separate java Swing library, and then back to being integrated with web applications again (but this with client side rendering utilizing the [Dojo toolkit](http://dojotoolkit.org)).
+
+In comparison with SHAME, RForms is focused on simplicity with respect to the configuration mechanism (RForms-templates), the architecture (pure javascript library), and the terminology. The expressiveness with regards to which RDF that can be edited and the flexibility of the user interface has not been sacrified though.
+(With the limitation that there is no longer support for integration into java based desktop applications.)
+
+RForms is available under LGPL and supported by [MetaSolutions AB](http://metasolutions.se) and the [KMR group](http://kmr.csc.kth.se/).

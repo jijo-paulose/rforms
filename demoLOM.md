@@ -1,0 +1,2 @@
+The RForms-template used are http://code.google.com/p/rforms/source/browse/trunk/src/rforms/common/LOM.json.
+<wiki:gadget url="https://rforms.googlecode.com/svn/trunk/samples/ExperimentGadget.xml" height="650" width="100%" border="0" up\_templateSrc="http://rforms.googlecode.com/svn/trunk/src/rforms/common/LOM.json"/>
